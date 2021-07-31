@@ -6,7 +6,7 @@ import {jsx, css} from "@emotion/react";
 import {Divider} from "@components/widget/Divider";
 import * as R from "@common/requests"
 
-const MnemoincNotExist = () => {
+const MnemoincNotExist = ({mnemoin}) => {
     const router = useRouter();
 
     const [state, setState] = React.useState({
@@ -46,7 +46,7 @@ const MnemoincNotExist = () => {
                     boxShadow:"0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
                 }}>
                 <p>
-                    {state.mnemonic}
+                    {mnemoin || state.mnemonic}
                 </p>
             </div>
 
@@ -79,6 +79,24 @@ const MnemoincNotExist = () => {
             />
         </div>
         );
+}
+
+// This function gets called at build time on server-side.
+// It won't be called on client-side, so you can even do
+// direct database queries. See the "Technical details" section.
+export async function getStaticProps() {
+    // Call an external API endpoint to get posts.
+    // You can use any data fetching library
+    const response = await fetch("/api/token/mnemonic");
+    const mnemoin = await response.json();
+
+    // By returning { props: { posts } }, the Blog component
+    // will receive `posts` as a prop at build time
+    return {
+        props: {
+            mnemoin,
+        },
+    }
 }
 
 export default MnemoincNotExist;

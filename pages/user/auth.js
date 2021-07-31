@@ -82,7 +82,6 @@ export default class AuthPage extends React.Component {
         }
     }
 
-
     metaMaskPassword = ()=>{
         this.setState(
             {
