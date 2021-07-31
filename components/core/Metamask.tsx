@@ -20,11 +20,6 @@ class StrongType<Definition, Type> {
     }
 }
 
-type WindowInstanceWithEthereum = Window & typeof globalThis & { ethereum?: providers.ExternalProvider };
-
-export class EthereumAddress extends StrongType<'ethereum_address', string> {
-}
-
 
 const META_TASK_STATE_GRAPH = {
     idle: {confirmMetamask: "metamaskExist"},
@@ -43,16 +38,12 @@ const Metamask = (props) => {
     const onAction = props.onAction;
     const [currentState, dispatch] = React.useReducer(reducer, "idle");
     const [account, setAccount] = React.useState();
-    const router = useRouter();
 
     if (process.browser && !window.ethereum) {
         return <button
-            css={{
-                backgroundColor: "#636566"
-            }}
             className="bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
             type="button"
-            style={{transition: "all .15s ease"}}
+            style={{transition: "all .15s ease", backgroundColor: "#636566"}}
         >
             Metamask disabled
         </button>;
@@ -90,12 +81,9 @@ const Metamask = (props) => {
     return (
         <button
             onClick={(handleLogin)}
-            css={{
-                backgroundColor: "#FF715E"
-            }}
             className="bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
             type="button"
-            style={{transition: "all .15s ease"}}
+            style={{transition: "all .15s ease",backgroundColor: "#FF715E"}}
         >
             Continue with Metamask
         </button>

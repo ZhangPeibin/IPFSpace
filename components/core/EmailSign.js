@@ -8,6 +8,16 @@ import {toUtf8Bytes} from "ethers/lib/utils";
 import {BigNumber, utils} from "ethers";
 import {PrivateKey} from "@textile/hub";
 
+const EMAIL = css`
+    borderColor: "#FF715E";
+    focus: {
+        borderColor: "#FF715E";
+    };
+    active: {
+        borderColor: "#FF715E";
+    } 
+`
+
 const EmailSign = () => {
     let email = "";
     const router = useRouter();
@@ -80,18 +90,7 @@ const EmailSign = () => {
                     Email
                 </label>
                 <input
-                    css={{
-                        borderColor: "#FF715E",
-                        border:"none",
-                        focus: {
-                            borderColor: "#FF715E",
-                            outline:"none",
-                        },
-                        active: {
-                            borderColor: "#FF715E",
-                            outline:"none",
-                        }
-                    }}
+                    css={EMAIL}
                     onChange={onInputChange}
                     type="email"
                     className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
@@ -103,12 +102,9 @@ const EmailSign = () => {
             <div className="text-center mt-4">
                 <button
                     onClick={onPrivateKey}
-                    css={{
-                        backgroundColor: "#FF715E"
-                    }}
                     className="bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
                     type="button"
-                    style={{transition: "all .15s ease"}}
+                    style={{transition: "all .15s ease",backgroundColor: "#FF715E"}}
                 >
                     Sign In
                 </button>

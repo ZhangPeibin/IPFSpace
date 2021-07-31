@@ -31,37 +31,23 @@ const MnemoincExist = () => {
                     Your wallet's recovery phrase
                 </label>
                 <textarea
-                    css={{
-                        borderColor: "#FF715E",
-                        border:"none",
-                        overflow:"hidden",
-                        resize:"none",
-                        height:"5rem",
-                        focus: {
-                            borderColor: "#FF715E",
-                            outline:"none",
-                        },
-                        active: {
-                            borderColor: "#FF715E",
-                            outline:"none",
-                        }
-                    }}
                     onChange={onInputChange}
                     className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                     placeholder="recovery phrase"
-                    style={{transition: "all .15s ease"}}
+                    style={{transition: "all .15s ease",  borderColor: "#FF715E",
+                        border:"none",
+                        overflow:"hidden",
+                        resize:"none",
+                        height:"5rem",}}
                 />
             </div>
 
             <div className="text-center mt-4">
                 <button
                     onClick={onPrivateKey}
-                    css={{
-                        backgroundColor: "#FF715E"
-                    }}
                     className="bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
                     type="button"
-                    style={{transition: "all .15s ease"}}
+                    style={{transition: "all .15s ease",backgroundColor: "#FF715E"}}
                 >
                     Next
                 </button>
