@@ -15,7 +15,7 @@ export default function Landing() {
                                 <p className="text-lg font-light leading-relaxed mt-4 mb-4 text-gray-700">
                                     This is a very simple way to share a file with friends and the team.
                                     All you need to do is to log in to the'IPFSpace' platform with the same mnemonic,
-                                    so that everyone in the team or your friends can see the data uploaded by anyone.
+                                    so that everyone in the team your friends can see the data uploaded by anyone.
                                 </p>
                                 <p className="text-lg font-light leading-relaxed mt-0 mb-4 text-gray-700">
                                 </p>
