@@ -40,8 +40,8 @@ export const auth = async (userIdentity) => {
     }
 
     const keyInfo : KeyInfo= {
-        key: process.env.NEXT_PUBLIC_DB_API_KEY,
-        secret:process.env.NEXT_PUBLIC_DB_API_SECRET
+        key: "bhtmaiyqclqj6pw5lmyskkdy7iq",
+        secret:"bbfg3irdoe4ibswuszofgfr5gnn6nunjgxxjrdxq"
     };
 
     const userAuth = await authByTextile(keyInfo);

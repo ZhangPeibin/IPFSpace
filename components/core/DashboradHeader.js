@@ -84,7 +84,7 @@ const WebsitePrototypeHeader = (props) => {
     const router = useRouter();
     let magic;
     useEffect(function (){
-        magic = window && new Magic(process.env.NEXT_PUBLIC_MAGIC_KEY); // ✨
+        magic = window && new Magic("pk_live_893A36ED60BCFF42"); // ✨
     })
 
     useEffect(() => {
