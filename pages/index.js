@@ -116,9 +116,9 @@ function IndexPage(){
         const identity = localStorage.getItem('identity')
         console.log(identity)
         if (identity) {
-            window.href('"/dashboard"')
+            await router.replace("/dashboard")
         } else {
-            window.href("/user/auth")
+            await router.push("/user/auth")
         }
     }
     const title = `IPFSpace`;
