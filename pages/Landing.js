@@ -5,7 +5,7 @@ export default function Landing() {
     return (
         <div>
             <main>
-                <section className="pb-20  mt-56">
+                <section className="pb-20">
                     <div className="container mx-auto px-4">
                         <div className="flex flex-wrap items-center mt-32">
                             <div className="w-full md:w-5/12 px-4 mr-auto ml-auto">

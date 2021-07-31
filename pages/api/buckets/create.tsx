@@ -1,4 +1,3 @@
-import Cors from "cors";
 
 import * as T from "@common/textile";
 import * as S from "@common/server";

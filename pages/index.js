@@ -8,6 +8,7 @@ import {ButtonPrimary} from "../components/widget/Buttons";
 import WebsitePrototypeHeader from "../components/core/WebsitePrototypeHeader";
 import Landing from "./Landing";
 import { withRouter, NextRouter } from 'next/router'
+import Image from 'next/image'
 
 const STYLES_ROOT = css`
   padding: 0 88px;
@@ -151,7 +152,8 @@ function IndexPage({router}){
                             </a>
                         </div>
                         <img
-                            width="100%"
+                            width={'100%'}
+                            height={"100%"}
                             src="https://slate.textile.io/ipfs/bafkreic7x37gplkxgk27yhslecqqyuovhabywcojmdgj2pwua42jnnmdwm"
                             style={{
                                 borderRadius: `4px`,

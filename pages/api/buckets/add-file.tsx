@@ -1,5 +1,3 @@
-import Cors from "cors";
-import BusBoyConstructor from "busboy";
 
 import * as T from "@common/textile";
 import * as S from "@common/server";
@@ -46,10 +44,10 @@ export default async function bucketsAddFile(req, res) {
     return res.status(500).json({ error });
   }
 
-  const busboy = new BusBoyConstructor({
-    headers: req.headers,
-    highWaterMark: HIGH_WATER_MARK,
-  });
+  // const busboy = new BusBoyConstructor({
+  //   headers: req.headers,
+  //   highWaterMark: HIGH_WATER_MARK,
+  // });
 
   let push;
   const _createStreamAndUploadToTextile = async (s): Promise<any> => {
@@ -87,7 +85,7 @@ export default async function bucketsAddFile(req, res) {
   console.log("upload start!");
 
   try {
-    const response = await _createStreamAndUploadToTextile(busboy);
+    // const response = await _createStreamAndUploadToTextile(busboy);
   } catch (e) {
     console.log(e);
     return res.status(500).json({ error: true });

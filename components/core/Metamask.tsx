@@ -52,8 +52,6 @@ const Metamask = (props) => {
     useDetectMetaMask({onDetection: () => dispatch("confirmMetamask")});
 
 
-
-
     let currentAccount = null;
     const handleLogin = async () => {
         onAction();
