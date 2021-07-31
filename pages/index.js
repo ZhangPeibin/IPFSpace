@@ -8,7 +8,6 @@ import {ButtonPrimary} from "../components/widget/Buttons";
 import WebsitePrototypeHeader from "../components/core/WebsitePrototypeHeader";
 import Landing from "./Landing";
 import { withRouter, NextRouter } from 'next/router'
-import Image from 'next/image'
 
 const STYLES_ROOT = css`
   padding: 0 88px;
