@@ -1,0 +1,26 @@
+{
+  "presets": [
+    [
+      "next/babel",
+      {
+        "transform-runtime": {
+          "useESModules": false
+        },
+        "preset-react": {
+          "runtime": "classic"
+        }
+      }
+    ],
+    "@emotion/babel-preset-css-prop"
+  ],
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "alias": {
+          "~": "./"
+        }
+      }
+    ]
+  ]
+}
