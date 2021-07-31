@@ -1,8 +1,9 @@
+/** @jsx jsx */
+import {jsx, css} from "@emotion/react";
 import {H3} from "../widget/Typography";
 import * as Styles from "../../common/styles";
 import * as SVG from "../../common/svg";
 import * as React from "react";
-import {css} from "@emotion/react";
 import * as Constants from "../../common/constants";
 import {BigNumber, providers, utils} from "ethers";
 import {PrivateKey} from "@textile/hub";
@@ -228,18 +229,6 @@ const PasswordInput = (props)=>{
                 {"Enter password for your metamask auth"}
             </H3>
             <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-                <div
-                    css={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItem: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                </div>
-                <div className="text-gray-500 text-center mb-3 font-bold">
-                    <small>you should input a strong password</small>
-                </div>
                 <form>
                     <div className="relative w-full mb-3">
                         <label
@@ -250,22 +239,11 @@ const PasswordInput = (props)=>{
                         </label>
                         <input
                             onChange={_handlePassword}
-                            css={{
-                                borderColor: "#FF715E",
-                                border:"none",
-                                focus: {
-                                    borderColor: "#FF715E",
-                                    outline:"none",
-                                },
-                                active: {
-                                    borderColor: "#FF715E",
-                                    outline:"none",
-                                }
-                            }}
                             type="password"
                             className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                             placeholder="password"
-                            style={{transition: "all .15s ease"}}
+                            style={{transition: "all .15s ease",borderColor: "#FF715E",
+                                border:"none",}}
                         />
 
                         <label
@@ -276,26 +254,15 @@ const PasswordInput = (props)=>{
                         </label>
                         <input
                             onChange={_handlePasswordAgain}
-                            css={{
-                                borderColor: "#FF715E",
-                                border:"none",
-                                focus: {
-                                    borderColor: "#FF715E",
-                                    outline:"none",
-                                },
-                                active: {
-                                    borderColor: "#FF715E",
-                                    outline:"none",
-                                }
-                            }}
                             type="password"
                             className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                             placeholder="password again"
-                            style={{transition: "all .15s ease"}}
+                            style={{transition: "all .15s ease",borderColor: "#FF715E",
+                                border:"none",}}
                         />
                         {
                             state.message &&(
-                                <div css={{
+                                <div style={{
                                     color: "#FF715E"
                                 }} className="text-gray-500 text-center mt-6 font-bold">
                                     <small>{ state.message}</small>
@@ -306,12 +273,9 @@ const PasswordInput = (props)=>{
 
                         <button
                             onClick={(handleLogin)}
-                            css={{
-                                backgroundColor: "#FF715E"
-                            }}
                             className="mt-6 bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
                             type="button"
-                            style={{transition: "all .15s ease"}}
+                            style={{transition: "all .15s ease",backgroundColor: "#FF715E"}}
                         >
                             Continue with Metamask
                         </button>
