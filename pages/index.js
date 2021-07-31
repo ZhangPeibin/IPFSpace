@@ -116,9 +116,9 @@ function IndexPage(){
         const identity = localStorage.getItem('identity')
         console.log(identity)
         if (identity) {
-            await router.replace({pathname: "/dashboard"})
+            await router.replace("/dashboard")
         } else {
-            await router.push({pathname:"/user/auth"})
+            await router.push("/user/auth")
         }
     }
     const title = `IPFSpace`;
