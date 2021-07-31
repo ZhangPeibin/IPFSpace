@@ -7,7 +7,7 @@ import * as Constants from "/common/constants";
 import {ButtonPrimary} from "../components/widget/Buttons";
 import WebsitePrototypeHeader from "../components/core/WebsitePrototypeHeader";
 import Landing from "./Landing";
-import { withRouter, NextRouter } from 'next/router'
+import { useRouter } from 'next/router'
 
 const STYLES_ROOT = css`
   padding: 0 88px;
@@ -110,8 +110,8 @@ const STYLES_HIGHLIGHT_BLUE = css`
 `;
 
 
-function IndexPage({router}){
-
+function IndexPage(){
+    const router = useRouter()
     const _signIn = async () => {
         const identity = localStorage.getItem('identity')
         console.log(identity)
@@ -172,4 +172,4 @@ function IndexPage({router}){
     );
 }
 
-export default withRouter(IndexPage)
+export default IndexPage
