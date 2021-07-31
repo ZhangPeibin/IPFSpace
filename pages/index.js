@@ -146,9 +146,7 @@ function IndexPage(){
                                 By making data storage easier, reliable, safe and highly scalable
                             </p>
                             <br />
-                            <a style={{ textDecoration: `none` }} onClick={_signIn} >
-                                <ButtonPrimary>Sign In</ButtonPrimary>
-                            </a>
+                                <ButtonPrimary onClick={_signIn}>Sign In</ButtonPrimary>
                         </div>
                         <img
                             width={'100%'}
