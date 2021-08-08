@@ -14,6 +14,8 @@ const STYLES_ROOT = css`
   width: 100%;
   display: flex;
   position:absolute;
+  padding-left: 48px;
+  padding-right: 48px;
   @media (max-width: ${Constants.sizes.mobile}px) {
     padding: 48px 24px 0 24px;
   }
@@ -26,21 +28,6 @@ const STYLES_CONTAINER = css`
   margin: 0 auto;
   display:block;
 `;
-
-
-const STYLES_CONTAINER_DASHBORAD = css`
-  max-width: 1440px;
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  display:block;
-  margin-bottom: 64px;
-  @media (max-width: ${Constants.sizes.mobile}px) {
-    padding: 12px 32px;
-    margin-bottom: 32px;
-  }
-`;
-
 
 const STYLES_SECTION_WRAPPER = css`
   max-width: 1440px;

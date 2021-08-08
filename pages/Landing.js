@@ -12,6 +12,8 @@ const STYLES_CONTAINER = css`
   margin: 72px auto;
   display: block;
   padding: 32px 0px;
+  padding-left: 48px;
+  padding-right: 48px;
   font-family: ${Constants.font.text};
   font-weight: 400;
   font-size: ${Constants.typescale.lvl0};
@@ -32,6 +34,8 @@ const STYLES_OFFERS = css`
   margin: 0px auto;
   display: block;
   padding: 32px 0px;
+  padding-left: 48px;
+  padding-right: 48px;
   font-family: ${Constants.font.text};
   font-weight: 400;
   font-size: ${Constants.typescale.lvl0};
