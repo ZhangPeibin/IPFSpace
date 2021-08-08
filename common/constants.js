@@ -15,10 +15,11 @@ export const sizes = {
 
 export const system = {
   //system color
+  index_font_color:"#faebd7",
   white: "#FFFFFF",
   brand: "#0666bb",
   textGray: "#878688",
-  backgroundColor:"#f8f8f8",
+  backgroundColor:"#FFFFFF",
   grayLight:"#f8f8f8",
   grayLight6: "#F2F5F7",
   grayLight5: "#E5E8EA",
@@ -175,6 +176,7 @@ export const font = {
 export const typescale = {
   lvlN1: `0.75rem`,
   lvl0: `0.875rem`,
+  lvl01: `0.995rem`,
   lvl1: `1rem`,
   lvl2: `1.25rem`,
   lvl3: `1.563rem`,

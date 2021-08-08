@@ -42,7 +42,7 @@ const STYLES_LINK = css`
   transition: 200ms ease color;
   align-items: center;
   font-family: ${Constants.font.medium};
-  font-weight: 500;
+  font-weight: 600;
   font-size: ${Constants.typescale.lvl1};
 
   :hover {

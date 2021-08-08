@@ -1,63 +1,52 @@
 /** @jsx jsx */
 import { jsx, css } from "@emotion/react";
-import React from "react";
+import React, {useEffect} from "react";
 import WebsitePrototypeWrapper from "../components/core/WebsitePrototypeWrapper";
 import WebsitePrototypeFooter from "../components/core/WebsitePrototypeFooter";
 import * as Constants from "/common/constants";
 import {ButtonPrimary} from "../components/widget/Buttons";
 import WebsitePrototypeHeader from "../components/core/WebsitePrototypeHeader";
-import Landing from "./Landing";
 import { useRouter } from 'next/router'
+import IndexBg from "../components/widget/Indexbg";
+import Landing from "./Landing";
 
 const STYLES_ROOT = css`
-  padding: 0 88px;
-  margin: -88px auto 0 auto;
   width: 100%;
-  background-color: ${Constants.system.backgroundColor};
-
+  display: flex;
+  position:absolute;
   @media (max-width: ${Constants.sizes.mobile}px) {
     padding: 48px 24px 0 24px;
   }
 `;
 
-
 const STYLES_CONTAINER = css`
   max-width: 1440px;
   width: 100%;
+  height: 100%;
   margin: 0 auto;
+  display:block;
 `;
+
+
+const STYLES_CONTAINER_DASHBORAD = css`
+  max-width: 1440px;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  display:block;
+  margin-bottom: 64px;
+  @media (max-width: ${Constants.sizes.mobile}px) {
+    padding: 12px 32px;
+    margin-bottom: 32px;
+  }
+`;
+
 
 const STYLES_SECTION_WRAPPER = css`
   max-width: 1440px;
   width: 100%;
-  height: 100%;
-  padding: 120px 0;
-  display: flex;
-  align-items: flex-start;
-
-  @media (max-width: ${Constants.sizes.tablet}px) {
-    padding: 88px 0;
-  }
-
-  @media (max-width: ${Constants.sizes.mobile}px) {
-    padding: 48px 0;
-    display: block;
-  }
-`;
-
-const STYLES_FOOTER_WRAPPER = css`
-  max-width: 100%;
-  width: 100%;
-  height: 100%;
-  padding: 16px 0;
-  display: flex;
-  align-items: flex-start;
-  background-color: ${Constants.system.grayLight3};
-
-  @media (max-width: ${Constants.sizes.tablet}px) {
-    padding: 88px 0;
-  }
-
+  display: block;
+  margin-top: 180px;
   @media (max-width: ${Constants.sizes.mobile}px) {
     padding: 48px 0;
     display: block;
@@ -67,11 +56,11 @@ const STYLES_FOOTER_WRAPPER = css`
 const STYLES_TEXT_BLOCK_CENTER = css`
   display: block;
   margin: 0 auto 80px auto;
-  width: 50%;
+  height: 100%;
   text-align: center;
 
   @media (max-width: ${Constants.sizes.mobile}px) {
-    margin: 48px auto 64px auto;
+    margin: 0px auto 64px auto;
     width: 100%;
   }
 `;
@@ -79,7 +68,22 @@ const STYLES_TEXT_BLOCK_CENTER = css`
 const STYLES_H1 = css`
   font-family: ${Constants.font.medium};
   font-weight: 400;
-  font-size: ${Constants.typescale.lvl4};
+  font-size: ${Constants.typescale.lvl5};
+  letter-spacing: -0.022rem;
+  line-height: 1.3;
+  color: ${Constants.system.index_font_color};
+  margin-bottom: 16px;
+
+  @media (max-width: ${Constants.sizes.tablet}px) {
+    font-size: ${Constants.typescale.lvl3};
+  }
+`;
+
+const STYLES_DASHBORAD = css`
+  font-family: ${Constants.font.medium};
+  font-weight: 600;
+  margin-top: 64px;
+  font-size: ${Constants.typescale.lvl5};
   letter-spacing: -0.022rem;
   line-height: 1.3;
   color: ${Constants.system.grayDark6};
@@ -88,16 +92,19 @@ const STYLES_H1 = css`
   @media (max-width: ${Constants.sizes.tablet}px) {
     font-size: ${Constants.typescale.lvl3};
   }
+  @media (max-width: ${Constants.sizes.mobile}px) {
+    margin-top: 16px;
+  }
 `;
 
 const STYLES_P = css`
-  font-family: ${Constants.font.text};
-  font-weight: 400;
-  font-size: ${Constants.typescale.lvl1};
+  font-family: ${Constants.font.semiBold};
+  font-weight: 500;
+  font-size: ${Constants.typescale.lvl2};
   letter-spacing: -0.011rem;
   line-height: 1.5;
   margin: 4px 0 0 0;
-  color: ${Constants.system.grayDark6};
+  color: ${Constants.system.index_font_color};
   width: 64%;
 
   @media (max-width: ${Constants.sizes.tablet}px) {
@@ -106,12 +113,18 @@ const STYLES_P = css`
 `;
 
 const STYLES_HIGHLIGHT_BLUE = css`
-  color: ${Constants.system.redlight3};
+  color: ${Constants.system.index_font_color};
 `;
 
 
 function IndexPage(){
     const router = useRouter()
+    const whitePager = "https://hub.textile.io/ipfs/bafybeiekoonofc7jkfwl5zgef4ujjx74qzahxtp6lpmcz3uikrgjiga2sq";
+
+    const _whitePager = () =>{
+        window.open(whitePager,"_blank")
+    }
+
     const _signIn = async () => {
         const identity = localStorage.getItem('identity')
         console.log(identity)
@@ -128,43 +141,47 @@ function IndexPage(){
 
     return (
         <WebsitePrototypeWrapper title={title} description={description} url={url} >
-            <div  css={STYLES_ROOT}>
+            <div css={STYLES_ROOT}>
                 <div css={STYLES_CONTAINER}>
                     <WebsitePrototypeHeader/>
                     <div css={STYLES_SECTION_WRAPPER} style={{ display: `block` }}>
                         <div css={STYLES_TEXT_BLOCK_CENTER}>
                             <h1 css={STYLES_H1} style={{ width: `100%` }}>
-                                IPFSpace is  on  <span css={STYLES_HIGHLIGHT_BLUE}> decentralized storage</span>
+                                <span css={STYLES_HIGHLIGHT_BLUE}> Decentralized DataSharing Infrastructure</span>
                             </h1>
                             <p css={STYLES_P} style={{ width: `100%` }}>
-                                A storage platform based on IPFS
+                                Based on IPFS & FileCoin
                             </p>
                             <p css={STYLES_P} style={{ width: `100%` }}>
-                                Use MetaMask, Recovery phrase and Email for security
-                            </p>
-                            <p css={STYLES_P} style={{ width: `100%` }}>
-                                By making data storage easier, reliable, safe and highly scalable
+                                Designed to store and share humanity's data
                             </p>
                             <br />
-                                <ButtonPrimary onClick={_signIn}>Sign In</ButtonPrimary>
+                            <ButtonPrimary style={{  minWidth:'120px', marginRight: `12px`,background:"#ffffff",color:"#FF715E" }} onClick={_whitePager}>White Pager</ButtonPrimary>
+                            <ButtonPrimary  style={{minWidth:'120px', marginLeft: `12px` }} onClick={_signIn}>Try it out</ButtonPrimary>
                         </div>
-                        <img
-                            width={'100%'}
-                            height={"100%"}
-                            src="https://slate.textile.io/ipfs/bafkreic7x37gplkxgk27yhslecqqyuovhabywcojmdgj2pwua42jnnmdwm"
-                            style={{
-                                borderRadius: `4px`,
-                                width: `100%`,
-                                boxShadow: `0px 10px 50px 20px rgba(0, 0, 0, 0.1)`,
-                                backgroundSize: `cover`,
-                            }}
-                        />
-                        <Landing/>
                     </div>
                 </div>
             </div>
-            <div  css={STYLES_FOOTER_WRAPPER} style={{ display: `block` }}>
-                <WebsitePrototypeFooter />
+            <IndexBg/>
+            <div css={STYLES_CONTAINER_DASHBORAD} >
+                <h1 css={STYLES_DASHBORAD} >
+                    {"DashBorad"}
+                </h1>
+                <img
+                    width={'100%'}
+                    height={"100%"}
+                    src="https://slate.textile.io/ipfs/bafkreic7x37gplkxgk27yhslecqqyuovhabywcojmdgj2pwua42jnnmdwm"
+
+                    style={{
+                        borderRadius: `4px`,
+                        width: `100%`,
+                        boxShadow: `0px 10px 50px 20px rgba(0, 0, 0, 0.1)`,
+                        backgroundSize: `cover`,
+                    }}
+                />
+            </div>
+            <div style={{  background: "#1e1f26"}}>
+                <WebsitePrototypeFooter/>
             </div>
         </WebsitePrototypeWrapper>
     );

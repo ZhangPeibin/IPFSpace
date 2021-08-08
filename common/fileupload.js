@@ -96,6 +96,7 @@ export const upload = async ({ file, context }) => {
             XHR.send(file);
         });
 
+    // todo add web3.storage .
     let res = await _privateUploadMethod(`https://api.nft.storage/upload`, file);
 
     if (!res?.ok) {

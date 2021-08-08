@@ -1,5 +1,5 @@
 {
-  "name": "happen",
+  "name": "ipfspace",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -27,15 +27,18 @@
     "ipfs-core": "^0.8.0",
     "ipfs-http-client": "^50.1.2",
     "it-all": "^1.0.5",
+    "jquery": "^3.6.0",
     "js-file-download": "^0.4.12",
     "jszip": "^3.7.0",
     "magic-sdk": "^4.4.0",
     "next": "11.0.1",
     "nft.storage": "^3.0.1",
-    "react": "17.0.2",
+    "react": "^17.0.2",
     "react-dom": "17.0.2",
     "react-download-link": "^2.3.0",
-    "react-sidebar": "^3.0.2"
+    "react-sidebar": "^3.0.2",
+    "react-tsparticles": "^1.33.2",
+    "yarn": "^1.22.11"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",

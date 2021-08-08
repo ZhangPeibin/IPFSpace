@@ -20,6 +20,7 @@ export default class WebsitePrototypeWrapper extends React.Component {
 
           <link rel="apple-touch-icon" href="/static/ipfspace.png" />
           <link rel="manifest" href="/manifest.json" />
+          <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"/>
         </Head>
         {this.props.children}
       </React.Fragment>

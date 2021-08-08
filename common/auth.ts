@@ -91,6 +91,7 @@ export const authIndex = async (identity,dbClient:Client) => {
 };
 
 
+
 export const storeFile = async (client: Client ,identity,fileJson)=>{
     console.log(fileJson)
     const thread = await client.getThread(C.DB.THREAD_NAME)
