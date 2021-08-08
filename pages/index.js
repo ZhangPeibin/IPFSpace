@@ -136,7 +136,7 @@ function IndexPage(){
     }
     const title = `IPFSpace`;
     const description =
-        "Welcome to the future of file store. Powered by IPFSpace.";
+        "Decentralized DataSharing Infrastructure, Based on IPFS & FileCoin ,Designed to store and share humanity's data";
     const url = "https://anipfs.space";
 
     return (
