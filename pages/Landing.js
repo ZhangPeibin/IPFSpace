@@ -178,6 +178,9 @@ export default function Landing() {
                                     The data uploaded by users will be reviewed by other users. When enough users reach a consensus to deny the quality of the data, the weight of the data will be reduced or even lost. Cancellation of entry into the shared chain, the review conducted by the user will be recorded on the shared chain and a certain token reward will be obtained through consensus. After the data has passed the consensus, the provider will be rewarded. Any downloading, sharing, or liking of the data will also reward the provider. Data can be set as a price and purchased with rewarded tokens. Every behavior of the data will be recorded in the ledger.
                                     The additional rewards of the content provider will be gained by familiarizing the weight of the elements of the data.
                                 </span>
+                                <span  css={offer_text}>
+                                     Of course, data NFT and on-chain transactions are also an important part of our sharing system.
+                                </span>
                             </div>
 
                             <div css={diverDiv}/>
