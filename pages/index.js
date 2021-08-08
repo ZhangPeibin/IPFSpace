@@ -163,23 +163,7 @@ function IndexPage(){
                 </div>
             </div>
             <IndexBg/>
-            <div css={STYLES_CONTAINER_DASHBORAD} >
-                <h1 css={STYLES_DASHBORAD} >
-                    {"DashBorad"}
-                </h1>
-                <img
-                    width={'100%'}
-                    height={"100%"}
-                    src="https://slate.textile.io/ipfs/bafkreic7x37gplkxgk27yhslecqqyuovhabywcojmdgj2pwua42jnnmdwm"
-
-                    style={{
-                        borderRadius: `4px`,
-                        width: `100%`,
-                        boxShadow: `0px 10px 50px 20px rgba(0, 0, 0, 0.1)`,
-                        backgroundSize: `cover`,
-                    }}
-                />
-            </div>
+            <Landing/>
             <div style={{  background: "#1e1f26"}}>
                 <WebsitePrototypeFooter/>
             </div>
