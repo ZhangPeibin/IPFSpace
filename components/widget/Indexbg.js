@@ -90,7 +90,7 @@ const  IndexBg = (props) =>{
                 }}
             />
         )
-    })
+    },[])
 
     return  view
 }

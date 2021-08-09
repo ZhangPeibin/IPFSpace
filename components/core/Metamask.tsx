@@ -97,4 +97,6 @@ const useDetectMetaMask = ({onDetection}) => {
     }, []);
 };
 
+
+
 export default Metamask;
