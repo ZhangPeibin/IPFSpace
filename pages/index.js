@@ -106,7 +106,7 @@ const STYLES_HIGHLIGHT_BLUE = css`
 
 function IndexPage(){
     const router = useRouter()
-    const whitePager = "https://hub.textile.io/ipfs/bafybeicgdjsy77vg3ilg5c5he2kxjeogqx6t3oceockm5zdb4hinvbthyy";
+    const whitePager = "https://hub.textile.io/ipfs/bafybeiei6dlmkuvvtahisbjcs7vufqbes6mta7pgoaenvtifvtsqechmu4";
 
     const _whitePager = () =>{
         window.open(whitePager,"_blank")
