@@ -117,7 +117,7 @@ export default class DashboardPage extends React.Component {
         if(!identity){
             identity = localStorage.getItem("identity")
         }
-        A.useInfo(identity).then((v) => {
+        A.auth(identity).then((v) => {
             this.setState({
                 client:v
             })
