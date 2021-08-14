@@ -11,7 +11,7 @@ const STYLES_CONTAINER = css`
   font-family: ${Constants.font.text};
   font-weight: 400;
   font-size: ${Constants.typescale.lvlN1};
-  display: flex;
+  display: block;
   justify-content: space-between;
   max-width: 1440px;
   width: 100%;
@@ -24,14 +24,21 @@ const STYLES_CONTAINER = css`
   }
 `;
 
+
+const OFFERS_DIV_PARENT = css`
+  position: relative;
+  margin: 0px auto;
+  display: flex;
+  width: 100%;
+  @media (max-width: ${Constants.sizes.mobile}px) {
+    display: block;
+  }
+`;
+
 const STYLES_LINK = css`
   color: ${Constants.system.index_font_color};
   text-decoration: none;
   transition: 200ms ease color;
-
-  :hover {
-    color: ${Constants.system.blue};
-  }
 `;
 
 const STYLES_LEFT = css`
@@ -49,19 +56,51 @@ const STYLES_RIGHT = css`
   }
 `;
 
+
+const OFFERS_DIV = css`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: break-word;
+  width: 100%;
+  margin-bottom: 6px;
+  @media (max-width: ${Constants.sizes.mobile}px) {
+  }
+`;
+
 export const WebsitePrototypeFooter = (props) => {
     return (
         <div css={STYLES_CONTAINER} style={props.style}>
-            <p css={STYLES_LEFT}>
-                Powered by{" "}
-                <a css={STYLES_LINK} href="https://textile.io">
-                    IPFSpace
-                </a>{" "}
-            </p>
-            <div css={STYLES_RIGHT}>
-                <a css={STYLES_LINK} href="https://twitter.com/IPFSpace" style={{marginRight: 24}}>
-                    Twitter
-                </a>
+            <div>
+                <h3 css={STYLES_LINK} style={{fontSize: "52px",paddingTop:"2rem"}} className="mb-4 font-medium">
+                    How contact us
+                </h3>
+            </div>
+            <div css={OFFERS_DIV_PARENT}>
+                <div
+                    css={OFFERS_DIV}>
+                    <a css={STYLES_LINK} target={'_blank'} href="https://twitter.com/IPFSpace" style={{fontSize: "20px",fontFamily:"Calibri"}} className="mb-2 mt-4">
+                        Twitter：@IPFSpace
+                    </a>
+                    <a css={STYLES_LINK} target={'_blank'} href="https://t.me/peibin"  style={{fontSize: "20px",fontFamily:"Calibri"}} className="mb-2 mt-4">
+                        Telegram:  @peibin
+                    </a>
+                    <h2  css={STYLES_LINK} style={{fontSize: "20px",fontFamily:"Calibri"}} className="mb-2 mt-4">
+                        Email: ipfspace@163.com
+                    </h2>
+                    <h2  css={STYLES_LINK} style={{fontSize: "20px",fontFamily:"Calibri"}} className="mb-2 mt-4">
+                        Slack On FileCoin : @IPFSpace
+                    </h2>
+
+                    <p css={STYLES_LEFT}  style={{fontSize: "20px",marginTop:"20px",marginBottom:"36px",marfontFamily:"Calibri"}}>
+                        Powered by{" "}
+                        <a css={STYLES_LINK}  style={{color:"#FF715E",fontSize: "20px",fontFamily:"Calibri"}} href="https://www.anipfs.space">
+                            IPFSpace
+                        </a>{" "}
+                    </p>
+                </div>
+
             </div>
         </div>
     );

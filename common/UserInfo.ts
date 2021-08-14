@@ -2,6 +2,15 @@ import {Client, createUserAuth,Where, KeyInfo, PrivateKey, ThreadID, UserAuth} f
 import * as C from "./constants"
 
 
+/// can also use init
+const UserInfoSchema ={
+    identity:"",
+    name:"",
+    icon:"",
+    filAddress:"",
+    likeId:"",
+    web3:false
+}
 
 const schema = {
     identity: "",
@@ -22,6 +31,29 @@ const init = {
     _id: '',
     files:[
     ]
+}
+
+export async function userInfo(client:Client,identity){
+    let thread = ThreadID.fromString(await getLocalThreadId());
+    const query = new Where('identity').eq(identity)
+    try {
+        const findResult = await client.find(thread,C.DB.USER_COLLECTION,query)
+        if(findResult &&findResult.length>0){
+            return findResult;
+        }
+        let config = UserInfoSchema
+        config.identity = identity;
+        await client.create(thread, C.DB.USER_COLLECTION, [config])
+        return [config];
+    }catch (e) {
+        if(e.toString().indexOf("not found")!==-1){
+            await client.newCollectionFromObject(thread, UserInfoSchema,{name:C.DB.USER_COLLECTION})
+            let config = UserInfoSchema
+            config.identity = identity;
+            await client.create(thread, C.DB.FILES_COLLECTION, [config])
+            return [config]
+        }
+    }
 }
 
 
@@ -50,9 +82,17 @@ export const auth = async (userIdentity) => {
     return client
 };
 
+export const getLocalThreadId = async ()=>{
+    let localThreadId = await  localStorage.getItem("threadId")
+    console.log("local thread id :"+localThreadId)
+    return localThreadId;
+}
+
 export const authIndex = async (identity,dbClient:Client) => {
     if(dbClient!=null){
-        let localThreadId = localStorage.getItem("threadId")
+
+        let localThreadId = await getLocalThreadId();
+
         if(!localThreadId){
             try {
                 const thread = await dbClient.getThread(C.DB.THREAD_NAME)

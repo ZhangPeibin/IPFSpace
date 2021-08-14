@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, css } from "@emotion/react";
-import * as A from "../../common/auth"
+import * as A from "../../common/UserInfo"
 import React from "react";
 import * as Constants from "../../common/constants";
 import DashboradHeader from "../../components/core/DashboradHeader";
@@ -62,19 +62,12 @@ const STYLES_SIDEBAR_ELEMENTS = css`
   @media (max-width: ${Constants.sizes.mobile}px) {
   width: 100%;
 }
-  /*
-  @supports ((-webkit-backdrop-filter: blur(25px)) or (backdrop-filter: blur(25px))) {
-    -webkit-backdrop-filter: blur(25px);
-    backdrop-filter: blur(25px);
-    background-color: rgba(195, 195, 196, 0.6);
-  }
-  */
 `;
 
 
 const title = `IPFSpace`;
 const description =
-    "Welcome to the future of file store. Powered by IPFSpace.";
+    "Decentralized DataSharing Infrastructure, Based on IPFS & FileCoin ,Designed to store and share humanity's data";
 const url = "https://anipfs.space";
 
 const SIDEBARS = {
@@ -96,7 +89,7 @@ export default class DashboardPage extends React.Component {
 
     async componentDidMount() {
         if (this.state.identity == null) {
-            const identity = localStorage.getItem('identity')
+            const identity = await localStorage.getItem('identity')
             this.setState({
                 identity: identity
             })
@@ -135,10 +128,6 @@ export default class DashboardPage extends React.Component {
     _requestData = (identity,v)=>{
         A.authIndex(identity,v).then(r => {
             console.log(r)
-            if(r.length<1){
-                console.log("why don't get userConfig ?")
-                return;
-            }
             const userConfig = r[0]
             const files = userConfig.files;
             this.setState({
@@ -273,7 +262,6 @@ export default class DashboardPage extends React.Component {
 
 
     render() {
-
         let sidebarElement;
         if (this.state.sidebar) {
             sidebarElement = React.cloneElement(this.state.sidebar, {
@@ -296,6 +284,7 @@ export default class DashboardPage extends React.Component {
                                 _handleUploadData={this._handleUploadData}
                                 _refreshData = {this._refreshData}
                                 files={this.state.items}
+                                has1tT = {false}
                                 deleteCid={this._deleteCid}/>
                         )
                     }

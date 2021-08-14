@@ -1,5 +1,5 @@
 import * as S from "@common/server";
-import * as A from "@common/auth";
+import * as A from "@common/UserInfo";
 import * as U from "@common/utilities";
 
 export default async function auth(req, res) {

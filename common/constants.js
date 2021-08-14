@@ -222,5 +222,7 @@ export const linkPreviewSizeLimit = 5000000; //NOTE(martina): 5mb limit for twit
 
 export const DB = {
   THREAD_NAME : "user",
-  FILES_COLLECTION:"files"
+  FILES_COLLECTION:"files",
+  USER_COLLECTION:"use_info"
+
 }
