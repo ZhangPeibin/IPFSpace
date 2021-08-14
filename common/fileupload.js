@@ -1,4 +1,5 @@
 import * as Store from "./store";
+import {storeWithProgress} from "./web3";
 
 export const formatUploadedFiles = ({ files }) => {
     let toUpload = [];
@@ -25,6 +26,36 @@ export const formatUploadedFiles = ({ files }) => {
 
     return { toUpload, fileLoading, numFailed: files.length - toUpload.length };
 };
+
+export const web3Upload = async ({ file, context,token }) => {
+    if(token){
+        const  web3File = await storeWithProgress(token, file, context)
+        return {
+            'cid':web3File.cid,
+            "size":web3File.size,
+            "type":web3File.type,
+            "createTime":web3File.lastModified,
+        }
+    }else{
+        return await upload({file, context})
+    }
+}
+
+export const uploadEnter = async ({ file, context,token }) => {
+    let  response = await upload({file, context})
+    if (!response || response.error) {
+        if(token){
+            const  web3File = await storeWithProgress(token, file, context)
+            return {
+                'cid':web3File.cid,
+                "size":web3File.size,
+                "type":web3File.type,
+                "createTime":web3File.lastModified,
+            }
+        }
+    }
+    return response;
+}
 
 
 export const upload = async ({ file, context }) => {
@@ -100,6 +131,7 @@ export const upload = async ({ file, context }) => {
     let res = await _privateUploadMethod(`https://api.nft.storage/upload`, file);
 
     if (!res?.ok) {
+
         if (context) {
             await context.setState({
                 fileLoading: {
@@ -114,7 +146,6 @@ export const upload = async ({ file, context }) => {
 
         return !res ? { decorator: "NO_RESPONSE_FROM_SERVER", error: true } : res;
     }
-
     let item = res['value'];
     return item;
 };

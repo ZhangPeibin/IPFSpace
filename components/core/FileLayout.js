@@ -127,6 +127,17 @@ export default class FileLayout  extends React.Component {
                     onChange={(value) => this.setState({ view: value })}
                     style={{ margin: "0 0 24px 0" }}
                 />
+
+                {
+                    this.props.has1tT ?(null):(
+                        <ButtonPrimary
+                            onClick={this.props._getWeb3Storage}
+                            style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36}}
+                        >
+                            1T free space
+                        </ButtonPrimary>
+                    )
+                }
                 <ButtonPrimary
                     onClick={this.props._refreshData}
                     style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36}}
@@ -220,7 +231,6 @@ export default class FileLayout  extends React.Component {
             ) : (
                 <EmptyState>
                     <FileTypeGroup />
-                    <div style={{ marginTop: 24 }}>It's time to add file into IPFSpace to upload</div>
                 </EmptyState>
             )}
         </div>

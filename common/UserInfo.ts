@@ -4,12 +4,13 @@ import * as C from "./constants"
 
 /// can also use init
 const UserInfoSchema ={
+    _id: '',
     identity:"",
     name:"",
     icon:"",
     filAddress:"",
     likeId:"",
-    web3:false
+    web3:""
 }
 
 const schema = {
@@ -34,7 +35,8 @@ const init = {
 }
 
 export async function userInfo(client:Client,identity){
-    let thread = ThreadID.fromString(await getLocalThreadId());
+    const localThreadId = await getLocalThreadId(client);
+    let thread = ThreadID.fromString(localThreadId);
     const query = new Where('identity').eq(identity)
     try {
         const findResult = await client.find(thread,C.DB.USER_COLLECTION,query)
@@ -50,7 +52,7 @@ export async function userInfo(client:Client,identity){
             await client.newCollectionFromObject(thread, UserInfoSchema,{name:C.DB.USER_COLLECTION})
             let config = UserInfoSchema
             config.identity = identity;
-            await client.create(thread, C.DB.FILES_COLLECTION, [config])
+            await client.create(thread, C.DB.USER_COLLECTION, [config])
             return [config]
         }
     }
@@ -82,47 +84,45 @@ export const auth = async (userIdentity) => {
     return client
 };
 
-export const getLocalThreadId = async ()=>{
+export const getLocalThreadId = async (client:Client)=>{
     let localThreadId = await  localStorage.getItem("threadId")
     console.log("local thread id :"+localThreadId)
+    if(!localThreadId){
+        try {
+            const thread = await client.getThread(C.DB.THREAD_NAME)
+            localThreadId = thread.id;
+        }catch (e) {
+            if(e.toString().indexOf("Thread") !==-1 && e.toString().indexOf("found") !==-1){
+                const newDbThread = await client.newDB(undefined, C.DB.THREAD_NAME)
+                localThreadId = newDbThread.toString();
+            }
+        }
+        localStorage.setItem("threadId",localThreadId)
+    }
     return localThreadId;
 }
 
-export const authIndex = async (identity,dbClient:Client) => {
-    if(dbClient!=null){
-
-        let localThreadId = await getLocalThreadId();
-
-        if(!localThreadId){
-            try {
-                const thread = await dbClient.getThread(C.DB.THREAD_NAME)
-                localThreadId = thread.id;
-            }catch (e) {
-                if(e.toString().indexOf("Thread") !==-1 && e.toString().indexOf("found") !==-1){
-                    const newDbThread = await dbClient.newDB(undefined, C.DB.THREAD_NAME)
-                    localThreadId = newDbThread.toString();
-                }
-            }
-            localStorage.setItem("threadId",localThreadId)
-        }
+export const authIndex = async (identity,client:Client) => {
+    if(client!=null){
+        let localThreadId = await getLocalThreadId(client);
 
         const threadId = ThreadID.fromString(localThreadId);
         const query = new Where('identity').eq(identity)
         try {
-            const findResult = await dbClient.find(threadId,C.DB.FILES_COLLECTION,query)
+            const findResult = await client.find(threadId,C.DB.FILES_COLLECTION,query)
             if(findResult &&findResult.length>0){
                 return findResult;
             }
             let config = init
             config.identity = identity;
-            await dbClient.create(threadId, C.DB.FILES_COLLECTION, [config])
+            await client.create(threadId, C.DB.FILES_COLLECTION, [config])
             return [config];
         }catch (e) {
             if(e.toString().indexOf("not found")!==-1){
                 let config = init
                 config.identity = identity;
-                await dbClient.newCollectionFromObject(threadId, schema,{name:C.DB.FILES_COLLECTION})
-                await dbClient.create(threadId, C.DB.FILES_COLLECTION, [config])
+                await client.newCollectionFromObject(threadId, schema,{name:C.DB.FILES_COLLECTION})
+                await client.create(threadId, C.DB.FILES_COLLECTION, [config])
                 return [config]
             }
         }
@@ -130,12 +130,24 @@ export const authIndex = async (identity,dbClient:Client) => {
     return [];
 };
 
+export const storeUserInfo = async (client: Client ,userInfo)=>{
+    const threadId = ThreadID.fromString(await getLocalThreadId(client));
+    const query = new Where('identity').eq(localStorage.getItem("identity"))
+    const remoteUserConfigs = await client.find(threadId, C.DB.USER_COLLECTION, query)
+    if(remoteUserConfigs.length<1){
+        console.log("why remote user config is empty?")
+        return
+    }
+    let user = remoteUserConfigs[0];
+    // @ts-ignore
+    user.web3 = userInfo.web3;
+    await client.save(threadId, C.DB.USER_COLLECTION, [user])
+}
 
 
 export const storeFile = async (client: Client ,identity,fileJson)=>{
     console.log(fileJson)
-    const thread = await client.getThread(C.DB.THREAD_NAME)
-    const threadId = ThreadID.fromString(thread.id);
+    const threadId = ThreadID.fromString(await getLocalThreadId(client));
     const query = new Where('identity').eq(identity)
     const remoteUserConfigs = await client.find(threadId, C.DB.FILES_COLLECTION, query)
     if(remoteUserConfigs.length<1){
@@ -150,8 +162,7 @@ export const storeFile = async (client: Client ,identity,fileJson)=>{
 
 export const storeFileMeteData = async (client: Client, identity, userConfig)=>{
     console.log(userConfig)
-    const thread = await client.getThread(C.DB.THREAD_NAME)
-    const threadId = ThreadID.fromString(thread.id);
+    const threadId =  ThreadID.fromString(await getLocalThreadId(client));
     const query = new Where('identity').eq(userConfig.identity)
     const remoteUserConfig = await client.find(threadId, C.DB.FILES_COLLECTION, query)
     if(remoteUserConfig.length<1){
@@ -163,8 +174,7 @@ export const storeFileMeteData = async (client: Client, identity, userConfig)=>{
 }
 
 export const deleteFile = async (cids, client: Client, identity)=> {
-    const thread = await client.getThread(C.DB.THREAD_NAME)
-    const threadId = ThreadID.fromString(thread.id);
+    const threadId = ThreadID.fromString(await getLocalThreadId(client));
     const query = new Where('identity').eq(identity)
     const remoteUserConfigs = await client.find(threadId, C.DB.FILES_COLLECTION, query)
     if(remoteUserConfigs.length<1){

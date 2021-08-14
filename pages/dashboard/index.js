@@ -14,6 +14,9 @@ import {Alert} from "../../components/core/Alert";
 import FileLayout from "../../components/core/FileLayout";
 import * as Events from "../../common/custom-events";
 import Loading from "../../components/core/Loading";
+import Web3Storage from "../../components/sidebar/Web3Storage";
+import {ConfirmationModal} from "../../components/widget/ConfirmationModal";
+import {Web3ConfirmationModal} from "../../components/widget/Web3ConfirmationModal";
 
 const STYLES_ROOT = css`
   width: 100%;
@@ -71,7 +74,8 @@ const description =
 const url = "https://anipfs.space";
 
 const SIDEBARS = {
-    SIDEBAR_ADD_FILE_TO_BUCKET: <SidebarAddFileToBucket />
+    SIDEBAR_ADD_FILE_TO_BUCKET: <SidebarAddFileToBucket />,
+    WEB3_INTRO:<Web3Storage/>
 };
 export default class DashboardPage extends React.Component {
 
@@ -82,19 +86,69 @@ export default class DashboardPage extends React.Component {
             privacyTooltip: false,
             items:[],
             loading:true,
-            dbClient:null
+            dbClient:null,
+            isRefreshByHand:false,
+            showWeb3:false
         }
         this.handleFile.bind(this)
     }
 
     async componentDidMount() {
         if (this.state.identity == null) {
-            const identity = await localStorage.getItem('identity')
+            const identity = await localStorage.getItem("identity")
             this.setState({
                 identity: identity
             })
             await this._auth(identity)
         }
+    }
+
+    _auth = (identity)=>{
+        A.auth(identity).then(async (v) => {
+            this.setState({
+                client: v
+            })
+            await this._requestData(identity, v);
+        })
+    }
+
+    _requestData = async (identity, v) => {
+        const user = await A.userInfo(v, identity)
+        console.log(user[0])
+        this.setState({
+            user:user[0],
+            web3:user[0].web3,
+            showWeb3: (!this.state.isRefreshByHand ) && (!user[0].web3)
+        })
+        A.authIndex(identity, v).then(r => {
+            console.log(r)
+            const userConfig = r[0]
+            const files = userConfig.files;
+            this.setState({
+                userConfig: userConfig,
+                items: files,
+                loading: false
+            })
+        })
+    }
+
+    _refreshData = ()=>{
+        if(this.state.client){
+            this.setState({
+                loading:true,
+                isRefreshByHand:true
+            })
+            this._requestData(this.state.identity,
+                this.state.client)
+        }else{
+            this._auth(this.state.identity);
+        }
+    }
+    _getWeb3Storage = ()=>{
+        this._handleAction({
+            type: "SIDEBAR",
+            value: "WEB3_INTRO",
+        });
     }
 
     _handleAction = (options) => {
@@ -113,42 +167,6 @@ export default class DashboardPage extends React.Component {
         });
     };
 
-    _auth = (identity)=>{
-        if(!identity){
-            identity = localStorage.getItem("identity")
-        }
-        A.auth(identity).then((v) => {
-            this.setState({
-                client:v
-            })
-            this._requestData(identity,v);
-        })
-    }
-
-    _requestData = (identity,v)=>{
-        A.authIndex(identity,v).then(r => {
-            console.log(r)
-            const userConfig = r[0]
-            const files = userConfig.files;
-            this.setState({
-                userConfig:userConfig,
-                items:files,
-                loading:false
-            })
-        })
-    }
-
-    _refreshData = ()=>{
-        if(this.state.client){
-            this.setState({
-                loading:true
-            })
-            this._requestData(this.state.identity,
-                this.state.client)
-        }else{
-            this._auth(this.state.identity);
-        }
-    }
 
     _deleteCid = async (cids) => {
         console.log(cids)
@@ -161,7 +179,7 @@ export default class DashboardPage extends React.Component {
     }
 
 
-    handleFile = async (files, ipfs,keys) => {
+    handleFile = async (files,keys) => {
 
         this.setState({ sidebar: null, sidebarData: null });
 
@@ -169,7 +187,7 @@ export default class DashboardPage extends React.Component {
             this._handleRegisterLoadingFinished({keys});
             return;
         }
-
+        const web3 = this.state.user.web3
         const resolvedFiles = [];
         for (let i = 0; i < files.length; i++) {
             if (Store.checkCancelled(`${files[i].lastModified}-${files[i].name}`)) {
@@ -180,12 +198,13 @@ export default class DashboardPage extends React.Component {
 
             let response;
             try {
-                response = await FileUpload.upload({
+                response = await FileUpload.uploadEnter({
                     file: files[i],
                     context: this,
+                    token:this.state.web3
                 });
             } catch (e) {
-                console.log(e);
+                console.log(e)
             }
             console.log(response);
             if (!response || response.error) {
@@ -206,8 +225,6 @@ export default class DashboardPage extends React.Component {
             }
 
             const result = this.state.items.filter(item=>item.cid===cid)
-            console.log("filter")
-            console.log(result)
             if(result && result.length<1){
                 await A.storeFile(this.state.client,this.state.identity,fileJson)
                 this.setState({
@@ -251,8 +268,16 @@ export default class DashboardPage extends React.Component {
     handleUploadFiles = async ({ files }) => {
         const { fileLoading, toUpload, numFailed } = FileUpload.formatUploadedFiles({ files });
         this._handleRegisterFileLoading(fileLoading)
-        await this.handleFile(toUpload,null, Object.keys(fileLoading));
+        await this.handleFile(toUpload, Object.keys(fileLoading));
     };
+
+    setApiToken = async (token) => {
+        console.log(token)
+        let user = this.state.user;
+        user.web3 = token;
+        await A.storeUserInfo(this.state.client, user);
+        this.setState({ sidebar: null, sidebarData: null,web3:token });
+    }
 
     _handleDismiss = (e) => {
         e.stopPropagation();
@@ -260,6 +285,14 @@ export default class DashboardPage extends React.Component {
         this.setState({ sidebar: null, sidebarData: null });
     };
 
+    _handleWeb3Storage = (res) => {
+        this.setState({
+            showWeb3:false
+        })
+        if(res){
+            this._getWeb3Storage();
+        }
+    };
 
     render() {
         let sidebarElement;
@@ -267,6 +300,7 @@ export default class DashboardPage extends React.Component {
             sidebarElement = React.cloneElement(this.state.sidebar, {
                 onUpload:this.handleUploadFiles,
                 fileLoading:this.state.fileLoading,
+                setApiToken:this.setApiToken
             });
         }
         return (
@@ -283,8 +317,9 @@ export default class DashboardPage extends React.Component {
                             <FileLayout
                                 _handleUploadData={this._handleUploadData}
                                 _refreshData = {this._refreshData}
+                                _getWeb3Storage = {this._getWeb3Storage}
                                 files={this.state.items}
-                                has1tT = {false}
+                                has1tT = {this.state.web3}
                                 deleteCid={this._deleteCid}/>
                         )
                     }
@@ -308,6 +343,16 @@ export default class DashboardPage extends React.Component {
                             </div>
                         </Boundary>
                     ) : null}
+
+                    {this.state.showWeb3 && (
+                        <Web3ConfirmationModal
+                            type={"CONFIRM"}
+                            withValidation={false}
+                            callback={this._handleWeb3Storage}
+                            header={`Do you want to get 1T free storage space ?`}
+                            subHeader={`Follow our guide to Web3.storage to claim your 1T free storage space.`}
+                        />
+                    )}
                 </div>
             </WebsitePrototypeWrapper>
         )

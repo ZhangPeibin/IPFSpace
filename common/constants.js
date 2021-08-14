@@ -76,6 +76,7 @@ export const system = {
   yellowDark5: "#555100",
   yellowDark6: "#2B2A00",
 
+  readLight10:"#fceded",
   redLight6: "#FFD5D5",
   redLight5: "#FFAFAA",
   redLight4: "#FF8D80",
@@ -223,6 +224,6 @@ export const linkPreviewSizeLimit = 5000000; //NOTE(martina): 5mb limit for twit
 export const DB = {
   THREAD_NAME : "user",
   FILES_COLLECTION:"files",
-  USER_COLLECTION:"use_info"
+  USER_COLLECTION:"config"
 
 }
