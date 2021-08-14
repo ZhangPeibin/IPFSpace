@@ -2,6 +2,7 @@ import * as React from "react";
 import * as Constants from "/common/constants";
 import {css} from "@emotion/react";
 import {useEffect, useState} from "react";
+import { useRouter } from "next/router";
 
 const STYLES_CONTAINER = css`
   position: -webkit-sticky;
@@ -56,7 +57,24 @@ const STYLES_RIGHT = css`
 
 const WebsitePrototypeHeader = (props) => {
     const [open, setOpen] = useState(false);
+    const router = useRouter()
+    //鉴权
+    const [isAuthenticated,setIsAuthenticated] = useState(false)
 
+    useEffect(()=>{
+      const isAuthenticated = localStorage.getItem('identity')?true:false
+      console.log("已登录：",isAuthenticated)
+      setIsAuthenticated(isAuthenticated)
+    },[])
+
+    const _signIn =  () => {
+        if (isAuthenticated) {
+            router.replace("/dashboard")
+        } else {
+            router.push("/user/auth")
+        }
+    }
+    
     useEffect(() => {
         window.addEventListener("resize", handleOpen);
         return () => window.removeEventListener("resize", handleOpen);
@@ -66,7 +84,7 @@ const WebsitePrototypeHeader = (props) => {
         setOpen(false);
     };
 
-    const signInURL = "/user/auth";
+    //const signInURL = "/user/auth";
     return (
         <div css={STYLES_CONTAINER} style={props.style}>
             <div css={STYLES_LEFT}>
@@ -75,11 +93,10 @@ const WebsitePrototypeHeader = (props) => {
                 </a>
             </div>
             {<div css={STYLES_RIGHT}>
-                <a css={STYLES_LINK} href={signInURL}>
-                    Sign In
+                <a css={STYLES_LINK} onClick={_signIn}>
+                    Sign In 
                 </a>
             </div>}
-
         </div>
     );
 };

@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, css } from "@emotion/react";
-import React, {useEffect} from "react";
+import React, {useEffect,useState} from "react";
 import WebsitePrototypeWrapper from "../components/core/WebsitePrototypeWrapper";
 import WebsitePrototypeFooter from "../components/core/WebsitePrototypeFooter";
 import * as Constants from "/common/constants";
@@ -9,7 +9,6 @@ import WebsitePrototypeHeader from "../components/core/WebsitePrototypeHeader";
 import { useRouter } from 'next/router'
 import IndexBg from "../components/widget/Indexbg";
 import Landing from "./Landing";
-
 const STYLES_ROOT = css`
   width: 100%;
   display: flex;
@@ -112,15 +111,6 @@ function IndexPage(){
         window.open(whitePager,"_blank")
     }
 
-    const _signIn = async () => {
-        const identity = localStorage.getItem('identity')
-        console.log(identity)
-        if (identity) {
-            await router.replace("/dashboard")
-        } else {
-            await router.push("/user/auth")
-        }
-    }
     const title = `IPFSpace`;
     const description =
         "Decentralized DataSharing Infrastructure, Based on IPFS & FileCoin ,Designed to store and share humanity's data";
@@ -144,7 +134,7 @@ function IndexPage(){
                             </p>
                             <br />
                             <ButtonPrimary style={{  minWidth:'120px', marginRight: `12px`,background:"#ffffff",color:"#FF715E" }} onClick={_whitePager}>White Pager</ButtonPrimary>
-                            <ButtonPrimary  style={{minWidth:'120px', marginLeft: `12px` }} onClick={_signIn}>Try it out</ButtonPrimary>
+                            <ButtonPrimary  style={{minWidth:'120px', marginLeft: `12px` }} onClick={()=>{router.push('/dashboardv2')}}>Try it out</ButtonPrimary>
                         </div>
                     </div>
                 </div>
