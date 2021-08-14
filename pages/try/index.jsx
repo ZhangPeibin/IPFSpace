@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, css } from "@emotion/react";
-import * as A from "../../common/auth"
+import * as A from "../../common/UserInfo"
 import React from "react";
 import * as Constants from "../../common/constants";
 import DashboradHeader from "../../components/core/DashboradHeader";
@@ -85,24 +85,11 @@ export default class DashboardPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            identity: null,
             privacyTooltip: false,
             items:[],
             loading:false,
-            dbClient:null
         }
         this.handleFile.bind(this)
-    }
-
-
-    async componentDidMount() {
-        if (this.state.identity == null) {
-            const identity = 'tryitout'
-            this.setState({
-                identity: identity
-            })
-            //await this._auth(identity)
-        }
     }
 
     _handleAction = (options) => {
@@ -121,59 +108,9 @@ export default class DashboardPage extends React.Component {
         });
     };
 
-    _auth = (identity)=>{
-        if(!identity){
-            identity = localStorage.getItem("identity")
-        }
-        A.auth(identity).then((v) => {
-            this.setState({
-                client:v
-            })
-            //this._requestData(identity,v);
-        })
-    }
-
-    _requestData = (identity,v)=>{
-        A.authIndex(identity,v).then(r => {
-            console.log(r)
-            if(r.length<1){
-                console.log("why don't get userConfig ?")
-                return;
-            }
-            const userConfig = r[0]
-            const files = userConfig.files;
-            this.setState({
-                userConfig:userConfig,
-                items:files,
-                loading:false
-            })
-        })
-    }
-
-    _refreshData = ()=>{
-        if(this.state.client){
-            this.setState({
-                loading:true
-            })
-            //this._requestData(this.state.identity,this.state.client)
-        }else{
-            this._auth(this.state.identity);
-        }
-    }
-
-    _deleteCid = async (cids) => {
-        console.log(cids)
-        const userConfig = await A.deleteFile(cids,this.state.client,this.state.identity);
-        const files = userConfig.files;
-        this.setState({
-            userConfig:userConfig,
-            items:files
-        })
-    }
 
 
     handleFile = async (files, ipfs,keys) => {
-
         this.setState({ sidebar: null, sidebarData: null });
 
         if (!files || !files.length) {
@@ -217,15 +154,8 @@ export default class DashboardPage extends React.Component {
             }
 
             const result = this.state.items.filter(item=>item.cid===cid)
-            console.log("filter")
-            console.log(result)
             if(result && result.length<1){
-                //await A.storeFile(this.state.client,this.state.identity,fileJson)
                 this.setState({
-                    // userConfig: {
-                    //     ...this.state.userConfig,
-                    //     files: [...this.state.userConfig.files, fileJson],
-                    // },
                     items:[...this.state.items,fileJson],
                 });
             }
@@ -273,9 +203,7 @@ export default class DashboardPage extends React.Component {
     };
 
 
-    // 此页面对应try it out 体验页面
     render() {
-
         let sidebarElement;
         if (this.state.sidebar) {
             sidebarElement = React.cloneElement(this.state.sidebar, {
@@ -286,8 +214,7 @@ export default class DashboardPage extends React.Component {
         return (
             <WebsitePrototypeWrapper title={title} description={description} url={url}>
                 <div  css={STYLES_ROOT} >
-                    <DashboradHeader/>
-
+                    <DashboradHeader try={true}/>
                     <Alert
                         fileLoading={this.state.fileLoading}
                         onAction={this._handleAction}/>
@@ -300,7 +227,8 @@ export default class DashboardPage extends React.Component {
                                 _handleUploadData={this._handleUploadData}
                                 _refreshData = {this._refreshData}
                                 files={this.state.items}
-                                deleteCid={this._deleteCid}/>
+                                deleteCid={this._deleteCid}
+                                try={true}/>
                         )
                     }
                     {/* 伸缩右部侧边栏 */}

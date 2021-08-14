@@ -87,11 +87,12 @@ export const auth = async (userIdentity) => {
 export const getLocalThreadId = async (client:Client)=>{
     let localThreadId = await  localStorage.getItem("threadId")
     console.log("local thread id :"+localThreadId)
-    if(!localThreadId){
+    if(!localThreadId || localThreadId == "null"){
         try {
             const thread = await client.getThread(C.DB.THREAD_NAME)
             localThreadId = thread.id;
         }catch (e) {
+            console.log(e)
             if(e.toString().indexOf("Thread") !==-1 && e.toString().indexOf("found") !==-1){
                 const newDbThread = await client.newDB(undefined, C.DB.THREAD_NAME)
                 localThreadId = newDbThread.toString();

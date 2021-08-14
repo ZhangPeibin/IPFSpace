@@ -114,12 +114,13 @@ const WebsitePrototypeHeader = (props) => {
                     IPFSpace
                 </a>
             </div>
-            <div css={STYLES_RIGHT}>
-                <button css={STYLES_LINK} style={styleNavLink}  onClick={()=>exit()}>
-                    Sign out
-                </button>
-            </div>
-
+            {
+                props.try?null:(  <div css={STYLES_RIGHT}>
+                    <button css={STYLES_LINK} style={styleNavLink}  onClick={()=>exit()}>
+                        Sign out
+                    </button>
+                </div>)
+            }
         </div>
     );
 };

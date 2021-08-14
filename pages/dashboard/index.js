@@ -201,7 +201,7 @@ export default class DashboardPage extends React.Component {
                 response = await FileUpload.uploadEnter({
                     file: files[i],
                     context: this,
-                    token:this.state.web3
+                    token:web3
                 });
             } catch (e) {
                 console.log(e)

@@ -129,21 +129,29 @@ export default class FileLayout  extends React.Component {
                 />
 
                 {
-                    this.props.has1tT ?(null):(
+                    (
+                        this.props.try?null:(
+                            this.props.has1tT?(null):(
+                                <ButtonPrimary
+                                    onClick={this.props._getWeb3Storage}
+                                    style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36}}
+                                >
+                                    1T free space
+                                </ButtonPrimary>
+                            )
+                        )
+                    )
+                }
+                {
+                    this.props.try?null:(
                         <ButtonPrimary
-                            onClick={this.props._getWeb3Storage}
+                            onClick={this.props._refreshData}
                             style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36}}
                         >
-                            1T free space
+                            Refresh
                         </ButtonPrimary>
                     )
                 }
-                <ButtonPrimary
-                    onClick={this.props._refreshData}
-                    style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36}}
-                >
-                    Refresh
-                </ButtonPrimary>
                 <ButtonPrimary
                     onClick={this.props._handleUploadData}
                     style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36}}
