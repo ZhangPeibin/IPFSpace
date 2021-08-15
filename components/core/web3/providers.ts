@@ -1,7 +1,6 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Fortmatic from "fortmatic";
 import Torus from "@toruslabs/torus-embed";
-import dynamic from "next/dynamic";
 
 export const getProviderOptions = () => {
     const providerOptions = {

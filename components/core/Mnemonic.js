@@ -2,12 +2,10 @@ import React, {Component} from 'react'
 // 助记词登录组件
 /** @jsx jsx */
 import {jsx, css} from "@emotion/react";
-import WebsitePrototypeWrapper from "./WebsitePrototypeWrapper"
 import {H3} from "../widget/Typography";
 import * as SVG from "../../common/svg";
 import * as Styles from "../../common/styles";
 import * as Constants from "../../common/constants";
-import {BackgroundGenerator} from "../../pages/user/auth";
 import {useRouter} from 'next/router';
 import * as R from "@common/requests";
 
