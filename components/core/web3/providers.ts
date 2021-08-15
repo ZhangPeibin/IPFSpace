@@ -1,8 +1,8 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Fortmatic from "fortmatic";
-import Torus from "@toruslabs/torus-embed";
 
-export const getProviderOptions = () => {
+export const getProviderOptions = async () => {
+    const torus = (await import("@toruslabs/torus-embed")).default;
     const providerOptions = {
         walletconnect: {
             package: WalletConnectProvider,
@@ -11,7 +11,7 @@ export const getProviderOptions = () => {
             }
         },
         torus: {
-            package: Torus
+            package: torus
         },
         fortmatic: {
             package: Fortmatic,

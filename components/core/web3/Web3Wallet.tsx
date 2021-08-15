@@ -1,5 +1,7 @@
 /** @jsx jsx */
 import {jsx, css} from "@emotion/react";
+import Router from 'next/router'
+
 import * as React from "react";
 import Web3 from "web3";
 import Web3Modal from "web3modal";
@@ -13,9 +15,9 @@ import {H3} from "@components/widget/Typography";
 import * as Styles from "@common/styles";
 import * as SVG from "@common/svg";
 import * as Constants from "@common/constants";
-import {router} from "next/client";
 import {withSnackbar} from "notistack";
-import {Slide} from "@material-ui/core";
+
+
 
 interface IAppState {
     fetching: boolean;
@@ -94,12 +96,12 @@ class Web3Wallet extends React.Component<any, any> {
         };
     }
 
-    componentDidMount() {
-        if(window){
+    async componentDidMount() {
+        if (window) {
             this.web3Modal = new Web3Modal({
                 network: this.getNetwork(),
                 cacheProvider: false,
-                providerOptions: getProviderOptions()
+                providerOptions: await getProviderOptions()
             });
         }
     }
@@ -115,7 +117,6 @@ class Web3Wallet extends React.Component<any, any> {
                     vertical: 'bottom',
                     horizontal: 'center',
                 },
-                TransitionComponent: Slide,
             })
     }
 
@@ -200,7 +201,7 @@ class Web3Wallet extends React.Component<any, any> {
         console.log(identity.toString())
         // @ts-ignore
         localStorage.setItem("identity", identity.toString())
-        await router.replace({pathname: "/dashboard"})
+        await Router.replace({pathname: "/dashboard"})
     }
 
 
