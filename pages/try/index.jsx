@@ -72,7 +72,7 @@ const STYLES_SIDEBAR_ELEMENTS = css`
 `;
 
 
-const title = `IPFSpace`;
+const title = `Store On IPFS & FileCoin`;
 const description =
     "Welcome to the future of file store. Powered by IPFSpace.";
 const url = "https://anipfs.space";

@@ -182,6 +182,7 @@ export const typescale = {
   lvl2: `1.25rem`,
   lvl3: `1.563rem`,
   lvl4: `1.953rem`,
+  lvl45: `2.153rem`,
   lvl5: `2.441rem`,
   lvl6: `3.052rem`,
   lvl7: `3.815rem`,

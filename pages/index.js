@@ -111,10 +111,10 @@ function IndexPage(){
         window.open(whitePager,"_blank")
     }
 
-    const title = `IPFSpace`;
+    const title = `Decentralized DataSharing Infrastructure`;
     const description =
         "Decentralized DataSharing Infrastructure, Based on IPFS & FileCoin ,Designed to store and share humanity's data";
-    const url = "https://anipfs.space";
+    const url = "https://www.anipfs.space";
 
     return (
         <WebsitePrototypeWrapper title={title} description={description} url={url} >

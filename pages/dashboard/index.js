@@ -68,7 +68,7 @@ const STYLES_SIDEBAR_ELEMENTS = css`
 `;
 
 
-const title = `IPFSpace`;
+const title = `All On IPFS & FileCoin`;
 const description =
     "Decentralized DataSharing Infrastructure, Based on IPFS & FileCoin ,Designed to store and share humanity's data";
 const url = "https://anipfs.space";

@@ -7,13 +7,13 @@ import {H3} from "../../components/widget/Typography";
 import * as SVG from "/common/svg";
 import * as Styles from "../../common/styles";
 import * as Constants from "../../common/constants";
-import Metamask from "../../components/core/Metamask";
 import Mnemonic from "../../components/core/Mnemonic";
 import EmailSign from "../../components/core/EmailSign";
-import PasswordInput from "../../components/core/PasswordInput";
 import * as Utilities from "../../common/utilities";
 import IndexBg from "../../components/widget/Indexbg";
 import {withRouter} from 'next/router';
+import Web3Wallet from "../../components/core/web3/Web3Wallet";
+import {SnackbarProvider} from "notistack";
 
 const STYLES_LINK_ITEM = (theme) => css`
   display: block;
@@ -38,10 +38,6 @@ const STYLES_CONTAINER = css`
   height: 100%;
 `;
 
-
-const CONTENT = css`
-  margin: auto auto;
-`;
 
 
 const AUTH_BACKGROUNDS = [
@@ -103,7 +99,7 @@ class AuthPage extends React.Component {
             return <Mnemonic back={() => this.setState({step: null})}/>
         }
         if (step == STEP_METAMASK_PASSWORD) {
-            return <PasswordInput back={() => this.setState({step: null})}/>
+            return <Web3Wallet back={() => this.setState({step: null})}/>
         }
 
         if (step == null) {
@@ -128,9 +124,15 @@ class AuthPage extends React.Component {
                                 justifyContent: "center",
                             }}
                         >
-                            <Metamask onAction={() => {
-                                this._setStep(STEP_METAMASK_PASSWORD)
-                            }}/>
+                            <button
+                                onClick={()=>this._setStep(STEP_METAMASK_PASSWORD)}
+                                className="bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
+                                type="button"
+                                style={{transition: "all .15s ease",backgroundColor: "#FF715E"}}
+                            >
+                                Continue with Web3 Wallet
+                            </button>
+
                             <button
                                 css={{
                                     backgroundColor: "#FF715E"
@@ -198,21 +200,23 @@ class AuthPage extends React.Component {
         const {step} = this.state
         return (
             <WebsitePrototypeWrapper>
-                <div
-                    css={STYLES_CONTAINER}
-                    style={{
-                        display: "flex",
-                        position: "absolute"
-                    }}>
-                    <div className="container mx-auto px-4 h-full">
-                        <div className="flex content-center items-center justify-center h-full">
-                            <div className="w-full lg:w-4/12 px-4">
-                                {this._renderAuth(step)}
+                <SnackbarProvider maxSnack={1}>
+                    <div
+                        css={STYLES_CONTAINER}
+                        style={{
+                            display: "flex",
+                            position: "absolute"
+                        }}>
+                        <div className="container mx-auto px-4 h-full">
+                            <div className="flex content-center items-center justify-center h-full">
+                                <div className="w-full lg:w-4/12 px-4">
+                                    {this._renderAuth(step)}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <IndexBg/>
+                    <IndexBg/>
+                </SnackbarProvider>
             </WebsitePrototypeWrapper>
         );
     }
