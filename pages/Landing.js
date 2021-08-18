@@ -9,9 +9,9 @@ const STYLES_CONTAINER = css`
   max-width: 1440px;
   width: 100%;
   height: 100%;
-  margin: 72px auto;
+  margin: 0px auto;
+  padding-top: 72px;
   display: block;
-  padding: 32px 0px;
   padding-left: 48px;
   padding-right: 48px;
   font-family: ${Constants.font.text};
@@ -55,7 +55,8 @@ const diverDiv = css`
 `;
 
 const img = css`
-  height: 340px;
+  width: 427px;
+  height: 240px;
   @media (max-width: ${Constants.sizes.mobile}px) {
     height: 180px;
   }
@@ -114,68 +115,133 @@ export default function Landing() {
     return (
         <div>
             <main>
-                <section>
+                <section className="pb-24" style={{background: "#faebd7"}}>
                     <div css={STYLES_CONTAINER}>
                         <div>
-                            <h3 style={{fontSize: "52px"}} className="mb-2 font-medium">
+                            <h3 style={{
+                                fontSize: "52px",
+                                fontFamily:"sans-serif"
+                            }} className="mb-2 font-medium">
                                 How IPFSpace store
                             </h3>
-                            <p style={{fontSize: "20px", color: "#1C1D1E"}}
+                            <p style={{
+                                fontSize: "20px",
+                                color: "#1C1D1E",
+                                fontWeight:500,
+                                fontFamily:"sans-serif"}}
                                className="text-lg font-light leading-relaxed mt-4 mb-8">
                                 All data are built on the next protocols that power the web3
                                 (IPFS,Filecoin,Textile,NFT.storage,Web3.storage)
                             </p>
                         </div>
 
-                        <div className="w-full  mr-auto ml-auto flex">
+                        <div style={{
+                            display: "flex",
+                            alignItems:"center",
+                            justifyContent:"center",
+                        }}>
                             <div
-                                className="relative  flex flex-col min-w-0 break-words  w-full mb-6 shadow-lg rounded-lg">
+                                style={{
+                                    width: "427px",
+                                    marginRight:"24px",
+                                }}>
                                 <img
                                     css={img}
                                     alt="..."
                                     src="/static/ipfs.png"
-                                    className="w-full align-middle rounded-t-lg"
+                                    className=" align-middle rounded-t-lg"
                                 />
-                                <blockquote className="relative p-8 mb-4">
-                                    <h4 style={{fontSize: "22px"}} className=" font-bold text-gray-700">
-                                        Hot Storage
-                                    </h4>
-                                    <p style={{fontSize: "18px"}} className=" font-light mt-2 text-gray-700">
-                                        Data stored hot layer is on the IPFS network ,
-                                        is designed to be fast and available on the IPFS network ,
-                                        Data stored with hot enabled can pinned to Pinata and other IPFS nodes.
-                                        We use nft.storage and web3.storage to provide users with stable and free IPFS
-                                        storage space
-                                    </p>
+
+                                <blockquote className=" p-4 mb-4">
+                                    <a href={"https://ipfs.io/"} target={"_blank"}  style={{fontSize: "22px"}} className=" font-bold text-gray-700">
+                                        IPFS
+                                    </a>
                                 </blockquote>
                             </div>
-                            <div css={diverDiv}/>
                             <div
-                                className="relative flex flex-col min-w-0 break-words  w-full mb-6 shadow-lg rounded-lg">
+                                style={{
+                                    marginLeft:"24px",
+                                    width: "427px",
+                                }}>
                                 <img
                                     css={img}
                                     alt="..."
                                     src="/static/filecoin.png"
-                                    className="w-full align-middle rounded-t-lg"
+                                    className="  rounded-t-lg"
                                 />
-                                <blockquote className="relative p-8 mb-4">
-                                    <h4 style={{fontSize: "22px"}} className=" font-bold text-gray-700">
-                                        Cold Storage
-                                    </h4>
-                                    <p style={{fontSize: "18px"}} className=" font-light mt-2 text-gray-700">
-                                        The data stored in the Cold layer is stored on the Filecoin network by miners
-                                        and is designed for secure and persistent storage on the Filecoin network.
-                                        Cold storage will only be stored on the main network by miners according to the
-                                        user's choice. Big data can be stored directly on Filecoin.
-                                    </p>
+                                <blockquote className=" p-4 mb-4">
+                                    <a href={"https://filecoin.io/"} target={"_blank"} style={{fontSize: "22px"}} className=" font-bold text-gray-700">
+                                        FileCoin
+                                    </a>
                                 </blockquote>
                             </div>
                         </div>
 
+
+                        <div style={{
+                            display: "flex",
+                            alignItems:"center",
+                            justifyContent:"center",
+                        }}>
+                            <div
+                                style={{
+                                    width: "427px",
+                                    marginRight:"24px",
+                                }}>
+                                <img
+                                    css={img}
+                                    alt="..."
+                                    src="/static/nft-storage.png"
+                                    className=" align-middle rounded-t-lg"
+                                />
+
+                                <blockquote className=" p-4 mb-4">
+                                    <a href={"https://nft.storage/"} target={"_blank"} style={{fontSize: "22px"}} className=" font-bold text-gray-700">
+                                        NFT.Storage
+                                    </a>
+                                </blockquote>
+                            </div>
+                            <div
+                                style={{
+                                    marginLeft:"12px",
+                                    marginRight:"12px",
+                                    width: "427px",
+                                }}>
+                                <img
+                                    css={img}
+                                    alt="..."
+                                    src="/static/web3-storage-card.png"
+                                    className="  rounded-t-lg"
+                                />
+                                <blockquote className=" p-4 mb-4">
+                                    <a href={"https://web3.storage/"} target={"_blank"} style={{fontSize: "22px"}} className=" font-bold text-gray-700">
+                                        Web3.storage
+                                    </a>
+                                </blockquote>
+                            </div>
+
+                            <div
+                                style={{
+                                    marginLeft:"24px",
+                                    width: "427px",
+                                }}>
+                                <img
+                                    css={img}
+                                    alt="..."
+                                    src="/static/textile.png"
+                                    className="  rounded-t-lg"
+                                />
+                                <blockquote className=" p-4 mb-4">
+                                    <a href={"https://www.textile.io"} target={"_blank"} style={{fontSize: "22px"}} className=" font-bold text-gray-700">
+                                        Textile.io
+                                    </a>
+                                </blockquote>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
-                <section className="pb-24" style={{background: "#ebeff0"}}>
+                <section className="pb-24" style={{background: "#ffffff"}}>
                     <div css={STYLES_OFFERS}>
                         <div>
                             <h3 style={{fontSize: "52px"}} className="mb-4 mt-8 font-medium">
@@ -259,15 +325,15 @@ export default function Landing() {
                         <div css={NEXT_PARENT}>
                             <div
                                 css={NEXT}>
-                                <div css={OFFERS_DIV} style={{marginRight:"32px"}}>
+                                <div css={OFFERS_DIV} style={{marginRight: "32px"}}>
                                     <h2 style={{fontSize: "32px"}} className="mb-2 mt-4 font-medium">
                                         Decentralized Registry
                                     </h2>
-                                    <img src="/static/idx.png" style={{width:"100%",}}/>
+                                    <img src="/static/idx.png" style={{width: "100%",}}/>
                                 </div>
 
 
-                                <div css={OFFERS_DIV}  style={{marginLeft:"32px"}}>
+                                <div css={OFFERS_DIV} style={{marginLeft: "32px"}}>
                                     <h2 style={{fontSize: "32px"}} className="mb-2 mt-4 font-medium">
                                         Decentralized Storage
                                     </h2>
@@ -277,13 +343,13 @@ export default function Landing() {
 
                             <div
                                 css={NEXT}>
-                                <div css={OFFERS_DIV} style={{marginRight:"32px"}}>
+                                <div css={OFFERS_DIV} style={{marginRight: "32px"}}>
                                     <h2 style={{fontSize: "32px"}} className="mb-2 mt-4 font-medium">
                                         Decentralized Sharing
                                     </h2>
                                     <img src="/static/img_1.png"/>
                                 </div>
-                                <div css={OFFERS_DIV} style={{marginLeft:"32px"}}>
+                                <div css={OFFERS_DIV} style={{marginLeft: "32px"}}>
                                     <h2 style={{fontSize: "32px"}} className="mb-2 mt-4 font-medium">
                                         Decentralized Search
                                     </h2>

@@ -25,7 +25,7 @@ const sidebar = css`
 const howto = css`
   padding: 12px;
   display: block;
-  background-color: ${Constants.system.readLight10};
+  background-color:#faf5f5;
 `;
 
 export default class Web3Storage extends React.Component {

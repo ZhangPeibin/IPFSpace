@@ -16,7 +16,8 @@ import * as Styles from "@common/styles";
 import * as SVG from "@common/svg";
 import * as Constants from "@common/constants";
 import {withSnackbar} from "notistack";
-
+import {IDXClient} from "@components/core/ceramic/IDXClient";
+import {CircularProgress} from "@material-ui/core";
 
 
 interface IAppState {
@@ -31,9 +32,10 @@ interface IAppState {
     showModal: boolean;
     pendingRequest: boolean;
     result: any | null;
-    secretKey:string;
-    password:string;
-    passwordAgain:string;
+    secretKey: string;
+    password: string;
+    passwordAgain: string;
+    loading: boolean;
 }
 
 const INITIAL_STATE: IAppState = {
@@ -48,9 +50,10 @@ const INITIAL_STATE: IAppState = {
     showModal: false,
     pendingRequest: false,
     result: null,
-    secretKey:null,
-    password:null,
-    passwordAgain:null,
+    secretKey: null,
+    password: null,
+    passwordAgain: null,
+    loading: false
 };
 
 function initWeb3(provider: any) {
@@ -79,6 +82,7 @@ const STYLES_LINK_ITEM = (theme) => css`
   margin-top: 2px;
   transition: 200ms ease all;
   word-wrap: break-word;
+
   :hover {
     color: ${Constants.system.redlight3};
   }
@@ -97,19 +101,17 @@ class Web3Wallet extends React.Component<any, any> {
     }
 
     async componentDidMount() {
-        if (window) {
-            this.web3Modal = new Web3Modal({
-                network: this.getNetwork(),
-                cacheProvider: false,
-                providerOptions: await getProviderOptions()
-            });
-        }
+        this.web3Modal = new Web3Modal({
+            network: this.getNetwork(),
+            cacheProvider: true,
+            providerOptions: await getProviderOptions()
+        });
     }
 
     public getNetwork = () => getChainData(this.state.chainId).network;
 
 
-    public showMessage = (message) =>{
+    public showMessage = (message) => {
         this.props.enqueueSnackbar(message,
             {
                 variant: 'error',
@@ -138,7 +140,6 @@ class Web3Wallet extends React.Component<any, any> {
                         this.setState({
                             message: null
                         })
-
                         await this.handleLogin()
                     }
                 }
@@ -149,15 +150,19 @@ class Web3Wallet extends React.Component<any, any> {
     }
 
     handleLogin = async () => {
+        this.setState({
+            loading: true
+        })
+
         const provider = await this.web3Modal.connect();
         await this.subscribeProvider(provider);
         const web3: any = initWeb3(provider);
         const accounts = await web3.eth.getAccounts();
+        console.log(accounts)
         const address = accounts[0];
         const networkId = await web3.eth.net.getId();
         const chainId = await web3.eth.chainId()
         const secretKey = this.state.password;
-
         await this.setState({
             web3,
             provider,
@@ -168,8 +173,15 @@ class Web3Wallet extends React.Component<any, any> {
             secretKey
         });
 
-        console.log(accounts + "---" + address + "----" + networkId + "------" + chainId)
-        await this.sign()
+        console.log(address)
+        //
+        // const client = new IDXClient()
+        // const result = await client.getDID(address, web3.eth.currentProvider)
+        // console.log(result)
+        await this.sign();
+        this.setState({
+            loading: false
+        })
     }
 
     public sign = async () => {
@@ -177,14 +189,13 @@ class Web3Wallet extends React.Component<any, any> {
         const message = generateMessageForEntropy(address, "IPFSpace", secretKey)
         const hasPersonalMessage = hashPersonalMessage(message)
         const signedText = await web3.eth.sign(hasPersonalMessage, address);
-
-        const signer = recoverPublicKey(signedText, hasPersonalMessage);
-        const verified = signer.toLowerCase() === address.toLowerCase();
-        console.log(verified)
-        if(!verified){
-            this.showMessage("Signature information error")
-            return;
-        }
+        // const signer = recoverPublicKey(signedText, hasPersonalMessage);
+        // const verified = signer.toLowerCase() === address.toLowerCase();
+        // console.log(verified)
+        // if (!verified) {
+        //     this.showMessage("Signature information error")
+        //     return;
+        // }
         const hash = utils.keccak256(signedText);
         console.log(hash)
         const array = hash
@@ -213,112 +224,122 @@ class Web3Wallet extends React.Component<any, any> {
             console.log("close")
         });
         provider.on("accountsChanged", async (accounts: string[]) => {
-            await this.setState({ address: accounts[0] });
+            await this.setState({address: accounts[0]});
             // await this.getAccountAssets();
             console.log("accountsChanged")
         });
         provider.on("chainChanged", async (chainId: number) => {
-            const { web3 } = this.state;
+            const {web3} = this.state;
             const networkId = await web3.eth.net.getId();
-            await this.setState({ chainId, networkId });
+            await this.setState({chainId, networkId});
             // await this.getAccountAssets();
             console.log("chainChanged")
         });
 
         provider.on("networkChanged", async (networkId: number) => {
-            const { web3 } = this.state;
+            const {web3} = this.state;
             const chainId = await web3.eth.chainId();
-            await this.setState({ chainId, networkId });
+            await this.setState({chainId, networkId});
             // await this.getAccountAssets();
             console.log("networkChanged")
         });
     };
 
 
-    public _handlePassword =(e)=> {
+    public _handlePassword = (e) => {
         this.setState({
             password: e.target.value
         })
     }
 
-    public _handlePasswordAgain =(e)=> {
+    public _handlePasswordAgain = (e) => {
         this.setState({
             passwordAgain: e.target.value
         })
     }
 
     render() {
-       return (
-           <div
-               className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-200 border-0">
-               <H3
-                   style={{
-                       textAlign: "center",
-                       lineHeight: "30px",
-                       padding: "36px 32px  24px 32px",
-                   }}
-               >
-                   {"Set Web3 Wallet's Password"}
-               </H3>
-               <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-                   <form>
-                       <div className="relative w-full mb-3">
-                           <label
-                               className="block text-gray-700 text-xs font-bold mb-2"
-                               htmlFor="grid-password"
-                           >
-                               Password
-                           </label>
-                           <input
-                               onChange={this._handlePassword}
-                               type="password"
-                               className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                               placeholder="password"
-                               style={{transition: "all .15s ease",borderColor: "#FF715E",
-                                   border:"none",}}
-                           />
+        return (
+            <div
+                className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-200 border-0">
+                <H3
+                    style={{
+                        textAlign: "center",
+                        lineHeight: "30px",
+                        padding: "36px 32px  24px 32px",
+                    }}
+                >
+                    {"Set Web3 Wallet's Password"}
+                </H3>
+                <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
+                    <form>
+                        <div className="relative w-full mb-3">
+                            <label
+                                className="block text-gray-700 text-xs font-bold mb-2"
+                                htmlFor="grid-password"
+                            >
+                                Password
+                            </label>
+                            <input
+                                onChange={this._handlePassword}
+                                type="password"
+                                className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                                placeholder="password"
+                                style={{
+                                    transition: "all .15s ease", borderColor: "#FF715E",
+                                    border: "none",
+                                }}
+                            />
 
-                           <label
-                               className="block  text-gray-700 text-xs font-bold mb-2 mt-4"
-                               htmlFor="grid-password"
-                           >
-                               Password again
-                           </label>
-                           <input
-                               onChange={this._handlePasswordAgain}
-                               type="password"
-                               className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                               placeholder="password again"
-                               style={{transition: "all .15s ease",borderColor: "#FF715E",
-                                   border:"none",}}
-                           />
-                           <button
-                               onClick={(this.checkPassword)}
-                               className="mt-6 bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
-                               type="button"
-                               style={{transition: "all .15s ease",backgroundColor: "#FF715E"}}
-                           >
-                               Continue with Web3 Wallet
-                           </button>
-                       </div>
+                            <label
+                                className="block  text-gray-700 text-xs font-bold mb-2 mt-4"
+                                htmlFor="grid-password"
+                            >
+                                Password again
+                            </label>
+                            <input
+                                onChange={this._handlePasswordAgain}
+                                type="password"
+                                className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                                placeholder="password again"
+                                style={{
+                                    transition: "all .15s ease", borderColor: "#FF715E",
+                                    border: "none",
+                                }}
+                            />
+                            {
+                                <button
+                                    onClick={(this.checkPassword)}
+                                    className="mt-6 bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
+                                    type="button"
+                                    style={{
+                                        transition: "all .15s ease",
+                                        backgroundColor: "#FF715E",
+                                        alignContent: "center"
+                                    }}
+                                >
+                                    {this.state.loading && <CircularProgress size={18} style={{color:"#faebd7",marginRight:"12px"}} />}
+                                    {this.state.loading?"Connecting ..." :" Continue with Web3 Wallet"}
+                                </button>
+                            }
+                        </div>
 
-                       <div className="mt-28">
-                           <div style={{marginTop: "auto"}}>
-                               <div css={STYLES_LINK_ITEM}>
-                                   <div css={Styles.HORIZONTAL_CONTAINER_CENTERED} onClick={(e)=> this.props.back()}>
-                                       <SVG.ArrowDownLeft height="16px"
-                                                          style={{marginRight: 4}}/> Back
-                                   </div>
-                               </div>
-                           </div>
-                       </div>
-                   </form>
-               </div>
-           </div>
-       )
+                        <div className="mt-28">
+                            <div style={{marginTop: "auto"}}>
+                                <div css={STYLES_LINK_ITEM}>
+                                    <div css={Styles.HORIZONTAL_CONTAINER_CENTERED} onClick={(e) => this.props.back()}>
+                                        <SVG.ArrowDownLeft height="16px"
+                                                           style={{marginRight: 4}}/> Back
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )
     }
 }
-
 
 
 export default withSnackbar(Web3Wallet);

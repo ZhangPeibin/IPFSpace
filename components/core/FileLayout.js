@@ -134,9 +134,9 @@ export default class FileLayout  extends React.Component {
                             this.props.has1tT?(null):(
                                 <ButtonPrimary
                                     onClick={this.props._getWeb3Storage}
-                                    style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36}}
+                                    style={{background:"#1abcde", whiteSpace: "nowrap", marginRight: 24 ,height:36}}
                                 >
-                                    1T free space
+                                    Web3.Storage
                                 </ButtonPrimary>
                             )
                         )

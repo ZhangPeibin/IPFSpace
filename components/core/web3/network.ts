@@ -10,7 +10,7 @@ export function getChainData(chainId: number): IChainData {
         throw new Error("ChainId missing or not supported");
     }
 
-    const API_KEY = process.env.REACT_APP_INFURA_ID;
+    const API_KEY = "a197d00856fc465da5233ec948228a83";
 
     if (
         chainData.rpc_url.includes("infura.io") &&
