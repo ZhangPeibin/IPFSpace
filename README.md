@@ -1,34 +1,105 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Project Description
 
-## Getting Started
+IPFSpace aims to build Decentralized DataSharing Infrastructure. 
 
-First, run the development server:
+IPFSpace‘s mission: “To store the world's data and share it to the world.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+IPFSpace's deck link: https://hub.textile.io/ipfs/bafybeicgdjsy77vg3ilg5c5he2kxjeogqx6t3oceockm5zdb4hinvbthyy
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ Problems:
+ - Identity information is controlled by the service platform
+ - Centralized storage of data, controlled by centralized service providers, very insecure
+ - The data storage platform is too differentiated, and the life cycle may be short (burning money to death)
+ - The data storage platform charges fees by controlling download speed and other unreasonable behaviors
+ - The resource link of the data is easy to expire and lose, resulting in the data cannot be retrieved
+ - Data cannot be shared effectively (data is controlled centrally and cannot be shared)
+ - Duplicate data and excessive junk data make data acquisition difficult
+ - Content creators cannot transfer data to other platforms (data will be lost if the platform account is cancelled)
+ - Data sharing and reward economy are difficult to combine
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+Solution:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+- All data are built on the next protocols that power the web3 (IPFS,Filecoin,Textile,NFT.storage,Web3.storage)
+- Decentralized registration brought by blockchain
+- Decentralized Sharing based on Token Economy System
+- Decentralized Searching based on data's metadata （also rewards on Token Economy System）
+- Data generates NFT and on-chain transaction
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Our core is to store and share humanity's data . IPFS-based content addressing will be an index of data, and the metadata of data will be a secondary index of data. Everyone can obtain the data they want and share their existing data and obtain token economic rewards through sharing behaviors, and the data can be stored safely and stably for a long time.
+The humanity's data will have its own economic reward model. Anyone can get benefits from sharing,data interaction and can also act as a data verifier to determine the quality of the data to obtain benefits, and at the same time to maintain the data high quality.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## Value
+We know the correct strategy is to develop authentic power users.
+At present, the infrastructure of IPFS&FILECOIN continues to expand, which also promotes the rapid growth of user storage requirements. We start from being close to the storage needs of users, and attract users to our platform by establishing a selected data set based on IPFS&Filecoin.
+IPFS-based content addressing and the community’s validator system allow our database to store the most valuable piece of data. Introduce Token economic rewards, promote high-quality data storage, and promote data sharing behaviors to attract users from centralized storage to the IPFS&Filecoin decentralized storage system.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Achieved:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Use MetaMask, wallet mnemonics, and Magic to verify user identity and decentralize user information.
+- Use nft.storage (Filecoin Protocol Lab) for free storage of data and bring meta attributes
+- Use Textile for MFS implementation of user data
+- Simple and easy to use interactive page
 
-## Deploy on Vercel
+In the end, we rely on the data sharing economy system (Token+NFT) and the reliable and stable free storage of the nft.storage,web3.storage to establish a core user group, relying on the user group to improve the platform and obtain a data sharing technology facility platform,
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deliverables
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+IPFS has four main compenets: 
+
+Decentralized Registry & Decentralized storage: 
+-	Use DID protocol to reimagined for a user-centric web
+-	Encrypt private data through decentralized user authentication
+-	Perfect cross-platform interactive experience
+-	Multiple reliable IPFS storage node options( NFT.storage, Web3.storage,Textile,Pinata)
+-	Use Filecoin for safe, durable and reliable storage and retrieval of data
+
+Decentralized Sharing : 
+-	Decentralized user license agreement signing
+-	Establish a metadata infrastructure for data
+-	Data sharing token economy system is established
+-	Data NFT trading system establishment
+
+Decentralized Searching:
+- Search by data metadata
+- The search weight of the data is weighed by the metadata and the weight of the record on the chain
+- Shared data can be accessed by search engines via ShareAPI
+- Private data is searched through private API interface
+
+## Maintenance and Upgrade Plans
+
+We are keen on the construction of the IPFS&FILECOIN ecosystem. We will use this project to upgrade and maintain our core products. There will be operations to mine user needs and iterate functions, and perform code upgrade. What we currently lack most is getting funds to carry out all-round route development functions.
+# Team
+
+## Team Members
+
+- ZhangPeibin  (full stack developer)
+- Zhenqian Zhang ( IoT and Blockchain enthusiast )
+
+
+## Team Website
+
+https://www.anipfs.space
+
+## Relevant Experience
+
+I have been engaged in Internet technology development for 8 years, and I have been looking for some directions that can change the current Internet. I am currently working on the direction of IPFS & FileCoin, which is also the route to focus on in the future.
+
+Here are some of our experiences:
+
+- Participate in the Filecoin Grant Hackathon and get the good results of the third prize (45 teams from the United States, China, India, Europe and Africa participated, 16 projects won the award). 
+Below are the relevant links:
+https://hidorahacks.medium.com/introducing-prize-winners-from-filecoin-grant-hackathon-e902db2fd63c
+
+
+- Invited to participate in the "[IPFS.CN](http://ipfs.cn/) AMA" interview held by the official IPFS community in China. 
+The following link(We have carried out in-depth thinking  and modification on the basis of this time period):
+https://mp.weixin.qq.com/s/CNFImDj0JkN1Zl87fwNENQ 
+ 
+## Team code repositories
+
+https://github.com/ZhangPeibin/IPFSpace
+
+# Additional Information
+
+We already have some users and have been following the development of our project. As we know, the correct strategy is to develop authentic power users. We will always proceed from the perspective of users and reflect IPFS&Filecoin in the best possible way
