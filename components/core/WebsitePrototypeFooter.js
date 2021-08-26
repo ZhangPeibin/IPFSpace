@@ -99,7 +99,7 @@ export const WebsitePrototypeFooter = (props) => {
                     <p css={STYLES_LEFT}  style={{fontSize: "20px",marginTop:"20px",marginBottom:"36px",marfontFamily:"Calibri"}}>
                         Powered by{" "}
                         <a css={STYLES_LINK}  style={{color:"#FF715E",fontSize: "20px",fontFamily:"Calibri"}} href="https://www.anipfs.space">
-                            IPFSpace
+                            DDshare
                         </a>{" "}
                     </p>
                 </div>

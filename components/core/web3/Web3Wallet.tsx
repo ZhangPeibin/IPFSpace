@@ -183,7 +183,7 @@ class Web3Wallet extends React.Component<any, any> {
 
     public sign = async () => {
         const {web3, address, secretKey} = this.state;
-        const message = generateMessageForEntropy(address, "IPFSpace", secretKey)
+        const message = generateMessageForEntropy(address, "DDshare", secretKey)
         const hasPersonalMessage = hashPersonalMessage(message)
         const signedText = await web3.eth.sign(hasPersonalMessage, address);
         // const signer = recoverPublicKey(signedText, hasPersonalMessage);

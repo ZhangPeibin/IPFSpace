@@ -180,7 +180,7 @@ export class Alert extends React.Component {
       return (
           <div css={STYLES_MESSAGE} style={this.props.style}>
             <div css={STYLES_MESSAGE_BOX} style={{ fontSize: 14 ,}}>
-              Please don't upload sensitive information to IPFSpace yet. If you have any questions, you can contact to  ipfspace@163.com.
+              Please don't upload sensitive information to DDshare yet. If you have any questions, you can contact to  ipfspace@163.com.
               <span
                   style={{ position: "absolute", right: 24, padding: 4, cursor: "pointer" }}
                   onClick={this._handleDismissPrivacyAlert}

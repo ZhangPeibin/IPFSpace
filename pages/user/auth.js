@@ -73,7 +73,7 @@ class AuthPage extends React.Component {
                                 padding: "36px 16px  24px 16px",
                             }}
                         >
-                            {"Store and  Share files on IPFSpace"}
+                            {"Store and  Share files on DDshare"}
                         </H3>
                         <div
                             css={{

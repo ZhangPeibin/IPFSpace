@@ -107,7 +107,7 @@ function IndexPage(){
                     <div css={STYLES_SECTION_WRAPPER} style={{ display: `block` }}>
                         <div css={STYLES_TEXT_BLOCK_CENTER}>
                             <h1 css={STYLES_H1} style={{ width: `100%` }}>
-                                <span css={STYLES_HIGHLIGHT_BLUE}> Decentralized DataSharing Infrastructure</span>
+                                <span css={STYLES_HIGHLIGHT_BLUE}> Decentralized Data Sharing Infrastructure</span>
                             </h1>
                             <p css={STYLES_P} style={{ width: `100%` }}>
                                 Based on IPFS & FileCoin

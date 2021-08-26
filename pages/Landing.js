@@ -122,7 +122,7 @@ export default function Landing() {
                                 fontSize: "52px",
                                 fontFamily:"sans-serif"
                             }} className="mb-2 font-medium">
-                                How IPFSpace store
+                                How DDshare store
                             </h3>
                             <p style={{
                                 fontSize: "20px",
@@ -245,7 +245,7 @@ export default function Landing() {
                     <div css={STYLES_OFFERS}>
                         <div>
                             <h3 style={{fontSize: "52px"}} className="mb-4 mt-8 font-medium">
-                                What IPFSpace offers
+                                What DDshare offers
                             </h3>
                         </div>
 
@@ -318,7 +318,7 @@ export default function Landing() {
                     <div css={STYLES_OFFERS}>
                         <div>
                             <h3 style={{fontSize: "52px"}} className="mb-4 mt-4 font-medium">
-                                What IPFSpace Next
+                                What DDshare Next
                             </h3>
                         </div>
 

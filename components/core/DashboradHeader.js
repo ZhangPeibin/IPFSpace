@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import {Magic} from "magic-sdk";
 import AccountButton from "../widget/AccountButton";
+import * as SVGLogo from "../../common/logo";
 
 const STYLES_CONTAINER = css`
   position: fixed;
@@ -88,10 +89,9 @@ const WebsitePrototypeHeader = (props) => {
     return (
         <div css={STYLES_CONTAINER} style={props.style}>
             <div css={STYLES_LEFT}>
-                <img css={APP_LOGO} src={'/static/app.jpg'}/>
-                <a css={STYLES_LINK} href="/" style={{marginRight: 16, position: "relative"}}>
-                    IPFSpace
-                </a>
+                <div style={{marginTop:"12px"}}>
+                    <SVGLogo.Logo  />
+                </div>
             </div>
             {
                 props.try ? null : (<AccountButton name={props.userInfo==null? props.idx.substr(0,10):props.userInfo.name} icon={props.userInfo==null?null:props.userInfo.icon} showProfile={props.showProfile} exit={exit} idxLoading={props.idxLoading} idx={props.idx}/>)
