@@ -83,6 +83,9 @@ export const WebsitePrototypeFooter = (props) => {
                     <a css={STYLES_LINK} target={'_blank'} href="https://twitter.com/IPFSpace" style={{fontSize: "20px",fontFamily:"Calibri"}} className="mb-2 mt-4">
                         Twitter：@IPFSpace
                     </a>
+                    <a >
+
+                    </a>
                     <a css={STYLES_LINK} target={'_blank'} href="https://t.me/peibin"  style={{fontSize: "20px",fontFamily:"Calibri"}} className="mb-2 mt-4">
                         Telegram:  @peibin
                     </a>

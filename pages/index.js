@@ -1,14 +1,15 @@
 /** @jsx jsx */
 import { jsx, css } from "@emotion/react";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import React, {useEffect,useState} from "react";
 import WebsitePrototypeWrapper from "../components/core/WebsitePrototypeWrapper";
-import WebsitePrototypeFooter from "../components/core/WebsitePrototypeFooter";
 import * as Constants from "/common/constants";
 import {ButtonPrimary} from "../components/widget/Buttons";
 import WebsitePrototypeHeader from "../components/core/WebsitePrototypeHeader";
 import { useRouter } from 'next/router'
 import IndexBg from "../components/widget/Indexbg";
 import Landing from "./Landing";
+import Footer from "../components/core/Footer";
 const STYLES_ROOT = css`
   width: 100%;
   display: flex;
@@ -62,24 +63,6 @@ const STYLES_H1 = css`
 
   @media (max-width: ${Constants.sizes.tablet}px) {
     font-size: ${Constants.typescale.lvl3};
-  }
-`;
-
-const STYLES_DASHBORAD = css`
-  font-family: ${Constants.font.medium};
-  font-weight: 600;
-  margin-top: 64px;
-  font-size: ${Constants.typescale.lvl5};
-  letter-spacing: -0.022rem;
-  line-height: 1.3;
-  color: ${Constants.system.grayDark6};
-  margin-bottom: 16px;
-
-  @media (max-width: ${Constants.sizes.tablet}px) {
-    font-size: ${Constants.typescale.lvl3};
-  }
-  @media (max-width: ${Constants.sizes.mobile}px) {
-    margin-top: 16px;
   }
 `;
 
@@ -141,9 +124,7 @@ function IndexPage(){
             </div>
             <IndexBg/>
             <Landing/>
-            <div style={{  background: "#1e1f26"}}>
-                <WebsitePrototypeFooter/>
-            </div>
+            <Footer/>
         </WebsitePrototypeWrapper>
     );
 }

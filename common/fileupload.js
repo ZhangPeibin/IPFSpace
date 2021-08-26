@@ -58,6 +58,48 @@ export const uploadEnter = async ({ file, context,token }) => {
 }
 
 
+export const justUpload = async (file) =>{
+    let formData = new FormData();
+
+    // NOTE(jim): You must provide a file from an type="file" input field.
+    if (!file) {
+        return null;
+    }
+
+    formData.append("file", file);
+
+    const _privateUploadMethod = (path, file) =>
+        new Promise((resolve, reject) =>  {
+            const XHR = new XMLHttpRequest();
+            XHR.open("post", path, true);
+            XHR.setRequestHeader("authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDk4YjFDRUJDMDc5Mzk4NWNGNzM2NzNiNDI1MTVlOTQ0NzM4MmM3RGYiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYyNTYzMDc5MzgwNiwibmFtZSI6Inh5In0.OSYuicyoEtJSV_QfpaSk914VU1TIOwmEzVmP05lK6_c");
+            XHR.onerror = (event) => {
+                console.log(event)
+                XHR.abort();
+            };
+
+            XHR.onloadend = (event) => {
+                console.log("FILE UPLOAD END", event);
+                try {
+                    return resolve(JSON.parse(event.target.response));
+                } catch (e) {
+                    return resolve({
+                        error: "SERVER_UPLOAD_ERROR",
+                    });
+                }
+            };
+            XHR.send(file);
+        });
+
+    let res = await _privateUploadMethod(`https://api.nft.storage/upload`, file);
+
+    if (!res?.ok) {
+        return !res ? { decorator: "NO_RESPONSE_FROM_SERVER", error: true } : res;
+    }
+    let item = res['value'];
+    return item;
+}
+
 export const upload = async ({ file, context }) => {
     let formData = new FormData();
 

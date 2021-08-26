@@ -9,7 +9,7 @@ const STYLES_ALERT = `
   box-sizing: border-box;
   z-index: ${Constants.zindex.alert};
   position: fixed;
-  top: 50px;
+  top: 56px;
   width: 100%;
   color: ${Constants.system.white};
   min-height: 40px;

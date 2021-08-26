@@ -16,8 +16,8 @@ import * as Styles from "@common/styles";
 import * as SVG from "@common/svg";
 import * as Constants from "@common/constants";
 import {withSnackbar} from "notistack";
-import {IDXClient} from "@components/core/ceramic/IDXClient";
 import {CircularProgress} from "@material-ui/core";
+import {IDXClient} from "@components/core/ceramic/IDXClient";
 
 
 interface IAppState {
@@ -174,10 +174,7 @@ class Web3Wallet extends React.Component<any, any> {
         });
 
         console.log(address)
-        //
-        // const client = new IDXClient()
-        // const result = await client.getDID(address, web3.eth.currentProvider)
-        // console.log(result)
+
         await this.sign();
         this.setState({
             loading: false
@@ -209,7 +206,7 @@ class Web3Wallet extends React.Component<any, any> {
             throw new Error('Hash of signature is not the correct size! Something went wrong!');
         }
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(array))
-        console.log(identity.toString())
+        localStorage.setItem('seed',JSON.stringify(array));
         // @ts-ignore
         localStorage.setItem("identity", identity.toString())
         await Router.replace({pathname: "/dashboard"})

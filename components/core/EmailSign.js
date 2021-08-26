@@ -3,9 +3,10 @@ import * as React from "react";
 import {jsx, css} from "@emotion/react";
 import { useRouter } from 'next/router';
 import { Magic } from 'magic-sdk';
-import {useCallback, useEffect} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {toUtf8Bytes} from "ethers/lib/utils";
 import {BigNumber, utils} from "ethers";
+import {CircularProgress} from "@material-ui/core";
 import {PrivateKey} from "@textile/hub";
 
 const EMAIL = css`
@@ -20,6 +21,7 @@ const EMAIL = css`
 
 const EmailSign = () => {
     let email = "";
+    const [loading,setLoading] = useState(false)
     const router = useRouter();
     let magic;
     useEffect(function (){
@@ -32,7 +34,7 @@ const EmailSign = () => {
                 await generateId(email)
             } else {
                 // Log in the user
-                const user = await magic.auth.loginWithMagicLink({ email });
+                await magic.auth.loginWithMagicLink({ email });
                 await generateId(email)
             }
         }
@@ -59,7 +61,12 @@ const EmailSign = () => {
         if (array.length !== 32) {
             throw new Error('Hash of signature is not the correct size! Something went wrong!');
         }
+
+        setLoading(false)
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(array))
+        identity.privKey
+        identity.pubKey
+        localStorage.setItem('seed',JSON.stringify(array));
         console.log(identity.toString())
         localStorage.setItem("identity", identity.toString())
         await router.replace({pathname: "/dashboard"})
@@ -71,6 +78,7 @@ const EmailSign = () => {
     }
 
     const onPrivateKey = async () => {
+        setLoading(true)
         const isEmail = validateEmail(email);
         if(!isEmail){
             alert("Invalid email address !");
@@ -106,7 +114,8 @@ const EmailSign = () => {
                     type="button"
                     style={{transition: "all .15s ease",backgroundColor: "#FF715E"}}
                 >
-                    Sign In
+                    {loading && <CircularProgress size={18} style={{color:"#faebd7",marginRight:"12px"}} />}
+                    {loading?"Connecting with Magic and IDX ..." :" Sign In"}
                 </button>
             </div>
         </div>

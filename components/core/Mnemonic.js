@@ -29,7 +29,6 @@ const STYLES_LINK_ITEM = (theme) => css`
 
 const MnemoincExist = () => {
     const router = useRouter();
-
     let mnemonic = "";
     const onInputChange = (target) => {
         mnemonic = target.currentTarget.value;
@@ -94,6 +93,7 @@ const MnemoincNotExist = ({mnemoin}) => {
     const next = async () => {
         const mnemonic = state.mnemonic;
         const identity = await R.onRegenerateIdentityByMnemonic(mnemonic)
+
         localStorage.setItem("identity", identity)
         await router.replace({pathname: "/dashboard"})
     }

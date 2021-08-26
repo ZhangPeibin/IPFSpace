@@ -74,8 +74,8 @@ export const auth = async (userIdentity) => {
     }
 
     const keyInfo : KeyInfo= {
-        key: "bhtmaiyqclqj6pw5lmyskkdy7iq",
-        secret:"bbfg3irdoe4ibswuszofgfr5gnn6nunjgxxjrdxq"
+        key: process.env.NEXT_PUBLIC_TEXTILE_KEY,
+        secret:process.env.NEXT_PUBLIC_TEXTILE_SECRET
     };
 
     const userAuth = await authByTextile(keyInfo);

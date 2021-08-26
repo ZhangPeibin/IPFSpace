@@ -10,7 +10,7 @@ import { Boundary } from "./Boundary";
 import { CheckBox } from "./CheckBox";
 import { Table } from "./Table";
 import { FileTypeIcon } from "../core/FileTypeIcon";
-import { GroupSelectable, Selectable } from "../core/Selectable/";
+import { GroupSelectable, Selectable } from "../core/selectable/";
 import {ButtonPrimary, ButtonWarning} from "./Buttons";
 import FilePreviewBubble from "./FilePreviewBubble";
 import SlateMediaObjectPreview from "./SlateMediaObjectPreview";

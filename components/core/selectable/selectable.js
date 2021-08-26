@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useSelectable } from "~/components/core/Selectable/groupSelectable";
+import { useSelectable } from "~/components/core/selectable/groupSelectable";
 
 export default function Selectable({ children, selectableKey, style, ...props }) {
   const ref = React.useRef();

@@ -2,15 +2,17 @@ import * as React from "react";
 import * as Constants from "/common/constants";
 import {css} from "@emotion/react";
 import {useEffect, useState} from "react";
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import {Magic} from "magic-sdk";
+import AccountButton from "../widget/AccountButton";
 
 const STYLES_CONTAINER = css`
   position: fixed;
   z-index: ${Constants.zindex.alert};
-  padding: 10px 72px;
+  padding: 0px 72px;
   width: 100%;
-  margin: 0 auto;
+  height: 56px;
+  margin: auto auto;
   font-family: ${Constants.font.text};
   font-weight: 400;
   font-size: ${Constants.typescale.lvl0};
@@ -30,9 +32,9 @@ const STYLES_CONTAINER = css`
 `;
 
 const APP_LOGO = css`
-    width: 28px;
-    height: 28px;
-    margin-right: 8px;
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
 `;
 
 
@@ -57,33 +59,12 @@ const STYLES_LEFT = css`
   align-items: center;
 `;
 
-const STYLES_RIGHT = css`
-  min-width: 10%;
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  text-align: left;
-`;
-
-const openBurgerBun2 = {
-    transform: `rotate(-45deg)`,
-};
-
-const openMenu = {
-    display: `flex`,
-    transform: `translateX(0)`,
-};
-
-const openNavLink = {
-    display: `flex`,
-};
-
 
 const WebsitePrototypeHeader = (props) => {
     const [open, setOpen] = useState(false);
     const router = useRouter();
     let magic;
-    useEffect(function (){
+    useEffect(function () {
         magic = window && new Magic("pk_live_893A36ED60BCFF42"); // ✨
     })
 
@@ -98,13 +79,11 @@ const WebsitePrototypeHeader = (props) => {
 
     const exit = async () => {
         localStorage.clear();
-        if(magic){
+        if (magic) {
             await magic.user.logout();
         }
         await router.replace({pathname: "/"})
     };
-
-    const styleNavLink = open ? openNavLink : null;
 
     return (
         <div css={STYLES_CONTAINER} style={props.style}>
@@ -115,14 +94,11 @@ const WebsitePrototypeHeader = (props) => {
                 </a>
             </div>
             {
-                props.try?null:(  <div css={STYLES_RIGHT}>
-                    <button css={STYLES_LINK} style={styleNavLink}  onClick={()=>exit()}>
-                        Sign out
-                    </button>
-                </div>)
+                props.try ? null : (<AccountButton name={props.userInfo==null? props.idx.substr(0,10):props.userInfo.name} icon={props.userInfo==null?null:props.userInfo.icon} showProfile={props.showProfile} exit={exit} idxLoading={props.idxLoading} idx={props.idx}/>)
             }
         </div>
     );
-};
+}
+;
 
 export default WebsitePrototypeHeader;

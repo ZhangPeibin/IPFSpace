@@ -9,7 +9,6 @@ import * as Styles from "../../common/styles";
 import * as Constants from "../../common/constants";
 import Mnemonic from "../../components/core/Mnemonic";
 import EmailSign from "../../components/core/EmailSign";
-import * as Utilities from "../../common/utilities";
 import IndexBg from "../../components/widget/Indexbg";
 import {withRouter} from 'next/router';
 import Web3Wallet from "../../components/core/web3/Web3Wallet";
@@ -39,50 +38,11 @@ const STYLES_CONTAINER = css`
 `;
 
 
-
-const AUTH_BACKGROUNDS = [
-    "https://slate.textile.io/ipfs/bafkreih6q3baivs5e7of2e6ig4d5rg2uiio4amtt56nz4kexrmv5rmecta",
-    "https://slate.textile.io/ipfs/bafybeichgslmsm43nsgaurtiono2774qkrqqces5uj7jdbvd4rwhjgj23y",
-    "https://slate.textile.io/ipfs/bafybeibhhwcdrjile6v2vi5knrdntvinwbsxtxiuahskom6634nxvgdch4",
-    "https://slate.textile.io/ipfs/bafybeieaprew4mzwnn43gjqimpas2skjxlddsk7kloxmw35x2oi75g223m",
-    "https://slate.textile.io/ipfs/bafkreidbjytq4yjvlghj73m2l2fvy4rkbxdrfaclwotptwms3a24oybnp4",
-
-];
-
 const STEP = {
     STEP_METAMASK_PASSWORD: "METAMASK_PASSWORD",
     STEP_MNEMONIC: "STEP_MNEMONIC"
 }
 
-export const BackgroundGenerator = ({children, isMobile, ...props}) => {
-    const background = React.useMemo(() => {
-        const backgroundIdx = Utilities.getRandomNumberBetween(0, AUTH_BACKGROUNDS.length - 1);
-        return AUTH_BACKGROUNDS[backgroundIdx];
-    }, []);
-
-    const [height, setHeight] = React.useState();
-
-    React.useLayoutEffect(() => {
-        if (!window) return;
-        const updateHeight = () => {
-            const windowInnerHeight = window.innerHeight;
-            setHeight(windowInnerHeight);
-        };
-
-        updateHeight();
-        // NOTE(amine): don't update height on mobile
-        if (isMobile) return;
-
-        window.addEventListener("resize", updateHeight);
-        return () => window.addEventListener("resize", updateHeight);
-    }, [isMobile]);
-
-    return (
-        <div style={{backgroundImage: `url(${background})`, height}} {...props}>
-            {children}
-        </div>
-    );
-};
 
 class AuthPage extends React.Component {
 
@@ -93,7 +53,6 @@ class AuthPage extends React.Component {
     }
 
     _renderAuth = (step) => {
-
         const {STEP_METAMASK_PASSWORD, STEP_MNEMONIC} = STEP
         if (step == STEP_MNEMONIC) {
             return <Mnemonic back={() => this.setState({step: null})}/>
@@ -133,20 +92,20 @@ class AuthPage extends React.Component {
                                 Continue with Web3 Wallet
                             </button>
 
-                            <button
-                                css={{
-                                    backgroundColor: "#FF715E"
-                                }}
-                                className="mt-2 bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
-                                type="button"
-                                style={{transition: "all .15s ease"}}
+                            {/*<button*/}
+                            {/*    css={{*/}
+                            {/*        backgroundColor: "#FF715E"*/}
+                            {/*    }}*/}
+                            {/*    className="mt-2 bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"*/}
+                            {/*    type="button"*/}
+                            {/*    style={{transition: "all .15s ease"}}*/}
 
-                                onClick={() => {
-                                    this._setStep(STEP_MNEMONIC)
-                                }}
-                            >
-                                Continue with Recovery Phrase
-                            </button>
+                            {/*    onClick={() => {*/}
+                            {/*        this._setStep(STEP_MNEMONIC)*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    Continue with Recovery Phrase*/}
+                            {/*</button>*/}
 
 
                             <Divider
@@ -163,7 +122,7 @@ class AuthPage extends React.Component {
                         <EmailSign/>
 
                         {/* 箭头导航 */}
-                        <div className="mt-28">
+                        <div className="mt-14">
                             <div style={{marginTop: "auto"}}>
                                 <div css={STYLES_LINK_ITEM}>
                                     <div css={Styles.HORIZONTAL_CONTAINER_CENTERED} onClick={() => {
@@ -182,10 +141,10 @@ class AuthPage extends React.Component {
                                 </a>
 
                                 <a css={STYLES_LINK_ITEM} style={{marginTop: 4}}
-                                   href="https://ipfser.org/2019/11/03/ipfsshengtaibaogao%e4%b8%a8an-overview-of-distributed-storage-ipfs/"
+                                   href="https://idx.xyz/"
                                    target="_blank">
                                     <div css={Styles.HORIZONTAL_CONTAINER_CENTERED}>
-                                        <SVG.RightArrow height="16px" style={{marginRight: 4}}/> What is IPFS
+                                        <SVG.RightArrow height="16px" style={{marginRight: 4}}/> What is IDX
                                     </div>
                                 </a>
                             </div>
