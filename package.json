@@ -46,7 +46,6 @@
     "jszip": "^3.7.0",
     "key-did-provider-ed25519": "^1.1.0",
     "magic-sdk": "^4.4.0",
-    "near-api-js": "^0.42.0",
     "next": "11.0.1",
     "nft.storage": "^3.0.1",
     "notistack": "^1.0.10",
