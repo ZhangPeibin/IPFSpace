@@ -117,7 +117,7 @@ export default class DashboardPage extends React.Component {
             })
         })
 
-        // await this._auth(identity)
+        await this._auth(identity)
     }
 
     editProfile = async (kv) => {
@@ -134,6 +134,7 @@ export default class DashboardPage extends React.Component {
             this.setState({
                 client: v
             })
+            console.log("start request dATA")
             await this._requestData(identity, v);
         })
     }
