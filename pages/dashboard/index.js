@@ -117,7 +117,7 @@ export default class DashboardPage extends React.Component {
             })
         })
 
-        await this._auth(identity)
+        // await this._auth(identity)
     }
 
     editProfile = async (kv) => {
