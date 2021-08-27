@@ -102,8 +102,6 @@ export default class DashboardPage extends React.Component {
         this.setState({
             identity: identity
         })
-        await this._auth(identity)
-
         const seed = JSON.parse(localStorage.getItem('seed'));
         const idxClient = new IDXClient()
         idxClient.getJsDID(seed).then((did) => {
@@ -118,6 +116,8 @@ export default class DashboardPage extends React.Component {
                 })
             })
         })
+
+        await this._auth(identity)
     }
 
     editProfile = async (kv) => {
