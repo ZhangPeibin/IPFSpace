@@ -38,12 +38,12 @@ export default function EditProfile(props) {
 
     const [open, setOpen] = React.useState(true);
     const [scroll, setScroll] = React.useState('paper');
-    const [currency, setCurrency] = React.useState(userInfo.sex);
-    const [icon, setIcon] = React.useState(userInfo.icon);
-    const [name, setName] = React.useState(userInfo.name);
-    const [location, setLocation] = React.useState(userInfo.location);
-    const [webSite, setWeb] = React.useState(userInfo.website);
-    const [description,setDescription] = React.useState(userInfo.description);
+    const [currency, setCurrency] = React.useState(userInfo? userInfo.sex:"");
+    const [icon, setIcon] = React.useState(userInfo?userInfo.icon:"");
+    const [name, setName] = React.useState(userInfo?userInfo.name:"");
+    const [location, setLocation] = React.useState(userInfo?userInfo.location:"");
+    const [webSite, setWeb] = React.useState(userInfo?userInfo.website:"");
+    const [description,setDescription] = React.useState(userInfo?userInfo.description:"");
     const handleChange = (event) => {
         setCurrency(event.target.value);
     };
