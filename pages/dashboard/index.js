@@ -130,6 +130,8 @@ export default class DashboardPage extends React.Component {
     }
 
     _auth = (identity) => {
+        console.log("_auth:" + identity)
+
         A.auth(identity).then(async (v) => {
             this.setState({
                 client: v
