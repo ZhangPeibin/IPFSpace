@@ -134,7 +134,7 @@ export default class DashboardPage extends React.Component {
             this.setState({
                 client: v
             })
-            console.log("start request dATA")
+            console.log("start request _requestData")
             await this._requestData(identity, v);
         })
     }
