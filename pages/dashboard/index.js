@@ -16,10 +16,9 @@ import * as Events from "../../common/custom-events";
 import Loading from "../../components/core/Loading";
 import Web3Storage from "../../components/sidebar/Web3Storage";
 import {IDXClient} from "../../components/core/ceramic/IDXClient";
-import Profile from "../../components/sidebar/Profile";
 import EditProfile from "../../components/widget/EditProfile";
 import {Web3ConfirmationModal} from "../../components/widget/Web3ConfirmationModal";
-import {withSnackbar} from "notistack";
+import {SnackbarProvider} from "notistack";
 
 const STYLES_ROOT = css`
   width: 100%;
@@ -80,7 +79,7 @@ const SIDEBARS = {
     SIDEBAR_ADD_FILE_TO_BUCKET: <SidebarAddFileToBucket/>,
     WEB3_INTRO: <Web3Storage/>,
 };
- class DashboardPage extends React.Component {
+export default class DashboardPage extends React.Component {
 
     constructor(props) {
         super(props);
@@ -339,68 +338,68 @@ const SIDEBARS = {
         }
         return (
             <WebsitePrototypeWrapper title={title} description={description} url={url}>
-                <div css={STYLES_ROOT}>
-                    <DashboradHeader
-                        idxLoading={this.state.idxLoading}
-                        idx={this.state.idx}
-                        userInfo={this.state.userInfo}
-                        showProfile={() => this._openProfile()}
-                    />
-                    <Alert
-                        fileLoading={this.state.fileLoading}
-                        onAction={this._handleAction}/>
-                    {
-                        this.state.loading ? (
-                            <Loading/>
-                        ) : (
-                            <FileLayout
-                                _handleUploadData={this._handleUploadData}
-                                _refreshData={this._refreshData}
-                                _getWeb3Storage={this._getWeb3Storage}
-                                files={this.state.items}
-                                has1tT={this.state.web3}
-                                deleteCid={this._deleteCid}/>
-                        )
-                    }
-                    {this.state.sidebar ? (
-                        <Boundary
-                            onMouseDown
-                            captureResize={false}
-                            captureScroll={false}
-                            enabled
-                            onOutsideRectEvent={this._handleDismiss}
-                        >
-                            <div css={STYLES_SIDEBAR}>
-                                <div
-                                    css={STYLES_SIDEBAR_ELEMENTS}
-                                    ref={(c) => {
-                                        this._sidebar = c;
-                                    }}
-                                >
-                                    {sidebarElement}
-                                </div>
-                            </div>
-                        </Boundary>
-                    ) : null}
-
-                    {this.state.showWeb3 && (
-                        <Web3ConfirmationModal
-                            type={"CONFIRM"}
-                            withValidation={false}
-                            callback={this._handleWeb3Storage}
-                            header={`Do you want to get 1T free storage space ?`}
-                            subHeader={`Follow our guide to Web3.storage to claim your 1T free storage space.`}
+                <SnackbarProvider>
+                    <div css={STYLES_ROOT}>
+                        <DashboradHeader
+                            idxLoading={this.state.idxLoading}
+                            idx={this.state.idx}
+                            userInfo={this.state.userInfo}
+                            showProfile={() => this._openProfile()}
                         />
-                    )}
+                        <Alert
+                            fileLoading={this.state.fileLoading}
+                            onAction={this._handleAction}/>
+                        {
+                            this.state.loading ? (
+                                <Loading/>
+                            ) : (
+                                <FileLayout
+                                    _handleUploadData={this._handleUploadData}
+                                    _refreshData={this._refreshData}
+                                    _getWeb3Storage={this._getWeb3Storage}
+                                    files={this.state.items}
+                                    has1tT={this.state.web3}
+                                    deleteCid={this._deleteCid}/>
+                            )
+                        }
+                        {this.state.sidebar ? (
+                            <Boundary
+                                onMouseDown
+                                captureResize={false}
+                                captureScroll={false}
+                                enabled
+                                onOutsideRectEvent={this._handleDismiss}
+                            >
+                                <div css={STYLES_SIDEBAR}>
+                                    <div
+                                        css={STYLES_SIDEBAR_ELEMENTS}
+                                        ref={(c) => {
+                                            this._sidebar = c;
+                                        }}
+                                    >
+                                        {sidebarElement}
+                                    </div>
+                                </div>
+                            </Boundary>
+                        ) : null}
 
-                    {this.state.openProfile && <EditProfile
-                        handleClose={()=>this.setState({openProfile:false})}
-                        userInfo={this.state.userInfo}
-                        editProfile={this.editProfile}/>}
-                </div>
+                        {this.state.showWeb3 && (
+                            <Web3ConfirmationModal
+                                type={"CONFIRM"}
+                                withValidation={false}
+                                callback={this._handleWeb3Storage}
+                                header={`Do you want to get 1T free storage space ?`}
+                                subHeader={`Follow our guide to Web3.storage to claim your 1T free storage space.`}
+                            />
+                        )}
+
+                        {this.state.openProfile && <EditProfile
+                            handleClose={()=>this.setState({openProfile:false})}
+                            userInfo={this.state.userInfo}
+                            editProfile={this.editProfile}/>}
+                    </div>
+                </SnackbarProvider>
             </WebsitePrototypeWrapper>
         )
     }
 }
-
-export default withSnackbar(DashboardPage);
