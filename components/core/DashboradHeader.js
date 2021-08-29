@@ -89,7 +89,7 @@ const WebsitePrototypeHeader = (props) => {
     return (
         <div css={STYLES_CONTAINER} style={props.style}>
             <div css={STYLES_LEFT}>
-                <a href={"/"} style={{marginTop:"12px"}}>
+                <a href={"/"} >
                     <SVGLogo.Logo  />
                 </a>
             </div>
