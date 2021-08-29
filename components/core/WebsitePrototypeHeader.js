@@ -3,6 +3,8 @@ import * as Constants from "/common/constants";
 import {css} from "@emotion/react";
 import {useEffect, useState} from "react";
 import { useRouter } from "next/router";
+import * as SVGLogo from "../../common/logo";
+import {LogoWhite} from "../../common/logo";
 
 const STYLES_CONTAINER = css`
   position: -webkit-sticky;
@@ -89,7 +91,7 @@ const WebsitePrototypeHeader = (props) => {
         <div css={STYLES_CONTAINER} style={props.style}>
             <div css={STYLES_LEFT}>
                 <a css={STYLES_LINK} href="/" style={{marginRight: 16, position: "relative", top: "1px"}}>
-                    DDshare
+                    <SVGLogo.LogoWhite  />
                 </a>
             </div>
             {<div css={STYLES_RIGHT}>
