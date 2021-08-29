@@ -1,5 +1,6 @@
 import * as Store from "./store";
 import {storeWithProgress} from "./web3";
+const axios = require('axios');
 
 export const formatUploadedFiles = ({ files }) => {
     let toUpload = [];
@@ -192,11 +193,27 @@ export const upload = async ({ file, context }) => {
     return item;
 };
 
-
-export const _nativeDownload = (url,fileName) => {
-    var anchor = document.createElement('a');
-    anchor.setAttribute("download",fileName);
-    anchor.setAttribute("href", url);
-    anchor.setAttribute("target","_blank")
-    anchor.click();
-};
+export const pinata = async (name,cid,callback)=>{
+    const url = `https://api.pinata.cloud/pinning/pinByHash`;
+    const body = {
+        hashToPin: cid,
+        pinataMetadata: {
+            name: name,
+        }
+    };
+    return axios
+        .post(url, body, {
+            headers: {
+                pinata_api_key:process.env.NEXT_PUBLIC_PINATA_KEY ,
+                pinata_secret_api_key: process.env.NEXT_PUBLIC_SECRET
+            }
+        })
+        .then(function (response) {
+            console.log(response)
+            callback(response)
+            //handle response here
+        })
+        .catch(function (error) {
+            //handle error here
+        });
+}

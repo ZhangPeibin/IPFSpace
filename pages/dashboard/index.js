@@ -19,6 +19,7 @@ import {IDXClient} from "../../components/core/ceramic/IDXClient";
 import Profile from "../../components/sidebar/Profile";
 import EditProfile from "../../components/widget/EditProfile";
 import {Web3ConfirmationModal} from "../../components/widget/Web3ConfirmationModal";
+import {withSnackbar} from "notistack";
 
 const STYLES_ROOT = css`
   width: 100%;
@@ -79,7 +80,7 @@ const SIDEBARS = {
     SIDEBAR_ADD_FILE_TO_BUCKET: <SidebarAddFileToBucket/>,
     WEB3_INTRO: <Web3Storage/>,
 };
-export default class DashboardPage extends React.Component {
+ class DashboardPage extends React.Component {
 
     constructor(props) {
         super(props);
@@ -401,3 +402,5 @@ export default class DashboardPage extends React.Component {
         )
     }
 }
+
+export default withSnackbar(DashboardPage);

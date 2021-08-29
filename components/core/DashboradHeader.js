@@ -89,9 +89,9 @@ const WebsitePrototypeHeader = (props) => {
     return (
         <div css={STYLES_CONTAINER} style={props.style}>
             <div css={STYLES_LEFT}>
-                <div style={{marginTop:"12px"}}>
+                <a href={"/"} style={{marginTop:"12px"}}>
                     <SVGLogo.Logo  />
-                </div>
+                </a>
             </div>
             {
                 props.try ? null : (<AccountButton name={props.userInfo==null? props.idx.substr(0,10):props.userInfo.name} icon={props.userInfo==null?null:props.userInfo.icon} showProfile={props.showProfile} exit={exit} idxLoading={props.idxLoading} idx={props.idx}/>)
