@@ -204,8 +204,8 @@ export const pinata = async (name,cid,callback)=>{
     return axios
         .post(url, body, {
             headers: {
-                pinata_api_key:process.env.NEXT_PUBLIC_PINATA_KEY ,
-                pinata_secret_api_key: process.env.NEXT_PUBLIC_SECRET
+                pinata_api_key:"22facc1292dfe9b24699",
+                pinata_secret_api_key: "6008c35b6a7ad5f3fcc597324b790e178c8f8bf21f969442b0efb3c221b712b2"
             }
         })
         .then(function (response) {
