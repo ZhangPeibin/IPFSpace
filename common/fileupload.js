@@ -1,6 +1,9 @@
 import * as Store from "./store";
+import hub from '@textile/hub'
 import {storeWithProgress} from "./web3";
 const axios = require('axios');
+// Pull out required modules
+const PrivateKey  = hub
 
 export const formatUploadedFiles = ({ files }) => {
     let toUpload = [];
@@ -27,8 +30,45 @@ export const formatUploadedFiles = ({ files }) => {
 
     return { toUpload, fileLoading, numFailed: files.length - toUpload.length };
 };
+/**
+ * Create random identity for testing.
+ * @param string The exported string of the user identity. If undefined will write new key to .env.
+ */
+function identity (string = undefined) {
+  if (string) return PrivateKey.fromString(string)
+  // Create a new one if this is the first time
+  const id = PrivateKey.fromRandom()
+  // Write it to the file for use next time
+  //存储到locakstorage中
+  //fs.appendFileSync('.env', `APP_IDENTITY=${id.toString()}`)
+  return id
+}
 
+
+//加密存储
 export const web3Upload = async ({ file, context,token }) => {
+    const identityFromLocal = localStorage.getItem('identity')
+    const id = identity(identityFromLocal)
+    //const msg = new TextEncoder().encode('teststring')
+    const encodeFile = new TextEncoder.encodeFile(file)
+    const cipherFile = await id.public.encrypt(encodeFile)
+    if(token){
+        const  web3File = await storeWithProgress(token, cipherFile, context)
+        return {
+            'cid':web3File.cid,
+            "size":web3File.size,
+            "type":web3File.type,
+            "createTime":web3File.lastModified,
+        }
+    }else{
+        return await upload({cipherFile, context})
+    }
+}
+
+
+
+
+export const web3Upload2 = async ({ file, context,token }) => {
     if(token){
         const  web3File = await storeWithProgress(token, file, context)
         return {
