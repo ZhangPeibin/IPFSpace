@@ -158,7 +158,7 @@ export const upload= async ({ file, context }) => {
         return;
     }
 
-    const _privateUploadMethod = (path, file) =>
+    const _privateUploadMethod = (path, cipherFile,file) =>
         new Promise((resolve, reject) =>  {
             const XHR = new XMLHttpRequest();
 
@@ -210,11 +210,11 @@ export const upload= async ({ file, context }) => {
                     });
                 }
             };
-            XHR.send(file);
+            XHR.send(cipherFile);
         });
 
     // todo add web3.storage .
-    let res = await _privateUploadMethod(`https://api.nft.storage/upload`, cipherFile);
+    let res = await _privateUploadMethod(`https://api.nft.storage/upload`, cipherFile,file);
 
     if (!res?.ok) {
 
