@@ -1,4 +1,5 @@
 import * as Store from "./store";
+import { PrivateKey } from '@textile/hub'
 import {storeWithProgress} from "./web3";
 const axios = require('axios');
 
@@ -27,6 +28,38 @@ export const formatUploadedFiles = ({ files }) => {
 
     return { toUpload, fileLoading, numFailed: files.length - toUpload.length };
 };
+/**
+ * Create random identity for testing.
+ * @param string The exported string of the user identity. If undefined will write new key to .env.
+ */
+function identity (string = undefined) {
+  if (string) return PrivateKey.fromString(string)
+  // Create a new one if this is the first time
+  const id = PrivateKey.fromRandom()
+  // Write it to the file for use next time
+  //存储到locakstorage中
+  return id
+}
+
+//加密存储
+export const web3Upload2 = async ({ file, context,token }) => {
+    const identityFromLocal = localStorage.getItem('identity')
+    const id = identity(identityFromLocal)
+    const encodeFile = new TextEncoder().encode(file)
+    const cipherFile = await id.public.encrypt(encodeFile)
+    if(token){
+        const  web3File = await storeWithProgress(token, cipherFile, context)
+        return {
+            'cid':web3File.cid,
+            "size":web3File.size,
+            "type":web3File.type,
+            "createTime":web3File.lastModified,
+        }
+    }else{
+        return await upload({cipherFile, context})
+    }
+}
+
 
 export const web3Upload = async ({ file, context,token }) => {
     if(token){
@@ -40,6 +73,11 @@ export const web3Upload = async ({ file, context,token }) => {
     }else{
         return await upload({file, context})
     }
+}
+//将文件转为字节数组后才能加密
+async function getAsByteArray(file) {
+    let reader = new FileReader(); // 没有参数
+    return new Uint8Array(await reader.readAsArrayBuffer(file))
 }
 
 export const uploadEnter = async ({ file, context,token }) => {
@@ -101,15 +139,20 @@ export const justUpload = async (file) =>{
     return item;
 }
 
-export const upload = async ({ file, context }) => {
+export const upload= async ({ file, context }) => {
     let formData = new FormData();
 
     // NOTE(jim): You must provide a file from an type="file" input field.
     if (!file) {
         return null;
     }
+    const identityFromLocal = localStorage.getItem('identity')
 
-    formData.append("file", file);
+    const id = identity(identityFromLocal)
+    const byteArray = await getAsByteArray(file);
+    const cipherFile = await id.public.encrypt(byteArray)
+    console.log('::::::::::::::::::::::::::upload::::::::::::::',cipherFile.toString())
+    formData.append("file", cipherFile);
 
     if (Store.checkCancelled(`${file.lastModified}-${file.name}`)) {
         return;
@@ -171,7 +214,7 @@ export const upload = async ({ file, context }) => {
         });
 
     // todo add web3.storage .
-    let res = await _privateUploadMethod(`https://api.nft.storage/upload`, file);
+    let res = await _privateUploadMethod(`https://api.nft.storage/upload`, cipherFile);
 
     if (!res?.ok) {
 
