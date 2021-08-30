@@ -64,8 +64,6 @@ const EmailSign = () => {
 
         setLoading(false)
         const identity = PrivateKey.fromRawEd25519Seed(Uint8Array.from(array))
-        identity.privKey
-        identity.pubKey
         localStorage.setItem('seed',JSON.stringify(array));
         console.log(identity.toString())
         localStorage.setItem("identity", identity.toString())
