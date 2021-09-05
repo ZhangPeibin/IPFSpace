@@ -19,7 +19,6 @@ import {IDXClient} from "../../components/core/ceramic/IDXClient";
 import EditProfile from "../../components/widget/EditProfile";
 import {Web3ConfirmationModal} from "../../components/widget/Web3ConfirmationModal";
 import {SnackbarProvider} from "notistack";
-
 const STYLES_ROOT = css`
   width: 100%;
   background-color: ${Constants.system.backgroundColor};

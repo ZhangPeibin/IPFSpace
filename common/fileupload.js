@@ -151,7 +151,6 @@ export const upload= async ({ file, context }) => {
     const id = identity(identityFromLocal)
     const byteArray = await getAsByteArray(file);
     const cipherFile = await id.public.encrypt(byteArray)
-    console.log('::::::::::::::::::::::::::upload::::::::::::::',cipherFile.toString())
     formData.append("file", cipherFile);
 
     if (Store.checkCancelled(`${file.lastModified}-${file.name}`)) {

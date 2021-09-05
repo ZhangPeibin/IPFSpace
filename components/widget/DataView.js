@@ -20,7 +20,7 @@ import {PopoverNavigation} from "./PopoverNavigation";
 import {getURLfromCID} from "../../common/strings";
 import {pinata} from "../../common/fileupload";
 import {withSnackbar} from "notistack";
-
+import {download,decryptFileFromUrl} from '../../common/encryptFile'
 const STYLES_CONTAINER_HOVER = css`
   display: flex;
 
@@ -506,6 +506,11 @@ class DataView extends React.Component {
         this.setState({cidToDelete: cid, modalShow: true});
     }
 
+    _decrptFile = async (e,cid,name)=>{
+        //解密文件
+        //点击解密，界面出提示，然后界面有个解密列表，在解密列表中可进行下载。
+        alert('你解密了',cid,"请到解密区进行下载！")
+    }
     _handlePinata = async (e, cid, name) => {
         this._handleHide(e)
         const props = this.props;
@@ -898,6 +903,13 @@ class DataView extends React.Component {
                                             {
                                                 text: "Pin To Pinata",
                                                 onClick: (e) => this._handlePinata(e, cid, each.filename),
+                                            },
+                                            {
+                                                text: "Decrpt File",
+                                                onClick: (e) => {
+                                                    fileDownload(Strings.getURLfromCID(cid), each.filename),
+                                                    console.log("url:",getURLfromCID(cid))
+                                                }
                                             },
                                         ],
                                     ]}
