@@ -1,10 +1,15 @@
 import * as React from "react";
 import * as SVG from "../../common/svg";
 import * as Validations from "../../common/validations";
+import {DesktopEye, FileNotFound, Sun} from "../../common/svg";
 
 export function FileTypeIcon({ file, ...props }) {
   const type = props.type;
   const isLink = false;
+  const encrypt = props.encrypt
+  if(encrypt){
+    return <SVG.EyeOff {...props} />
+  }
 
   if (isLink) {
     return <SVG.Link {...props} />;
@@ -29,7 +34,6 @@ export function FileTypeIcon({ file, ...props }) {
   if (Validations.isPdfType(type)) {
     return <SVG.TextDocument {...props} />;
   }
-
   return <SVG.Document {...props} />;
 }
 

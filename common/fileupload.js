@@ -41,55 +41,69 @@ function identity (string = undefined) {
   return id
 }
 
-//加密存储
-export const web3Upload2 = async ({ file, context,token }) => {
+function readFileAsync(file) {
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+
+        reader.onload = () => {
+            resolve(reader.result);
+        };
+
+        reader.onerror = reject;
+
+        reader.readAsArrayBuffer(file);
+    })
+}
+
+export const deFile = (url,filename,callback)=>{
+    axios.get(url, { responseType: 'arraybuffer' }).then(async res => {
+        callback()
+        const uint8View = new Uint8Array(res.data);
+
+        const identityFromLocal = localStorage.getItem('identity')
+        const id = identity(identityFromLocal)
+        const file = await id.decrypt(uint8View)
+        const url = window.URL.createObjectURL(new Blob([file]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+    })
+}
+
+export const uploadWithNoEncrypt = async ({file, context, token}) => {
+    const fileShortName = `${file.lastModified}-${file.name}`
+    let response = await upload({file, fileShortName, context})
+    if (!response || response.error) {
+        if (token) {
+            const web3File = await storeWithProgress(token, file, context)
+            return {
+                'cid': web3File.cid,
+                "size": web3File.size,
+                "type": web3File.type,
+                "createTime": web3File.lastModified,
+            }
+        }
+    }
+    return response;
+}
+
+export const uploadWithEncrypt = async ({file, context, token}) => {
+    const fileShortName = `${file.lastModified}-${file.name}`
     const identityFromLocal = localStorage.getItem('identity')
     const id = identity(identityFromLocal)
-    const encodeFile = new TextEncoder().encode(file)
-    const cipherFile = await id.public.encrypt(encodeFile)
-    if(token){
-        const  web3File = await storeWithProgress(token, cipherFile, context)
-        return {
-            'cid':web3File.cid,
-            "size":web3File.size,
-            "type":web3File.type,
-            "createTime":web3File.lastModified,
-        }
-    }else{
-        return await upload({cipherFile, context})
-    }
-}
-
-
-export const web3Upload = async ({ file, context,token }) => {
-    if(token){
-        const  web3File = await storeWithProgress(token, file, context)
-        return {
-            'cid':web3File.cid,
-            "size":web3File.size,
-            "type":web3File.type,
-            "createTime":web3File.lastModified,
-        }
-    }else{
-        return await upload({file, context})
-    }
-}
-//将文件转为字节数组后才能加密
-async function getAsByteArray(file) {
-    let reader = new FileReader(); // 没有参数
-    return new Uint8Array(await reader.readAsArrayBuffer(file))
-}
-
-export const uploadEnter = async ({ file, context,token }) => {
-    let  response = await upload({file, context})
+    let contentBuffer = await readFileAsync(file);
+    file = await id.public.encrypt( new Uint8Array(contentBuffer))
+    let response = await upload({file, fileShortName, context})
     if (!response || response.error) {
-        if(token){
-            const  web3File = await storeWithProgress(token, file, context)
+        if (token) {
+            const web3File = await storeWithProgress(token, file, context)
             return {
-                'cid':web3File.cid,
-                "size":web3File.size,
-                "type":web3File.type,
-                "createTime":web3File.lastModified,
+                'cid': web3File.cid,
+                "size": web3File.size,
+                "type": web3File.type,
+                "createTime": web3File.lastModified,
             }
         }
     }
@@ -98,15 +112,10 @@ export const uploadEnter = async ({ file, context,token }) => {
 
 
 export const justUpload = async (file) =>{
-    let formData = new FormData();
-
     // NOTE(jim): You must provide a file from an type="file" input field.
     if (!file) {
         return null;
     }
-
-    formData.append("file", file);
-
     const _privateUploadMethod = (path, file) =>
         new Promise((resolve, reject) =>  {
             const XHR = new XMLHttpRequest();
@@ -139,30 +148,21 @@ export const justUpload = async (file) =>{
     return item;
 }
 
-export const upload= async ({ file, context }) => {
-    let formData = new FormData();
-
-    // NOTE(jim): You must provide a file from an type="file" input field.
+export const upload= async ({ file,fileShortName, context }) => {
     if (!file) {
+        console.log("return null")
         return null;
     }
-    const identityFromLocal = localStorage.getItem('identity')
 
-    const id = identity(identityFromLocal)
-    const byteArray = await getAsByteArray(file);
-    const cipherFile = await id.public.encrypt(byteArray)
-    console.log('::::::::::::::::::::::::::upload::::::::::::::',cipherFile.toString())
-    formData.append("file", cipherFile);
-
-    if (Store.checkCancelled(`${file.lastModified}-${file.name}`)) {
+    if (Store.checkCancelled(fileShortName)) {
         return;
     }
 
-    const _privateUploadMethod = (path, cipherFile,file) =>
+    const _privateUploadMethod = (path, file,fileShortName) =>
         new Promise((resolve, reject) =>  {
             const XHR = new XMLHttpRequest();
 
-            window.addEventListener(`cancel-${file.lastModified}-${file.name}`, () => {
+            window.addEventListener(`cancel-`+fileShortName, () => {
                 XHR.abort();
             });
 
@@ -186,7 +186,7 @@ export const upload= async ({ file, context }) => {
                         context.setState({
                             fileLoading: {
                                 ...context.state.fileLoading,
-                                [`${file.lastModified}-${file.name}`]: {
+                                [fileShortName]: {
                                     name: file.name,
                                     loaded: event.loaded,
                                     total: event.total,
@@ -198,7 +198,7 @@ export const upload= async ({ file, context }) => {
                 false
             );
 
-            window.removeEventListener(`cancel-${file.lastModified}-${file.name}`, () => XHR.abort());
+            window.removeEventListener(`cancel-`+fileShortName, () => XHR.abort());
 
             XHR.onloadend = (event) => {
                 console.log("FILE UPLOAD END", event);
@@ -210,19 +210,17 @@ export const upload= async ({ file, context }) => {
                     });
                 }
             };
-            XHR.send(cipherFile);
+            XHR.send(file);
         });
 
-    // todo add web3.storage .
-    let res = await _privateUploadMethod(`https://api.nft.storage/upload`, cipherFile,file);
+    let res = await _privateUploadMethod(`https://api.nft.storage/upload`, file,fileShortName);
 
     if (!res?.ok) {
-
         if (context) {
             await context.setState({
                 fileLoading: {
                     ...context.state.fileLoading,
-                    [`${file.lastModified}-${file.name}`]: {
+                    [fileShortName]: {
                         name: file.name,
                         failed: true,
                     },

@@ -235,7 +235,10 @@ export default class FileLayout  extends React.Component {
             </div>
 
             {this.props.files.length ? (
-                <DataView items={ this.state.fileTypeFiltersActive?this.state.filteredFiles:this.props.files} view={tab} deleteCid={this.props.deleteCid} />
+                <DataView items={ this.state.fileTypeFiltersActive?this.state.filteredFiles:this.props.files}
+                          view={tab}
+                          deleteCid={this.props.deleteCid}
+                            encryptLoading={this.props.encryptLoading}/>
             ) : (
                 <EmptyState>
                     <FileTypeGroup />
