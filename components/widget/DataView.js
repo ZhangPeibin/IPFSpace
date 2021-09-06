@@ -21,6 +21,8 @@ import {getURLfromCID} from "../../common/strings";
 import {pinata} from "../../common/fileupload";
 import {withSnackbar} from "notistack";
 import {download,decryptFileFromUrl} from '../../common/encryptFile'
+const axios = require('axios');
+
 const STYLES_CONTAINER_HOVER = css`
   display: flex;
 
@@ -453,10 +455,21 @@ class DataView extends React.Component {
     _handleDownloadFiles = async () => {
         const selectedFiles = this.props.items.filter((_, i) => this.state.checked[i]);
         for (const v of selectedFiles) {
-            await fileDownload(Strings.getURLfromCID(v.cid), v.filename)
+            await this._fileDownload(Strings.getURLfromCID(v.cid),v.filename)
         }
         this.setState({checked: {}});
     };
+
+    _fileDownload = async (url,filename)=>{
+        axios.get(url, { responseType: 'arraybuffer' }).then(async res => {
+            const url = window.URL.createObjectURL(new Blob([res.data], null));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+        })
+    }
 
     _handleDelete = (res, id) => {
         if (!res) {

@@ -17,8 +17,12 @@ function identity (string = undefined) {
   
 //将文件转为字节数组后才能加密
 async function getAsByteArray(file) {
-    let reader = new FileReader(); // 没有参数
-    return new Uint8Array(await reader.readAsArrayBuffer(file))
+    return new Promise((resolve,reject)=>{
+        let reader = new FileReader(); // 没有参数
+        reader.onload= ()=>resolve(reader.result)
+        reader.onerror = reject
+        reader.readAsArrayBuffer(file)
+    })
 }
 
 //key:钥匙
