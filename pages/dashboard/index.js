@@ -19,6 +19,10 @@ import {IDXClient} from "../../components/core/ceramic/IDXClient";
 import EditProfile from "../../components/widget/EditProfile";
 import {Web3ConfirmationModal} from "../../components/widget/Web3ConfirmationModal";
 import {SnackbarProvider} from "notistack";
+import {EncryptConfirmation} from "../../components/widget/EncryptConfirmation";
+import {uploadWithNoEncrypt} from "../../common/fileupload";
+import {LoadingDialog} from "../../components/widget/LoadingDialog";
+
 const STYLES_ROOT = css`
   width: 100%;
   background-color: ${Constants.system.backgroundColor};
@@ -91,7 +95,8 @@ export default class DashboardPage extends React.Component {
             isRefreshByHand: false,
             showWeb3: false,
             idxLoading: true,
-            idx: "connecting to idx ... "
+            idx: "connecting to idx ... ",
+            encryptLoading:false
         }
         this.handleFile.bind(this)
     }
@@ -195,11 +200,20 @@ export default class DashboardPage extends React.Component {
     };
 
     _handleUploadData = () => {
-        this._handleAction({
-            type: "SIDEBAR",
-            value: "SIDEBAR_ADD_FILE_TO_BUCKET",
-        });
+        // this._handleAction({
+        //     type: "SIDEBAR",
+        //     value: "SIDEBAR_ADD_FILE_TO_BUCKET",
+        // });
+        this.setState({
+            showChoiceEncrypt:true
+        })
     };
+
+    _encryptLoading = (v) =>{
+        this.setState({
+            encryptLoading:v
+        })
+    }
 
 
     _deleteCid = async (cids) => {
@@ -213,7 +227,7 @@ export default class DashboardPage extends React.Component {
     }
 
 
-    handleFile = async (files, keys) => {
+    handleFile = async (files, keys,encrypt) => {
 
         this.setState({sidebar: null, sidebarData: null});
 
@@ -232,17 +246,24 @@ export default class DashboardPage extends React.Component {
 
             let response;
             try {
-                response = await FileUpload.uploadEnter({
-                    file: files[i],
-                    context: this,
-                    token: web3
-                });
+                if(encrypt){
+                    response = await FileUpload.uploadWithEncrypt({
+                        file: files[i],
+                        context: this,
+                        token: web3})
+                }else{
+                    response = await FileUpload.uploadWithNoEncrypt({
+                        file: files[i],
+                        context: this,
+                        token: web3,})
+                }
             } catch (e) {
                 console.log(e)
             }
             if (!response || response.error) {
                 continue;
             }
+            console.log(response)
             resolvedFiles.push(response);
             const cid = response['cid']
             const filename = files[i].name
@@ -254,7 +275,8 @@ export default class DashboardPage extends React.Component {
                 size: size,
                 cid: cid,
                 createTime: createTime,
-                type: type
+                type: type,
+                encrypt:encrypt
             }
 
             const result = this.state.items.filter(item => item.cid === cid)
@@ -298,10 +320,13 @@ export default class DashboardPage extends React.Component {
         });
     };
 
-    handleUploadFiles = async ({files}) => {
+    handleUploadFiles = async ({files,encrypt}) => {
+        this.setState({
+            showChoiceEncrypt:false
+        })
         const {fileLoading, toUpload, numFailed} = FileUpload.formatUploadedFiles({files});
         this._handleRegisterFileLoading(fileLoading)
-        await this.handleFile(toUpload, Object.keys(fileLoading));
+        await this.handleFile(toUpload, Object.keys(fileLoading),encrypt);
     };
 
     setApiToken = async (token) => {
@@ -325,6 +350,9 @@ export default class DashboardPage extends React.Component {
         if (res) {
             this._getWeb3Storage();
         }
+    };
+
+    _handleSelectFiles = (res) => {
     };
 
 
@@ -355,6 +383,7 @@ export default class DashboardPage extends React.Component {
                                 <Loading/>
                             ) : (
                                 <FileLayout
+                                    encryptLoading = {this._encryptLoading}
                                     _handleUploadData={this._handleUploadData}
                                     _refreshData={this._refreshData}
                                     _getWeb3Storage={this._getWeb3Storage}
@@ -394,10 +423,33 @@ export default class DashboardPage extends React.Component {
                             />
                         )}
 
+                        {
+                            this.state.showChoiceEncrypt && (
+                                <EncryptConfirmation
+                                    onUpload={ this.handleUploadFiles}
+                                    cancelEncrypt={()=>{
+                                        this.setState({
+                                            showChoiceEncrypt:false
+                                        })
+                                    }}
+                                    type={"CONFIRM"}
+                                    withValidation={false}
+                                    callback={this._handleSelectFiles}
+                                    header={`Do you want to encrypt the file ?`}
+                                    subHeader={`Encryption is performed by the user’s public key, and the encryption is performed on the front end.`}
+                                />
+                            )
+                        }
+
                         {this.state.openProfile && <EditProfile
                             handleClose={()=>this.setState({openProfile:false})}
                             userInfo={this.state.userInfo}
-                            editProfile={this.editProfile}/>}
+                            editProfile={this.editProfile}/>
+                        }
+
+                        {
+                            this.state.encryptLoading && <LoadingDialog/>
+                        }
                     </div>
                 </SnackbarProvider>
             </WebsitePrototypeWrapper>

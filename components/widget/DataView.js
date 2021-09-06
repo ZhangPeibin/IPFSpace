@@ -18,9 +18,9 @@ import fileDownload from "js-file-download";
 import {ConfirmationModal} from "./ConfirmationModal";
 import {PopoverNavigation} from "./PopoverNavigation";
 import {getURLfromCID} from "../../common/strings";
-import {pinata} from "../../common/fileupload";
+import {deFile, pinata} from "../../common/fileupload";
 import {withSnackbar} from "notistack";
-import {download,decryptFileFromUrl} from '../../common/encryptFile'
+import {saveAs} from "../../common/window";
 const axios = require('axios');
 
 const STYLES_CONTAINER_HOVER = css`
@@ -455,20 +455,22 @@ class DataView extends React.Component {
     _handleDownloadFiles = async () => {
         const selectedFiles = this.props.items.filter((_, i) => this.state.checked[i]);
         for (const v of selectedFiles) {
-            await this._fileDownload(Strings.getURLfromCID(v.cid),v.filename)
+            await this._fileDownload(v)
         }
         this.setState({checked: {}});
     };
 
-    _fileDownload = async (url,filename)=>{
-        axios.get(url, { responseType: 'arraybuffer' }).then(async res => {
-            const url = window.URL.createObjectURL(new Blob([res.data], null));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', filename);
-            document.body.appendChild(link);
-            link.click();
-        })
+    _fileDownload = async (v)=>{
+        if(v){
+            if(v.encrypt){
+                this.props.encryptLoading(true);
+                deFile(Strings.getURLfromCID(v.cid),v.filename,()=>{
+                    this.props.encryptLoading(false);
+                })
+            }else{
+                saveAs(Strings.getURLfromCID(v.cid),v.filename)
+            }
+        }
     }
 
     _handleDelete = (res, id) => {
@@ -869,7 +871,7 @@ class DataView extends React.Component {
                                     window.open(getURLfromCID(cid))
                                 }}>
                                     <div css={STYLES_ICON_BOX_HOVER} style={{paddingLeft: 0, paddingRight: 18}}>
-                                        <FileTypeIcon type={each.type} height="24px"/>
+                                        <FileTypeIcon encrypt={each.encrypt} type={each.type} height="24px"/>
                                     </div>
                                     <div css={STYLES_LINK}>{each.filename}</div>
                                 </div>
