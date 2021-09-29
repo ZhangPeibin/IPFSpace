@@ -108,7 +108,8 @@ const SIDEBARS = {
             keplrAddress: null,
             askISCN:false,
             askISCNCid:null,
-            askISCNName:null
+            askISCNName:null,
+            localHasShowWeb3:false
         }
         this.handleFile.bind(this)
     }
@@ -118,6 +119,14 @@ const SIDEBARS = {
         this.setState({
             identity: identity
         })
+
+        const hasShowWeb3 = await localStorage.getItem("hasShowWeb3")
+        if(hasShowWeb3){
+            this.setState({
+                localHasShowWeb3:true
+            })
+        }
+
         const seed = JSON.parse(localStorage.getItem('seed'));
         const idxClient = new IDXClient()
         idxClient.getJsDID(seed).then((did) => {
@@ -161,7 +170,7 @@ const SIDEBARS = {
             this.setState({
                 client: v
             })
-            console.log("start request _requestData")
+
             await this._requestData(identity, v);
         })
     }
@@ -253,17 +262,24 @@ const SIDEBARS = {
             })
             return
         }
-        const res = await signISCNTx(formatISCNTxPayload(payload), this.state.keplr, this.state.keplrAddress)
-        const iscnId = await getISCNId(res.txHash)
-        console.log(iscnId)
-        await addISCNIdToFile(this.state.cidToISCN,
-            iscnId,
-            this.state.client,
-            this.state.identity)
-        this.setState({
-            openISCN:false,
-            iscnLoading:false
-        })
+        try {
+            const res = await signISCNTx(formatISCNTxPayload(payload), this.state.keplr, this.state.keplrAddress)
+            const iscnId = await getISCNId(res.txHash)
+            console.log(iscnId)
+            await addISCNIdToFile(this.state.cidToISCN,
+                iscnId,
+                this.state.client,
+                this.state.identity)
+            this.setState({
+                openISCN:false,
+                iscnLoading:false
+            })
+        }catch (e){
+            this._errorMessage("Register ISCN Failed "+e.toString())
+            this.setState({
+                iscnLoading:false
+            })
+        }
     }
 
 
@@ -512,7 +528,7 @@ const SIDEBARS = {
                             </Boundary>
                         ) : null}
 
-                        {this.state.showWeb3 && (
+                        { (!this.state.localHasShowWeb3) && this.state.showWeb3 && (
                             <Web3ConfirmationModal
                                 type={"CONFIRM"}
                                 withValidation={false}

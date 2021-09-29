@@ -76,6 +76,7 @@ export const Web3ConfirmationModal = (props) => {
     cancelText: "Cancel",
   };
 
+  localStorage.setItem("hasShowWeb3","1")
 
   return (
     <div css={STYLES_TRANSPARENT_BG}>
