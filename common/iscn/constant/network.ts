@@ -1,4 +1,4 @@
-import { IS_TESTNET, COSMOS_DENOM } from '.';
+import { COSMOS_DENOM } from '.';
 
 const mainConfig = {
   id: 'likecoin-mainnet-2',
@@ -42,7 +42,7 @@ const testnetConfig = {
   rpcURL: 'https://node.iscn-dev-2.like.co/rpc/',
   stakingWalletURL: 'http://likecoin-chain-taipei.netlify.app/',
 };
-
+const IS_TESTNET = false
 const combinedConfig = {
   ...mainConfig,
   ...(IS_TESTNET ? testnetConfig : {}),
