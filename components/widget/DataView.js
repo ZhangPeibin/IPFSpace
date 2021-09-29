@@ -929,6 +929,17 @@ class DataView extends React.Component {
                                         <FileTypeIcon encrypt={each.encrypt} type={each.type} height="24px"/>
                                     </div>
                                     <div css={STYLES_LINK}>{each.filename}</div>
+
+                                    {
+                                        each['iscnId'] && <img
+                                            onClick={(e) => this._handleViewISCN(e, cid, each)}
+                                            style={{width:"36px",marginLeft:"4px"}}
+                                            alt="..."
+                                            src="/static/iscn.png"
+                                            className="  rounded-t-lg"
+                                        />
+                                    }
+
                                 </div>
                             </Link>
                         </FilePreviewBubble>

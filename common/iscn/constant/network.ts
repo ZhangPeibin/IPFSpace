@@ -1,4 +1,4 @@
-import { IS_TESTNET, COSMOS_DENOM } from '.';
+import {  COSMOS_DENOM } from '.';
 
 const mainConfig = {
   id: 'likecoin-mainnet-2',
@@ -45,7 +45,7 @@ const testnetConfig = {
 
 const combinedConfig = {
   ...mainConfig,
-  ...(IS_TESTNET ? testnetConfig : {}),
+  ...(false ? testnetConfig : {}),
 };
 
 export default combinedConfig;
