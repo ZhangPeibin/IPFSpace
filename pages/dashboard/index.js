@@ -266,11 +266,15 @@ const SIDEBARS = {
             const res = await signISCNTx(formatISCNTxPayload(payload), this.state.keplr, this.state.keplrAddress)
             const iscnId = await getISCNId(res.txHash)
             console.log(iscnId)
-            await addISCNIdToFile(this.state.cidToISCN,
+            const userConfig =  await addISCNIdToFile(this.state.cidToISCN,
                 iscnId,
                 this.state.client,
                 this.state.identity)
+
+            const files = userConfig.files;
             this.setState({
+                userConfig: userConfig,
+                items: files,
                 openISCN:false,
                 iscnLoading:false
             })
