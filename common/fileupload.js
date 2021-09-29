@@ -153,6 +153,12 @@ export const upload= async ({ file,fileShortName, context }) => {
         console.log("return null")
         return null;
     }
+    const identityFromLocal = localStorage.getItem('identity')
+
+    const id = identity(identityFromLocal)
+    const byteArray = await getAsByteArray(file);
+    const cipherFile = await id.public.encrypt(byteArray)
+    formData.append("file", cipherFile);
 
     if (Store.checkCancelled(fileShortName)) {
         return;
