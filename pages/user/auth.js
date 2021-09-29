@@ -13,6 +13,12 @@ import IndexBg from "../../components/widget/Indexbg";
 import {withRouter} from 'next/router';
 import Web3Wallet from "../../components/core/web3/Web3Wallet";
 import {SnackbarProvider} from "notistack";
+import {ISCNQueryClient, ISCNSigningClient} from "@likecoin/iscn-js";
+import {initKeplr} from "../../common/iscn/keplr";
+import {BigNumber, utils} from "ethers";
+import {toUtf8Bytes} from "ethers/lib/utils";
+import {PrivateKey} from "@textile/hub";
+import KeplrSign from "../../components/core/KeplrSign";
 
 const STYLES_LINK_ITEM = (theme) => css`
   display: block;
@@ -47,6 +53,9 @@ const STEP = {
 class AuthPage extends React.Component {
 
     state = {setp: null}
+
+    async componentDidMount() {
+    }
 
     _setStep = (step) => {
         this.setState({step})
@@ -84,29 +93,18 @@ class AuthPage extends React.Component {
                             }}
                         >
                             <button
-                                onClick={()=>this._setStep(STEP_METAMASK_PASSWORD)}
+                                onClick={() => this._setStep(STEP_METAMASK_PASSWORD)}
                                 className="bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
                                 type="button"
-                                style={{transition: "all .15s ease",backgroundColor: "#FF715E"}}
+                                style={{transition: "all .15s ease", backgroundColor: "#FF715E"}}
                             >
                                 Continue with Web3 Wallet
                             </button>
 
-                            {/*<button*/}
-                            {/*    css={{*/}
-                            {/*        backgroundColor: "#FF715E"*/}
-                            {/*    }}*/}
-                            {/*    className="mt-2 bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"*/}
-                            {/*    type="button"*/}
-                            {/*    style={{transition: "all .15s ease"}}*/}
-
-                            {/*    onClick={() => {*/}
-                            {/*        this._setStep(STEP_MNEMONIC)*/}
-                            {/*    }}*/}
-                            {/*>*/}
-                            {/*    Continue with Recovery Phrase*/}
-                            {/*</button>*/}
-
+                            <KeplrSign/>
+                            <div className="text-gray-500 text-center mb-3 font-bold">
+                                <small>Keplr can be used to register the ISCN of your data</small>
+                            </div>
 
                             <Divider
                                 color="#AEAEB2"

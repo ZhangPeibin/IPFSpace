@@ -9,6 +9,11 @@ import DataView from "../widget/DataView";
 import {css} from "@emotion/react";
 import EmptyState from "../../common/EmptyState";
 import {FileTypeGroup} from "./FileTypeIcon";
+import { Input, Space } from 'antd';
+import {searchISCNById} from "../../common/iscn/sign";
+import {withSnackbar} from "notistack";
+import {formatAsUploadMessage} from "../../common/strings";
+const { Search } = Input;
 
 const STYLES_FILETYPE_TOOLTIP = css`
   display: flex;
@@ -52,7 +57,7 @@ const STYLES_TOOLTIP_ANCHOR = css`
   z-index: ${Constants.zindex.tooltip};
 `;
 
-export default class FileLayout  extends React.Component {
+ class FileLayout  extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -65,6 +70,7 @@ export default class FileLayout  extends React.Component {
             view: 1,
             filtersActive: false,
             filetypeTooltip: false,
+            searchLoading:false
         }
     }
 
@@ -81,6 +87,39 @@ export default class FileLayout  extends React.Component {
             this._filterFiles
         );
     };
+
+    _onSearch = async (value) => {
+        this.setState({
+            searchLoading:true
+        })
+        console.log(value)
+        if(value){
+            const res = await searchISCNById(value)
+            if(res==="-1"){
+                this._errorMessage("Invalid ISCN ID format")
+            }else if(res==="-2"){
+                this._errorMessage("Request ISCN failed")
+            }else{
+                const url = "https://app.like.co/view/"+encodeURIComponent(value)
+                window.open(url)
+            }
+        }
+        this.setState({
+            searchLoading:false
+        })
+    }
+
+
+    _errorMessage = (message)=>{
+        this.props.enqueueSnackbar(message,
+            {
+                variant: 'error',
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                },
+            })
+    }
 
     _filterFiles = () => {
         const filters = this.state.fileTypes;
@@ -128,13 +167,23 @@ export default class FileLayout  extends React.Component {
                     style={{ margin: "0 0 24px 0" }}
                 />
 
+                <Search
+                    style={{ marginRight:"24px"}}
+                    placeholder="search iscn by id"
+                    allowClear
+                    enterButton="Search"
+                    size="large"
+                    loading={this.state.searchLoading}
+                    onSearch={this._onSearch}
+                />
+
                 {
                     (
                         this.props.try?null:(
                             this.props.has1tT?(null):(
                                 <ButtonPrimary
                                     onClick={this.props._getWeb3Storage}
-                                    style={{background:"#1abcde", whiteSpace: "nowrap", marginRight: 24 ,height:36}}
+                                    style={{background:"#1890ff", whiteSpace: "nowrap", marginRight: 24 ,height:36}}
                                 >
                                     Web3.Storage
                                 </ButtonPrimary>
@@ -237,6 +286,9 @@ export default class FileLayout  extends React.Component {
             {this.props.files.length ? (
                 <DataView items={ this.state.fileTypeFiltersActive?this.state.filteredFiles:this.props.files}
                           view={tab}
+                          keplr = {this.props.keplr}
+                          keplrAddress ={this.props.keplrAddress}
+                          _openISCN={this.props._openISCN}
                           deleteCid={this.props.deleteCid}
                             encryptLoading={this.props.encryptLoading}/>
             ) : (
@@ -247,3 +299,4 @@ export default class FileLayout  extends React.Component {
         </div>
     }
 }
+export default withSnackbar(FileLayout);

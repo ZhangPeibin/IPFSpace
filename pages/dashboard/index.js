@@ -18,10 +18,17 @@ import Web3Storage from "../../components/sidebar/Web3Storage";
 import {IDXClient} from "../../components/core/ceramic/IDXClient";
 import EditProfile from "../../components/widget/EditProfile";
 import {Web3ConfirmationModal} from "../../components/widget/Web3ConfirmationModal";
-import {SnackbarProvider} from "notistack";
+import {SnackbarProvider, withSnackbar} from "notistack";
 import {EncryptConfirmation} from "../../components/widget/EncryptConfirmation";
 import {uploadWithNoEncrypt} from "../../common/fileupload";
 import {LoadingDialog} from "../../components/widget/LoadingDialog";
+import EditISCN from "../../components/widget/EditISCN";
+import {initKeplr} from "../../common/iscn/keplr";
+import {calculateTotalFee} from "../../common/iscn";
+import BigNumber from "bignumber.js";
+import {formatISCNTxPayload, getISCNId, signISCNTx} from "../../common/iscn/sign";
+import {addISCNIdToFile} from "../../common/UserInfo";
+import {KeplrConfirmationModal} from "../../components/widget/KeplrConfirmationModal";
 
 const STYLES_ROOT = css`
   width: 100%;
@@ -82,7 +89,7 @@ const SIDEBARS = {
     SIDEBAR_ADD_FILE_TO_BUCKET: <SidebarAddFileToBucket/>,
     WEB3_INTRO: <Web3Storage/>,
 };
-export default class DashboardPage extends React.Component {
+ class DashboardPage extends React.Component {
 
     constructor(props) {
         super(props);
@@ -96,7 +103,12 @@ export default class DashboardPage extends React.Component {
             showWeb3: false,
             idxLoading: true,
             idx: "connecting to idx ... ",
-            encryptLoading:false
+            encryptLoading: false,
+            keplr: null,
+            keplrAddress: null,
+            askISCN:false,
+            askISCNCid:null,
+            askISCNName:null
         }
         this.handleFile.bind(this)
     }
@@ -122,6 +134,15 @@ export default class DashboardPage extends React.Component {
         })
 
         await this._auth(identity)
+
+        const isAuthByKeplr = localStorage.getItem("isAuthByKeplr")
+        if(isAuthByKeplr ==="1"){
+            const value = await initKeplr()
+            this.setState({
+                keplr: value[0],
+                keplrAddress: value[1]
+            })
+        }
     }
 
     editProfile = async (kv) => {
@@ -190,6 +211,62 @@ export default class DashboardPage extends React.Component {
         })
     }
 
+    _openISCN = async (cid, filename) => {
+        if (!this.state.keplr || !this.state.keplrAddress) {
+            const value = await initKeplr()
+            this.setState({
+                keplr: value[0],
+                keplrAddress: value[1]
+            })
+        }
+
+        if (this.state.keplr && this.state.keplrAddress) {
+            this.setState({openISCN: true, cidToISCN: cid, cidToISCNFilename: filename});
+        } else {
+            this._errorMessage("Error connecting to Keplr wallet, please check whether Keplr is installed")
+        }
+    }
+
+     _errorMessage = (message)=>{
+         this.props.enqueueSnackbar(message,
+             {
+                 variant: 'error',
+                 anchorOrigin: {
+                     vertical: 'bottom',
+                     horizontal: 'center',
+                 },
+             })
+     }
+
+
+    editISCNOK = async (payload) => {
+        this.setState({
+            iscnLoading:true
+        })
+        const value = await calculateTotalFee(payload, this.state.keplrAddress)
+        const balance = value[0]
+        const totalFee = value[1]
+        if (new BigNumber(balance).lt(totalFee)) {
+            this._errorMessage("INSUFFICIENT_BALANCE")
+            this.setState({
+                iscnLoading:false
+            })
+            return
+        }
+        const res = await signISCNTx(formatISCNTxPayload(payload), this.state.keplr, this.state.keplrAddress)
+        const iscnId = await getISCNId(res.txHash)
+        console.log(iscnId)
+        await addISCNIdToFile(this.state.cidToISCN,
+            iscnId,
+            this.state.client,
+            this.state.identity)
+        this.setState({
+            openISCN:false,
+            iscnLoading:false
+        })
+    }
+
+
     _handleAction = (options) => {
         if (options.type === "SIDEBAR") {
             return this.setState({
@@ -205,19 +282,18 @@ export default class DashboardPage extends React.Component {
         //     value: "SIDEBAR_ADD_FILE_TO_BUCKET",
         // });
         this.setState({
-            showChoiceEncrypt:true
+            showChoiceEncrypt: true
         })
     };
 
-    _encryptLoading = (v) =>{
+    _encryptLoading = (v) => {
         this.setState({
-            encryptLoading:v
+            encryptLoading: v
         })
     }
 
 
     _deleteCid = async (cids) => {
-        console.log(cids)
         const userConfig = await A.deleteFile(cids, this.state.client, this.state.identity);
         const files = userConfig.files;
         this.setState({
@@ -227,7 +303,7 @@ export default class DashboardPage extends React.Component {
     }
 
 
-    handleFile = async (files, keys,encrypt) => {
+    handleFile = async (files, keys, encrypt) => {
 
         this.setState({sidebar: null, sidebarData: null});
 
@@ -237,6 +313,7 @@ export default class DashboardPage extends React.Component {
         }
         const web3 = this.state.user.web3
         const resolvedFiles = [];
+        const resolvedFileJsons= []
         for (let i = 0; i < files.length; i++) {
             if (Store.checkCancelled(`${files[i].lastModified}-${files[i].name}`)) {
                 continue;
@@ -246,16 +323,18 @@ export default class DashboardPage extends React.Component {
 
             let response;
             try {
-                if(encrypt){
+                if (encrypt) {
                     response = await FileUpload.uploadWithEncrypt({
                         file: files[i],
                         context: this,
-                        token: web3})
-                }else{
+                        token: web3
+                    })
+                } else {
                     response = await FileUpload.uploadWithNoEncrypt({
                         file: files[i],
                         context: this,
-                        token: web3,})
+                        token: web3,
+                    })
                 }
             } catch (e) {
                 console.log(e)
@@ -276,9 +355,9 @@ export default class DashboardPage extends React.Component {
                 cid: cid,
                 createTime: createTime,
                 type: type,
-                encrypt:encrypt
+                encrypt: encrypt
             }
-
+            resolvedFileJsons.push(fileJson)
             const result = this.state.items.filter(item => item.cid === cid)
             if (result && result.length < 1) {
                 await A.storeFile(this.state.client, this.state.identity, fileJson)
@@ -299,6 +378,15 @@ export default class DashboardPage extends React.Component {
         this._handleRegisterLoadingFinished({keys});
         let message = "Files Upload finished !";
         Events.dispatchMessage({message,});
+
+        if(files.length===1 && resolvedFileJsons.length===1){
+            const resolvedFileJson = resolvedFileJsons[0]
+            this.setState({
+                askISCN:true,
+                askISCNCid:resolvedFileJson['cid'],
+                askISCNName:resolvedFileJson['filename']
+            })
+        }
     }
 
     _handleRegisterLoadingFinished = ({keys}) => {
@@ -320,13 +408,13 @@ export default class DashboardPage extends React.Component {
         });
     };
 
-    handleUploadFiles = async ({files,encrypt}) => {
+    handleUploadFiles = async ({files, encrypt}) => {
         this.setState({
-            showChoiceEncrypt:false
+            showChoiceEncrypt: false
         })
         const {fileLoading, toUpload, numFailed} = FileUpload.formatUploadedFiles({files});
         this._handleRegisterFileLoading(fileLoading)
-        await this.handleFile(toUpload, Object.keys(fileLoading),encrypt);
+        await this.handleFile(toUpload, Object.keys(fileLoading), encrypt);
     };
 
     setApiToken = async (token) => {
@@ -355,6 +443,14 @@ export default class DashboardPage extends React.Component {
     _handleSelectFiles = (res) => {
     };
 
+    _showAskISCN = async (isEnable) => {
+        this.setState({askISCN: false});
+
+        if (!isEnable) {
+            return;
+        }
+        await this._openISCN(this.state.askISCNCid,this.state.askISCNName)
+    }
 
     render() {
         let sidebarElement;
@@ -383,12 +479,15 @@ export default class DashboardPage extends React.Component {
                                 <Loading/>
                             ) : (
                                 <FileLayout
-                                    encryptLoading = {this._encryptLoading}
+                                    _openISCN={this._openISCN}
+                                    encryptLoading={this._encryptLoading}
                                     _handleUploadData={this._handleUploadData}
                                     _refreshData={this._refreshData}
                                     _getWeb3Storage={this._getWeb3Storage}
                                     files={this.state.items}
                                     has1tT={this.state.web3}
+                                    keplr={this.state.keplr}
+                                    keplrAddress={this.state.keplrAddress}
                                     deleteCid={this._deleteCid}/>
                             )
                         }
@@ -426,10 +525,10 @@ export default class DashboardPage extends React.Component {
                         {
                             this.state.showChoiceEncrypt && (
                                 <EncryptConfirmation
-                                    onUpload={ this.handleUploadFiles}
-                                    cancelEncrypt={()=>{
+                                    onUpload={this.handleUploadFiles}
+                                    cancelEncrypt={() => {
                                         this.setState({
-                                            showChoiceEncrypt:false
+                                            showChoiceEncrypt: false
                                         })
                                     }}
                                     type={"CONFIRM"}
@@ -441,10 +540,26 @@ export default class DashboardPage extends React.Component {
                             )
                         }
 
+                        {this.state.askISCN && (
+                            <KeplrConfirmationModal
+                                callback={this._showAskISCN}
+                                header={`Register ISCN for data？`}
+                                subHeader={`To register for ISCN, you need to connect to the Keplr wallet.`}
+                            />
+                        )}
+
                         {this.state.openProfile && <EditProfile
-                            handleClose={()=>this.setState({openProfile:false})}
+                            handleClose={() => this.setState({openProfile: false})}
                             userInfo={this.state.userInfo}
                             editProfile={this.editProfile}/>
+                        }
+                        {this.state.openISCN && <EditISCN
+                            iscnLoading = {this.state.iscnLoading}
+                            cidToISCNFilename={this.state.cidToISCNFilename}
+                            keplrAddress={this.state.keplrAddress}
+                            cidToISCN={this.state.cidToISCN}
+                            handleClose={() => this.setState({openISCN: false})}
+                            editISCNBack={this.editISCNOK}/>
                         }
 
                         {
@@ -456,3 +571,4 @@ export default class DashboardPage extends React.Component {
         )
     }
 }
+export default withSnackbar(DashboardPage);

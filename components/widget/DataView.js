@@ -21,6 +21,9 @@ import {getURLfromCID} from "../../common/strings";
 import {deFile, pinata} from "../../common/fileupload";
 import {withSnackbar} from "notistack";
 import {saveAs} from "../../common/window";
+import {KeplrConfirmationModal} from "./KeplrConfirmationModal";
+import {initKeplr} from "../../common/iscn/keplr";
+import {searchISCNById} from "../../common/iscn/sign";
 const axios = require('axios');
 
 const STYLES_CONTAINER_HOVER = css`
@@ -291,6 +294,7 @@ class DataView extends React.Component {
         scrollDebounce: false,
         imageSize: 100,
         modalShow: false,
+        keplrShow:false,
     };
 
     isShiftDown = false;
@@ -515,10 +519,66 @@ class DataView extends React.Component {
         });
     };
 
+    _handleCopyISCNId = (e, cid,file) => {
+        e.stopPropagation();
+        this._handleHide();
+
+        const iscnId =file['iscnId']
+        if(iscnId){
+            this.setState({copyValue: iscnId[0]}, () => {
+                this._ref.select();
+                document.execCommand("copy");
+            });
+        }else{
+            this.showErrorMessage("This data has not been registered with ISCN")
+        }
+    };
+
+    showErrorMessage = (message)=>{
+        this.props.enqueueSnackbar(message,
+            {
+                variant: 'error',
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                },
+            })
+    }
+
+    _handleViewISCN = async (e, cid, file) => {
+        e.stopPropagation();
+        this._handleHide();
+        const iscnId = file['iscnId']
+        if (iscnId) {
+            const url = "https://app.like.co/view/"+encodeURIComponent(iscnId)
+            window.open(url)
+        } else {
+            this.showErrorMessage("This data has not been registered with ISCN")
+        }
+    };
+
     _handleDeleteByMenu = (e, cid) => {
         this._handleHide(e)
 
         this.setState({cidToDelete: cid, modalShow: true});
+    }
+
+    _handleRegisterISCN = (e, cid,filename) =>{
+        this._handleHide(e)
+        if(this.props.keplr && this.props.keplrAddress){
+            this.props._openISCN(cid,filename)
+        }else{
+            this.setState({iscnCid: cid,iscnfilename:filename, keplrShow: true})
+        }
+    }
+
+    _handleEnableKeplrWalletAndRegisterISCN = async (isEnable) => {
+        this.setState({keplrShow: false});
+
+        if (!isEnable) {
+            return;
+        }
+        this.props._openISCN(this.state.iscnCid,this.state.iscnfilename)
     }
 
     _handlePinata = async (e, cid, name) => {
@@ -914,6 +974,18 @@ class DataView extends React.Component {
                                                 text: "Pin To Pinata",
                                                 onClick: (e) => this._handlePinata(e, cid, each.filename),
                                             },
+                                            {
+                                                text: "Register ISCN",
+                                                onClick: (e) => this._handleRegisterISCN(e, cid, each.filename),
+                                            },
+                                            {
+                                                text: "Copy ISCN ID",
+                                                onClick: (e) => this._handleCopyISCNId(e, cid, each),
+                                            },
+                                            {
+                                                text: "View ISCN",
+                                                onClick: (e) => this._handleViewISCN(e, cid, each),
+                                            },
                                         ],
                                     ]}
                                 />
@@ -965,6 +1037,13 @@ class DataView extends React.Component {
                         callback={this._handleDelete}
                         header={`Are you sure you want to delete the selected files?`}
                         subHeader={`These files will be deleted from all connected collections and your file library. You can’t undo this action.`}
+                    />
+                )}
+                {this.state.keplrShow && (
+                    <KeplrConfirmationModal
+                        callback={this._handleEnableKeplrWalletAndRegisterISCN}
+                        header={`Keplr wallet must be connected`}
+                        subHeader={`To register for ISCN, you need to connect to the Keplr wallet.`}
                     />
                 )}
                 <input
