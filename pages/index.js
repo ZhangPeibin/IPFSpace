@@ -117,7 +117,7 @@ function IndexPage(){
                             </p>
                             <br />
                             <ButtonPrimary style={{  minWidth:'120px', marginRight: `12px`,background:"#ffffff",color:"#FF715E" }} onClick={_whitePager}>White Pager</ButtonPrimary>
-                            <ButtonPrimary  style={{minWidth:'120px', marginLeft: `12px` }} onClick={()=>{router.push('/try')}}>Try it out</ButtonPrimary>
+                            {/*<ButtonPrimary  style={{minWidth:'120px', marginLeft: `12px` }} onClick={()=>{router.push('/try')}}>Try it out</ButtonPrimary>*/}
                         </div>
                     </div>
                 </div>
