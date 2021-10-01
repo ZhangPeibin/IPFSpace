@@ -9,11 +9,12 @@ import DataView from "../widget/DataView";
 import {css} from "@emotion/react";
 import EmptyState from "../../common/EmptyState";
 import {FileTypeGroup} from "./FileTypeIcon";
-import { Input, Space } from 'antd';
+import {Input, Space} from 'antd';
 import {searchISCNById} from "../../common/iscn/sign";
 import {withSnackbar} from "notistack";
 import {formatAsUploadMessage} from "../../common/strings";
-const { Search } = Input;
+
+const {Search} = Input;
 
 const STYLES_FILETYPE_TOOLTIP = css`
   display: flex;
@@ -33,7 +34,7 @@ const STYLES_CONTAINER = css`
     margin-top: 24px;
     padding-left: 12px;
   }
-  
+
 `;
 
 const STYLES_CHECKBOX_LABEL = css`
@@ -57,7 +58,7 @@ const STYLES_TOOLTIP_ANCHOR = css`
   z-index: ${Constants.zindex.tooltip};
 `;
 
- class FileLayout  extends React.Component {
+class FileLayout extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -70,47 +71,47 @@ const STYLES_TOOLTIP_ANCHOR = css`
             view: 1,
             filtersActive: false,
             filetypeTooltip: false,
-            searchLoading:false
+            searchLoading: false
         }
     }
 
     componentDidMount() {
         this.setState({
-            files:this.props.files
+            files: this.props.files
         })
     }
 
 
     _handleFiletypeFilter = (type) => {
         this.setState(
-            { fileTypes: { ...this.state.fileTypes, [type]: !this.state.fileTypes[type] } },
+            {fileTypes: {...this.state.fileTypes, [type]: !this.state.fileTypes[type]}},
             this._filterFiles
         );
     };
 
     _onSearch = async (value) => {
         this.setState({
-            searchLoading:true
+            searchLoading: true
         })
         console.log(value)
-        if(value){
+        if (value) {
             const res = await searchISCNById(value)
-            if(res==="-1"){
+            if (res === "-1") {
                 this._errorMessage("Invalid ISCN ID format")
-            }else if(res==="-2"){
+            } else if (res === "-2") {
                 this._errorMessage("Request ISCN failed")
-            }else{
-                const url = "https://app.like.co/view/"+encodeURIComponent(value)
+            } else {
+                const url = "https://app.like.co/view/" + encodeURIComponent(value)
                 window.open(url)
             }
         }
         this.setState({
-            searchLoading:false
+            searchLoading: false
         })
     }
 
 
-    _errorMessage = (message)=>{
+    _errorMessage = (message) => {
         this.props.enqueueSnackbar(message,
             {
                 variant: 'error',
@@ -126,11 +127,11 @@ const STYLES_TOOLTIP_ANCHOR = css`
         let fileTypeFiltersActive = Object.values(filters).some((val) => val === true);
 
         if (!fileTypeFiltersActive) {
-            this.setState({ fileTypeFiltersActive });
+            this.setState({fileTypeFiltersActive});
             return;
         }
 
-        let filteredFiles ;
+        let filteredFiles;
         if (fileTypeFiltersActive) {
             filteredFiles = this.props.files.filter((file) => {
                 return (
@@ -149,26 +150,26 @@ const STYLES_TOOLTIP_ANCHOR = css`
     };
 
     _handleFiletypeTooltip = () => {
-        this.setState({ filetypeTooltip: !this.state.filetypeTooltip });
+        this.setState({filetypeTooltip: !this.state.filetypeTooltip});
     };
 
     render() {
-        const tab = this.state.view===0 ?"grid":"table";
+        const tab = this.state.view === 0 ? "grid" : "table";
 
-        return  <div css={STYLES_CONTAINER} style={{ display: `block` }}>
-            <div style={{ display: `flex` }}>
+        return <div css={STYLES_CONTAINER} style={{display: `block`}}>
+            <div style={{display: `flex`}}>
                 <SecondaryTabGroup
                     tabs={[
-                        <SVG.GridView height="24px" style={{ display: "block" }} />,
-                        <SVG.TableView height="24px" style={{ display: "block" }} />,
+                        <SVG.GridView height="24px" style={{display: "block"}}/>,
+                        <SVG.TableView height="24px" style={{display: "block"}}/>,
                     ]}
                     value={this.state.view}
-                    onChange={(value) => this.setState({ view: value })}
-                    style={{ margin: "0 0 24px 0" }}
+                    onChange={(value) => this.setState({view: value})}
+                    style={{margin: "0 0 24px 0"}}
                 />
 
                 <Search
-                    style={{ marginRight:"24px"}}
+                    style={{marginRight: "24px"}}
                     placeholder="search iscn by id"
                     allowClear
                     enterButton="Search"
@@ -179,11 +180,11 @@ const STYLES_TOOLTIP_ANCHOR = css`
 
                 {
                     (
-                        this.props.try?null:(
-                            this.props.has1tT?(null):(
+                        this.props.try ? null : (
+                            this.props.has1tT ? (null) : (
                                 <ButtonPrimary
                                     onClick={this.props._getWeb3Storage}
-                                    style={{background:"#1890ff", whiteSpace: "nowrap", marginRight: 24 ,height:36}}
+                                    style={{background: "#1890ff", whiteSpace: "nowrap", marginRight: 24, height: 36}}
                                 >
                                     Web3.Storage
                                 </ButtonPrimary>
@@ -192,10 +193,10 @@ const STYLES_TOOLTIP_ANCHOR = css`
                     )
                 }
                 {
-                    this.props.try?null:(
+                    this.props.try ? null : (
                         <ButtonPrimary
                             onClick={this.props._refreshData}
-                            style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36}}
+                            style={{whiteSpace: "nowrap", marginRight: 24, height: 36}}
                         >
                             Refresh
                         </ButtonPrimary>
@@ -203,7 +204,7 @@ const STYLES_TOOLTIP_ANCHOR = css`
                 }
                 <ButtonPrimary
                     onClick={this.props._handleUploadData}
-                    style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36}}
+                    style={{whiteSpace: "nowrap", marginRight: 24, height: 36}}
                 >
                     Upload data
                 </ButtonPrimary>
@@ -216,8 +217,8 @@ const STYLES_TOOLTIP_ANCHOR = css`
                 {/*        placeholder="Search files"*/}
                 {/*    />*/}
                 {/*</div>*/}
-                <div style={{ position: "relative" }}>
-                    <ButtonTertiary style={{ marginRight: 20 }} onClick={this._handleFiletypeTooltip}>
+                <div style={{position: "relative"}}>
+                    <ButtonTertiary style={{marginRight: 20}} onClick={this._handleFiletypeTooltip}>
                         <SVG.Filter
                             height="18px"
                             style={{
@@ -232,46 +233,46 @@ const STYLES_TOOLTIP_ANCHOR = css`
                             captureResize={true}
                             captureScroll={false}
                             enabled
-                            onOutsideRectEvent={() => this.setState({ filetypeTooltip: false })}
+                            onOutsideRectEvent={() => this.setState({filetypeTooltip: false})}
                         >
-                            <div css={STYLES_TOOLTIP_ANCHOR} style={{ width: 134, left: 2, top: 50 }}>
+                            <div css={STYLES_TOOLTIP_ANCHOR} style={{width: 134, left: 2, top: 50}}>
                                 <div css={STYLES_FILETYPE_TOOLTIP}>
-                                    <div style={{ width: 100 }}>
+                                    <div style={{width: 100}}>
                                         <CheckBox
                                             name="image"
                                             value={this.state.fileTypes.image}
                                             onChange={() => this._handleFiletypeFilter("image")}
-                                            boxStyle={{ height: 20, width: 20 }}
+                                            boxStyle={{height: 20, width: 20}}
                                         >
                                             <span css={STYLES_CHECKBOX_LABEL}>Image</span>
                                         </CheckBox>
                                     </div>
-                                    <div style={{ width: 100, marginTop: 12 }}>
+                                    <div style={{width: 100, marginTop: 12}}>
                                         <CheckBox
                                             name="audio"
                                             value={this.state.fileTypes.audio}
                                             onChange={() => this._handleFiletypeFilter("audio")}
-                                            boxStyle={{ height: 20, width: 20 }}
+                                            boxStyle={{height: 20, width: 20}}
                                         >
                                             <span css={STYLES_CHECKBOX_LABEL}>Audio</span>
                                         </CheckBox>
                                     </div>
-                                    <div style={{ width: 100, marginTop: 12 }}>
+                                    <div style={{width: 100, marginTop: 12}}>
                                         <CheckBox
                                             name="video"
                                             value={this.state.fileTypes.video}
                                             onChange={() => this._handleFiletypeFilter("video")}
-                                            boxStyle={{ height: 20, width: 20 }}
+                                            boxStyle={{height: 20, width: 20}}
                                         >
                                             <span css={STYLES_CHECKBOX_LABEL}>Video</span>
                                         </CheckBox>
                                     </div>
-                                    <div style={{ width: 100, marginTop: 12 }}>
+                                    <div style={{width: 100, marginTop: 12}}>
                                         <CheckBox
                                             name="pdf"
                                             value={this.state.fileTypes.pdf}
                                             onChange={() => this._handleFiletypeFilter("pdf")}
-                                            boxStyle={{ height: 20, width: 20 }}
+                                            boxStyle={{height: 20, width: 20}}
                                         >
                                             <span css={STYLES_CHECKBOX_LABEL}>Document</span>
                                         </CheckBox>
@@ -284,19 +285,20 @@ const STYLES_TOOLTIP_ANCHOR = css`
             </div>
 
             {this.props.files.length ? (
-                <DataView items={ this.state.fileTypeFiltersActive?this.state.filteredFiles:this.props.files}
+                <DataView items={this.state.fileTypeFiltersActive ? this.state.filteredFiles : this.props.files}
                           view={tab}
-                          keplr = {this.props.keplr}
-                          keplrAddress ={this.props.keplrAddress}
+                          keplr={this.props.keplr}
+                          keplrAddress={this.props.keplrAddress}
                           _openISCN={this.props._openISCN}
                           deleteCid={this.props.deleteCid}
-                            encryptLoading={this.props.encryptLoading}/>
+                          encryptLoading={this.props.encryptLoading}/>
             ) : (
                 <EmptyState>
-                    <FileTypeGroup />
+                    <FileTypeGroup/>
                 </EmptyState>
             )}
         </div>
     }
 }
+
 export default withSnackbar(FileLayout);
