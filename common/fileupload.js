@@ -3,6 +3,9 @@ import { PrivateKey } from '@textile/hub'
 import {storeWithProgress} from "./web3";
 const axios = require('axios');
 
+export const DDSHARE_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDk2YTQzQ0Q0MEUwZkRhODU2Q2JGOUYzN0Y5MkJkNTM2RjRlODAwNzIiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2Mjc3MDE2MDc5MzgsIm5hbWUiOiJJUEZTUEFDRSJ9.g3uAuIDFDqhS7lJjkJUPRPhkN8KpgQPdQeSxbKYWwTk"
+
+
 export const formatUploadedFiles = ({ files }) => {
     let toUpload = [];
     let fileLoading = {};
@@ -76,7 +79,8 @@ export const uploadWithNoEncrypt = async ({file, context, token}) => {
     const fileShortName = `${file.lastModified}-${file.name}`
     let response = await upload({file, fileShortName, context})
     if (!response || response.error) {
-        if (token) {
+        if (!token) {
+            token=DDSHARE_TOKEN
             const web3File = await storeWithProgress(token, file, context)
             return {
                 'cid': web3File.cid,
@@ -97,7 +101,8 @@ export const uploadWithEncrypt = async ({file, context, token}) => {
     file = await id.public.encrypt( new Uint8Array(contentBuffer))
     let response = await upload({file, fileShortName, context})
     if (!response || response.error) {
-        if (token) {
+        if (!token) {
+            token=DDSHARE_TOKEN
             const web3File = await storeWithProgress(token, file, context)
             return {
                 'cid': web3File.cid,
