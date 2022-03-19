@@ -1,13 +1,13 @@
 import React, {Component} from "react";
 import Web3Modal from "web3modal";
 import Web3 from "web3";
-import * as DDNFTMarket from "../../pages/abi/DDNFTMarketplace";
+import * as DDNFTMarket from "../../abi/DDNFTMarketplace";
 import {nftaddress, nftmarketaddress,nftactionaddress} from "../../config";
 import web3 from "web3";
 import {css} from "@emotion/react";
 import {withSnackbar} from "notistack";
-import * as DDNFT from "../../pages/abi/DDNFT";
-import * as DDAction from "../../pages/abi/DDAction"
+import * as DDNFT from "../../abi/DDNFT";
+import * as DDAction from "../../abi/DDAction"
 
 const BUTTON_LIKE = css`
   width: max-content;

@@ -40,9 +40,9 @@ import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Web3Modal from "web3modal";
 import Web3 from "web3";
-import * as DDNFTMarket from "../abi/DDNFTMarketplace";
+import * as DDNFTMarket from "../../abi/DDNFTMarketplace";
 import {nftaddress, nftmarketaddress} from "../../config";
-import * as DDNFT from "../abi/DDNFT";
+import * as DDNFT from "../../abi/DDNFT";
 import SharingPool from "../../components/widget/SharingPool";
 
 const STYLES_ROOT = css`

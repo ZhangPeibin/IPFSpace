@@ -3,8 +3,8 @@ import {nftaddress,nftmarketaddress} from '../../config'
 import {justUpload} from "../../common/fileupload";
 import Web3Modal from "web3modal";
 import Web3 from "web3";
-import * as DDNFT from "../../pages/abi/DDNFT";
-import * as DDNFTMarket from "../../pages/abi/DDNFTMarketplace"
+import * as DDNFT from "../../abi/DDNFT";
+import * as DDNFTMarket from "../../abi/DDNFTMarketplace"
 
 export default function Createpage(props) {
     const [preUrl, setPreUrl] = React.useState("");
