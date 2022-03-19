@@ -96,7 +96,7 @@ const WebsitePrototypeHeader = (props) => {
             </div>
             {<div css={STYLES_RIGHT}>
                 <button css={STYLES_LINK} onClick={_signIn}>
-                    Sign In 
+                    Sign In
                 </button>
             </div>}
         </div>

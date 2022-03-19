@@ -5,8 +5,9 @@ import * as Constants from "../../common/constants";
 import {Boundary} from "../widget/Boundary";
 import {CheckBox} from "../widget/CheckBox";
 import React, {useState} from "react";
-import DataView from "../widget/DataView";
 import {css} from "@emotion/react";
+
+import DataView from "../widget/DataView";
 import EmptyState from "../../common/EmptyState";
 import {FileTypeGroup} from "./FileTypeIcon";
 import {Input, Space} from 'antd';
@@ -209,6 +210,19 @@ class FileLayout extends React.Component {
                     Upload data
                 </ButtonPrimary>
 
+                <ButtonPrimary
+                    onClick={this.props._goToMarketplace}
+                    style={{whiteSpace: "nowrap", marginRight: 24, height: 36}}
+                >
+                    Marketplace
+                </ButtonPrimary>
+
+                <ButtonPrimary
+                    onClick={this.props._sharingPool}
+                    style={{whiteSpace: "nowrap", marginRight: 24, height: 36}}
+                >
+                    SharingPool
+                </ButtonPrimary>
                 {/*<div  style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36, }}*/}
                 {/*      className="bg-gray-200 relative flex w-1 flex-wrap items-stretch">*/}
                 {/*    <input*/}
@@ -290,6 +304,9 @@ class FileLayout extends React.Component {
                           keplr={this.props.keplr}
                           keplrAddress={this.props.keplrAddress}
                           _openISCN={this.props._openISCN}
+                          mint = {this.props._mint}
+                          sellNFT = {this.props._sellNFT}
+                          createSharePoolItem={this.props._createSharePoolItem}
                           deleteCid={this.props.deleteCid}
                           encryptLoading={this.props.encryptLoading}/>
             ) : (

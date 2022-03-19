@@ -29,10 +29,11 @@ const NETWORK_CONFIGS: Record<AppNetwork, ConfigURLs> = {
     verificationsServer: 'https://ceramic-clay.3boxlabs.com/',
   },
   'testnet-clay': {
+    //http://45.63.127.179:7007/
     ceramic: 'https://ceramic-clay.3boxlabs.com/',
-    // ceramic: 'http://45.63.127.179:7007/',
+    // ceramic: 'http://anipfs.space:7007/',
     connectNetwork: 'testnet-clay',
-    verificationsServer: 'https://ceramic-clay.3boxlabs.com/',
+    verificationsServer: 'http://anipfs.space:7007/',
   },
   mainnet: {
     ceramic: 'https://ceramic-private.3boxlabs.com',

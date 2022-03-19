@@ -20,15 +20,30 @@ import EditProfile from "../../components/widget/EditProfile";
 import {Web3ConfirmationModal} from "../../components/widget/Web3ConfirmationModal";
 import {SnackbarProvider, withSnackbar} from "notistack";
 import {EncryptConfirmation} from "../../components/widget/EncryptConfirmation";
-import {uploadWithNoEncrypt} from "../../common/fileupload";
 import {LoadingDialog} from "../../components/widget/LoadingDialog";
 import EditISCN from "../../components/widget/EditISCN";
 import {initKeplr} from "../../common/iscn/keplr";
 import {calculateTotalFee} from "../../common/iscn";
 import BigNumber from "bignumber.js";
 import {formatISCNTxPayload, getISCNId, signISCNTx} from "../../common/iscn/sign";
-import {addISCNIdToFile} from "../../common/UserInfo";
+import {addISCNIdToFile,addisMintToFile} from "../../common/UserInfo";
 import {KeplrConfirmationModal} from "../../components/widget/KeplrConfirmationModal";
+import Explore from "../../components/widget/explore";
+import Createpage from "../../components/widget/create";
+import Script from 'next/script'
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import TextField from "@material-ui/core/TextField";
+import DialogActions from "@material-ui/core/DialogActions";
+import Web3Modal from "web3modal";
+import Web3 from "web3";
+import * as DDNFTMarket from "../abi/DDNFTMarketplace";
+import {nftaddress, nftmarketaddress} from "../../config";
+import * as DDNFT from "../abi/DDNFT";
+import SharingPool from "../../components/widget/SharingPool";
 
 const STYLES_ROOT = css`
   width: 100%;
@@ -89,7 +104,8 @@ const SIDEBARS = {
     SIDEBAR_ADD_FILE_TO_BUCKET: <SidebarAddFileToBucket/>,
     WEB3_INTRO: <Web3Storage/>,
 };
- class DashboardPage extends React.Component {
+
+class DashboardPage extends React.Component {
 
     constructor(props) {
         super(props);
@@ -98,32 +114,39 @@ const SIDEBARS = {
             privacyTooltip: false,
             items: [],
             loading: true,
+            marketplace: false,
+            sharingPool:false,
+            mint: false,
             dbClient: null,
             isRefreshByHand: false,
             showWeb3: false,
             idxLoading: true,
             idx: "connecting to idx ... ",
             encryptLoading: false,
+            openSellPriceFormDialog:false,
             keplr: null,
             keplrAddress: null,
-            askISCN:false,
-            askISCNCid:null,
-            askISCNName:null,
-            localHasShowWeb3:false
+            askISCN: false,
+            askISCNCid: null,
+            askISCNName: null,
+            localHasShowWeb3: false,
+            mintFile:null
         }
         this.handleFile.bind(this)
     }
 
     async componentDidMount() {
+
+
         const identity = await localStorage.getItem("identity")
         this.setState({
             identity: identity
         })
 
         const hasShowWeb3 = await localStorage.getItem("hasShowWeb3")
-        if(hasShowWeb3){
+        if (hasShowWeb3) {
             this.setState({
-                localHasShowWeb3:true
+                localHasShowWeb3: true
             })
         }
 
@@ -145,12 +168,14 @@ const SIDEBARS = {
         await this._auth(identity)
 
         const isAuthByKeplr = localStorage.getItem("isAuthByKeplr")
-        if(isAuthByKeplr ==="1"){
+        if (isAuthByKeplr === "1") {
             const value = await initKeplr()
-            this.setState({
-                keplr: value[0],
-                keplrAddress: value[1]
-            })
+            if (value) {
+                this.setState({
+                    keplr: value[0],
+                    keplrAddress: value[1]
+                })
+            }
         }
     }
 
@@ -214,9 +239,82 @@ const SIDEBARS = {
             value: "WEB3_INTRO",
         });
     }
+
+    _goToMarketplace = () => {
+        this.setState({
+            marketplace: true,
+            mint:false
+        })
+    }
+
+    _sharingPool = ()=>{
+        this.setState({
+            sharingPool: true,
+            mint:false
+        })
+    }
+
+    mintNFTSuccess = async (itemId,cid) => {
+        this._goToHome();
+        const userConfig = await addisMintToFile(cid,
+            true,itemId,
+            this.state.client,
+            this.state.identity)
+        const files = userConfig.files;
+        this.setState({
+            userConfig: userConfig,
+            items: files,
+        })
+    }
+
+    _goToHome = () => {
+        this.setState({
+            marketplace: false,
+            sharingPool:false,
+            mint:false
+        })
+    }
+
+    _saveNFTToSpace = async (nftData) => {
+        this._goToHome();
+        const dateobj = new Date();
+        const createTime = dateobj.toISOString();
+        const fileJson = {
+            filename: nftData.title,
+            size: parseInt(nftData.fileSize),
+            cid: nftData.srcCid,
+            type: nftData.fileType,
+            createTime:createTime,
+            iscnId:[nftData.iscnId],
+            encrypt: false
+        }
+        const result = this.state.items.filter(item => item.cid === nftData.srcCid)
+        if (result && result.length < 1) {
+            await A.storeFile(this.state.client, this.state.identity, fileJson)
+            this.setState({
+                userConfig: {
+                    ...this.state.userConfig,
+                    files: [...this.state.userConfig.files, fileJson],
+                },
+                items: [fileJson,...this.state.items],
+            });
+        }
+        this._successMessage("NFT save to space success !")
+    }
+
+
     _openProfile = () => {
         this.setState({
             openProfile: true
+        })
+    }
+
+
+    _mint = (file) => {
+        console.log(file)
+        this.setState({
+            mint: true,
+            mintFile:file
         })
     }
 
@@ -236,21 +334,31 @@ const SIDEBARS = {
         }
     }
 
-     _errorMessage = (message)=>{
-         this.props.enqueueSnackbar(message,
-             {
-                 variant: 'error',
-                 anchorOrigin: {
-                     vertical: 'bottom',
-                     horizontal: 'center',
-                 },
-             })
-     }
+    _errorMessage = (message) => {
+        this.props.enqueueSnackbar(message,
+            {
+                variant: 'error',
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                },
+            })
+    }
+
+    _successMessage = (message) =>{
+        this.props.enqueueSnackbar(message,
+            {
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                },
+            })
+    }
 
 
     editISCNOK = async (payload) => {
         this.setState({
-            iscnLoading:true
+            iscnLoading: true
         })
         const value = await calculateTotalFee(payload, this.state.keplrAddress)
         const balance = value[0]
@@ -258,7 +366,7 @@ const SIDEBARS = {
         if (new BigNumber(balance).lt(totalFee)) {
             this._errorMessage("INSUFFICIENT_BALANCE")
             this.setState({
-                iscnLoading:false
+                iscnLoading: false
             })
             return
         }
@@ -266,7 +374,7 @@ const SIDEBARS = {
             const res = await signISCNTx(formatISCNTxPayload(payload), this.state.keplr, this.state.keplrAddress)
             const iscnId = await getISCNId(res.txHash)
             console.log(iscnId)
-            const userConfig =  await addISCNIdToFile(this.state.cidToISCN,
+            const userConfig = await addISCNIdToFile(this.state.cidToISCN,
                 iscnId,
                 this.state.client,
                 this.state.identity)
@@ -275,13 +383,13 @@ const SIDEBARS = {
             this.setState({
                 userConfig: userConfig,
                 items: files,
-                openISCN:false,
-                iscnLoading:false
+                openISCN: false,
+                iscnLoading: false
             })
-        }catch (e){
-            this._errorMessage("Register ISCN Failed "+e.toString())
+        } catch (e) {
+            this._errorMessage("Register ISCN Failed " + e.toString())
             this.setState({
-                iscnLoading:false
+                iscnLoading: false
             })
         }
     }
@@ -333,7 +441,7 @@ const SIDEBARS = {
         }
         const web3 = this.state.user.web3
         const resolvedFiles = [];
-        const resolvedFileJsons= []
+        const resolvedFileJsons = []
         for (let i = 0; i < files.length; i++) {
             if (Store.checkCancelled(`${files[i].lastModified}-${files[i].name}`)) {
                 continue;
@@ -399,12 +507,12 @@ const SIDEBARS = {
         let message = "Files Upload finished !";
         Events.dispatchMessage({message,});
 
-        if(files.length===1 && resolvedFileJsons.length===1){
+        if (files.length === 1 && resolvedFileJsons.length === 1) {
             const resolvedFileJson = resolvedFileJsons[0]
             this.setState({
-                askISCN:true,
-                askISCNCid:resolvedFileJson['cid'],
-                askISCNName:resolvedFileJson['filename']
+                askISCN: true,
+                askISCNCid: resolvedFileJson['cid'],
+                askISCNName: resolvedFileJson['filename']
             })
         }
     }
@@ -469,8 +577,85 @@ const SIDEBARS = {
         if (!isEnable) {
             return;
         }
-        await this._openISCN(this.state.askISCNCid,this.state.askISCNName)
+        await this._openISCN(this.state.askISCNCid, this.state.askISCNName)
     }
+
+    handleClickOpen = () => {
+        this.setState({
+            openSellPriceFormDialog:true
+        })
+    };
+
+    handleClose = () => {
+        this.setState({
+            openSellPriceFormDialog:false
+        })
+    };
+
+    _priceChange = (event)=>{
+        this.setState({
+            nftPrice: event.target.value
+        })
+    }
+
+    _sellNFTWithPrice = async () => {
+        this.handleClose();
+        const price = this.state.nftPrice;
+        const itemId = this.state.itemId;
+        console.log("price:" + price);
+        console.log("itemId:" + itemId);
+
+        const web3Modal = new Web3Modal();
+        const provider = await web3Modal.connect();
+        const web3 = new Web3(provider);
+        const accounts = await web3.eth.getAccounts();
+        const marketContract = new web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
+        const contract = new web3.eth.Contract(DDNFT.ABI, nftaddress);
+        const isOperator = await contract.methods.isApprovedForAll(accounts[0], nftmarketaddress).call();
+        if(!isOperator){
+            await contract.methods.setApprovalForAll(nftmarketaddress,true).send({
+                from: accounts[0]
+            });
+        }
+        let marketCreateTransaction = await marketContract.methods.createMarketItem(
+            itemId,
+            web3.utils.toWei(price),
+        ).send({from: accounts[0]})
+            .on('receipt', function (receipt) { });
+        console.log("market create transaction")
+        console.log(marketCreateTransaction)
+        this._goToMarketplace();
+    }
+
+    _sellNFT = (itemId) =>{
+        console.log(itemId);
+        this.setState({
+            openSellPriceFormDialog:true,
+            itemId:itemId
+        })
+    }
+
+    _createSharePoolItem = async (itemId) => {
+        const web3Modal = new Web3Modal();
+        const provider = await web3Modal.connect();
+        const web3 = new Web3(provider);
+        const accounts = await web3.eth.getAccounts();
+        const marketContract = new web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
+        let marketCreateTransaction = await marketContract.methods.createSharePoolItem(
+            itemId,
+            true,
+        ).send({from: accounts[0]})
+            .on('receipt', function (receipt) {
+            });
+        console.log("createSharePoolItem transaction")
+        console.log(marketCreateTransaction)
+        this.setState({
+            marketplace: false,
+            sharingPool:true,
+            mint:false
+        })
+    }
+
 
     render() {
         let sidebarElement;
@@ -491,24 +676,41 @@ const SIDEBARS = {
                             userInfo={this.state.userInfo}
                             showProfile={() => this._openProfile()}
                         />
-                        <Alert
-                            fileLoading={this.state.fileLoading}
-                            onAction={this._handleAction}/>
+                        {
+                            (this.state.marketplace || this.state.mint || this.state.sharingPool) ? (<div></div>) : (
+                                <Alert
+                                    fileLoading={this.state.fileLoading}
+                                    onAction={this._handleAction}/>
+                            )
+                        }
                         {
                             this.state.loading ? (
                                 <Loading/>
                             ) : (
-                                <FileLayout
-                                    _openISCN={this._openISCN}
-                                    encryptLoading={this._encryptLoading}
-                                    _handleUploadData={this._handleUploadData}
-                                    _refreshData={this._refreshData}
-                                    _getWeb3Storage={this._getWeb3Storage}
-                                    files={this.state.items}
-                                    has1tT={this.state.web3}
-                                    keplr={this.state.keplr}
-                                    keplrAddress={this.state.keplrAddress}
-                                    deleteCid={this._deleteCid}/>
+                                this.state.sharingPool?(
+                                        <SharingPool _goToHome={this._goToHome}/>
+                                    ):(
+                                    this.state.mint ? (
+                                        <Createpage mintFile={this.state.mintFile} _mintNFTSuccess={this.mintNFTSuccess} _toNFT={this._goToMarketplace}/>
+                                    ) : (this.state.marketplace ? (<Explore _goToHome={this._goToHome} saveNFTToSpace={this._saveNFTToSpace}/>) : (
+                                        <FileLayout
+                                            _openISCN={this._openISCN}
+                                            _mint={this._mint}
+                                            _sellNFT={this._sellNFT}
+                                            _createSharePoolItem={this._createSharePoolItem}
+                                            encryptLoading={this._encryptLoading}
+                                            _handleUploadData={this._handleUploadData}
+                                            _refreshData={this._refreshData}
+                                            _getWeb3Storage={this._getWeb3Storage}
+                                            _goToMarketplace={this._goToMarketplace}
+                                            _sharingPool = {this._sharingPool}
+                                            files={this.state.items}
+                                            has1tT={this.state.web3}
+                                            keplr={this.state.keplr}
+                                            keplrAddress={this.state.keplrAddress}
+                                            deleteCid={this._deleteCid}/>
+                                    ))
+                                )
                             )
                         }
                         {this.state.sidebar ? (
@@ -532,7 +734,7 @@ const SIDEBARS = {
                             </Boundary>
                         ) : null}
 
-                        { (!this.state.localHasShowWeb3) && this.state.showWeb3 && (
+                        {(!this.state.localHasShowWeb3) && this.state.showWeb3 && (
                             <Web3ConfirmationModal
                                 type={"CONFIRM"}
                                 withValidation={false}
@@ -574,7 +776,7 @@ const SIDEBARS = {
                             editProfile={this.editProfile}/>
                         }
                         {this.state.openISCN && <EditISCN
-                            iscnLoading = {this.state.iscnLoading}
+                            iscnLoading={this.state.iscnLoading}
                             cidToISCNFilename={this.state.cidToISCNFilename}
                             keplrAddress={this.state.keplrAddress}
                             cidToISCN={this.state.cidToISCN}
@@ -585,10 +787,46 @@ const SIDEBARS = {
                         {
                             this.state.encryptLoading && <LoadingDialog/>
                         }
+                        {
+                            <div>
+                                <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
+                                    Open form dialog
+                                </Button>
+                                <Dialog open={this.state.openSellPriceFormDialog} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                                    <DialogTitle id="form-dialog-title">Sell your NFT </DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>
+                                            Please fill in the price you want to sell, note that the price unit is: matic.
+                                        </DialogContentText>
+                                        <TextField
+                                            autoFocus
+                                            margin="dense"
+                                            id="name"
+                                            label="price in matic"
+                                            type="number"
+                                            onChange={this._priceChange}
+                                            fullWidth
+                                        />
+                                    </DialogContent>
+
+
+                                    <DialogActions>
+                                        <Button onClick={this.handleClose} color="primary">
+                                            Cancel
+                                        </Button>
+                                        <Button onClick={this._sellNFTWithPrice} color="primary">
+                                            Sell
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </div>
+                        }
                     </div>
                 </SnackbarProvider>
+                <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></Script>
             </WebsitePrototypeWrapper>
         )
     }
 }
+
 export default withSnackbar(DashboardPage);

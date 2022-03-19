@@ -44,8 +44,8 @@ const INITIAL_STATE: IAppState = {
     web3: null,
     provider: null,
     connected: false,
-    chainId: 1,
-    networkId: 1,
+    chainId: 80001,
+    networkId: 80001,
     assets: [],
     showModal: false,
     pendingRequest: false,
@@ -104,7 +104,6 @@ class Web3Wallet extends React.Component<any, any> {
         this.web3Modal = new Web3Modal({
             network: this.getNetwork(),
             cacheProvider: true,
-            providerOptions: await getProviderOptions()
         });
     }
 
@@ -149,19 +148,53 @@ class Web3Wallet extends React.Component<any, any> {
         }
     }
 
+    switchNetworkMumbai = async (web3) => {
+        try {
+            await web3.currentProvider.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: "0x13881" }],
+            });
+        } catch (error) {
+            if (error.code === 4902) {
+                try {
+                    await web3.currentProvider.request({
+                        method: "wallet_addEthereumChain",
+                        params: [
+                            {
+                                chainId: "0x13881",
+                                chainName: "Mumbai",
+                                rpcUrls: ["https://rpc-mumbai.matic.today"],
+                                nativeCurrency: {
+                                    name: "Matic",
+                                    symbol: "Matic",
+                                    decimals: 18,
+                                },
+                                blockExplorerUrls: ["https://explorer-mumbai.maticvigil.com"],
+                            },
+                        ],
+                    });
+                } catch (error) {
+                    alert(error.message);
+                }
+            }
+        }
+    }
+
     handleLogin = async () => {
         this.setState({
             loading: true
         })
-
         const provider = await this.web3Modal.connect();
         await this.subscribeProvider(provider);
         const web3: any = initWeb3(provider);
+        await this.switchNetworkMumbai(web3);
         const accounts = await web3.eth.getAccounts();
         console.log(accounts)
         const address = accounts[0];
         const networkId = await web3.eth.net.getId();
         const chainId = await web3.eth.chainId()
+        console.log(chainId)
+        console.log(networkId)
         const secretKey = this.state.password;
         await this.setState({
             web3,
@@ -172,9 +205,7 @@ class Web3Wallet extends React.Component<any, any> {
             networkId,
             secretKey
         });
-
         console.log(address)
-
         await this.sign();
         this.setState({
             loading: false

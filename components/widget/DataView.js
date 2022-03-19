@@ -557,6 +557,39 @@ class DataView extends React.Component {
         }
     };
 
+    _handleSharingPool = async (e,each) =>{
+        e.stopPropagation();
+        this._handleHide();
+        const itemId = each['itemId']
+        if (itemId) {
+            this.props.createSharePoolItem(itemId)
+        } else {
+            this.showErrorMessage("You cannot mint data that is not registered with an ISCN")
+        }
+    }
+
+    _handleSell = async (e,each) =>{
+        e.stopPropagation();
+        this._handleHide();
+        const itemId = each['itemId']
+        if (itemId) {
+            this.props.sellNFT(itemId)
+        } else {
+            this.showErrorMessage("You cannot mint data that is not registered with an ISCN")
+        }
+    }
+
+    _handleMint = async (e,cid,file) =>{
+        e.stopPropagation();
+        this._handleHide();
+        const iscnId = file['iscnId']
+        if (iscnId) {
+            this.props.mint(file)
+        } else {
+            this.showErrorMessage("You cannot mint data that is not registered with an ISCN")
+        }
+    }
+
     _handleDeleteByMenu = (e, cid) => {
         this._handleHide(e)
 
@@ -888,7 +921,48 @@ class DataView extends React.Component {
 
         const rows = this.props.items.slice(0, this.state.viewLimit).map((each, index) => {
             const cid = each.cid;
+            let actions = [
+                {
+                    text: "Copy CID",
+                    onClick: (e) => this._handleCopy(e, cid),
+                },
+                {
+                    text: "Delete",
+                    onClick: (e) => this._handleDeleteByMenu(e, cid),
+                },
+                {
+                    text: "Pin To Pinata",
+                    onClick: (e) => this._handlePinata(e, cid, each.filename),
+                },
+                {
+                    text: "Register ISCN",
+                    onClick: (e) => this._handleRegisterISCN(e, cid, each.filename),
+                },
+                {
+                    text: "Copy ISCN ID",
+                    onClick: (e) => this._handleCopyISCNId(e, cid, each),
+                },
+                {
+                    text: "View ISCN",
+                    onClick: (e) => this._handleViewISCN(e, cid, each),
+                },
+            ]
+            if(!each.isMint){
+                actions.push({
+                    text: "Mint NFT",
+                    onClick: (e) => this._handleMint(e, cid, each),
+                })
+            }else{
+                actions.push({
+                    text: "Sell NFT",
+                    onClick: (e) => this._handleSell(e, each),
+                })
 
+                actions.push({
+                    text: "Add to SharingPool",
+                    onClick: (e) => this._handleSharingPool(e, each),
+                })
+            }
             return {
                 ...each,
                 checkbox: (
@@ -972,32 +1046,7 @@ class DataView extends React.Component {
                                         right: "40px",
                                     }}
                                     navigation={[
-                                        [
-                                            {
-                                                text: "Copy CID",
-                                                onClick: (e) => this._handleCopy(e, cid),
-                                            },
-                                            {
-                                                text: "Delete",
-                                                onClick: (e) => this._handleDeleteByMenu(e, cid),
-                                            },
-                                            {
-                                                text: "Pin To Pinata",
-                                                onClick: (e) => this._handlePinata(e, cid, each.filename),
-                                            },
-                                            {
-                                                text: "Register ISCN",
-                                                onClick: (e) => this._handleRegisterISCN(e, cid, each.filename),
-                                            },
-                                            {
-                                                text: "Copy ISCN ID",
-                                                onClick: (e) => this._handleCopyISCNId(e, cid, each),
-                                            },
-                                            {
-                                                text: "View ISCN",
-                                                onClick: (e) => this._handleViewISCN(e, cid, each),
-                                            },
-                                        ],
+                                        actions
                                     ]}
                                 />
                             </Boundary>

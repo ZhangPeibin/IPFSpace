@@ -78,6 +78,7 @@ export const deFile = (url,filename,callback)=>{
 export const uploadWithNoEncrypt = async ({file, context, token}) => {
     const fileShortName = `${file.lastModified}-${file.name}`
     let response = await upload({file, fileShortName, context})
+    console.log(response)
     if (!response || response.error) {
         if (!token) {
             token=DDSHARE_TOKEN

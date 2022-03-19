@@ -101,10 +101,10 @@ class AuthPage extends React.Component {
                                 Continue with Web3 Wallet
                             </button>
 
-                            <KeplrSign/>
-                            <div className="text-gray-500 text-center mb-3 font-bold">
-                                <small>Keplr can be used to register the ISCN of your data</small>
-                            </div>
+                            {/*<KeplrSign/>*/}
+                            {/*<div className="text-gray-500 text-center mb-3 font-bold">*/}
+                            {/*    <small>Keplr can be used to register the ISCN of your data</small>*/}
+                            {/*</div>*/}
 
                             <Divider
                                 color="#AEAEB2"
@@ -172,7 +172,6 @@ class AuthPage extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <IndexBg/>
                 </SnackbarProvider>
             </WebsitePrototypeWrapper>
         );

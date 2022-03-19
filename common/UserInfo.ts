@@ -224,3 +224,30 @@ export const addISCNIdToFile = async (cid,ISCNId, client: Client, identity)=> {
     await client.save(threadId, C.DB.FILES_COLLECTION, [remoteUserConfig])
     return  remoteUserConfig;
 }
+
+export const addisMintToFile = async (cid,isMint,itemId, client: Client, identity)=> {
+    const threadId = ThreadID.fromString(await getLocalThreadId(client));
+    const query = new Where('identity').eq(identity)
+    const remoteUserConfigs = await client.find(threadId, C.DB.FILES_COLLECTION, query)
+    if(remoteUserConfigs.length<1){
+        console.log("why remote user config is empty?")
+        return
+    }
+    const remoteUserConfig = remoteUserConfigs[0];
+    // @ts-ignore
+    const files = remoteUserConfig.files;
+    let copyFiles = []
+    files.forEach(function (file) {
+        if(cid === file.cid){
+            file['isMint'] = isMint
+            file['itemId'] = itemId
+            copyFiles.push(file)
+        }else{
+            copyFiles.push(file)
+        }
+    })
+    // @ts-ignore
+    remoteUserConfig.files = copyFiles;
+    await client.save(threadId, C.DB.FILES_COLLECTION, [remoteUserConfig])
+    return  remoteUserConfig;
+}

@@ -61,6 +61,8 @@ const STYLES_LEFT = css`
 `;
 
 
+
+
 const WebsitePrototypeHeader = (props) => {
     const [open, setOpen] = useState(false);
     const router = useRouter();
@@ -89,7 +91,7 @@ const WebsitePrototypeHeader = (props) => {
     return (
         <div css={STYLES_CONTAINER} style={props.style}>
             <div css={STYLES_LEFT}>
-                <a href={"/"} >
+                <a href={"/dashboard"} >
                     <SVGLogo.Logo  />
                 </a>
             </div>
