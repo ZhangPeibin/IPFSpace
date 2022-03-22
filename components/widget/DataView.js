@@ -934,19 +934,26 @@ class DataView extends React.Component {
                     text: "Pin To Pinata",
                     onClick: (e) => this._handlePinata(e, cid, each.filename),
                 },
-                {
-                    text: "Register ISCN",
-                    onClick: (e) => this._handleRegisterISCN(e, cid, each.filename),
-                },
-                {
-                    text: "Copy ISCN ID",
-                    onClick: (e) => this._handleCopyISCNId(e, cid, each),
-                },
-                {
-                    text: "View ISCN",
-                    onClick: (e) => this._handleViewISCN(e, cid, each),
-                },
             ]
+
+            if(each.iscnId){
+                actions.push({
+                        text: "Copy ISCN ID",
+                        onClick: (e) => this._handleCopyISCNId(e, cid, each),
+                    },
+                    {
+                        text: "View ISCN",
+                        onClick: (e) => this._handleViewISCN(e, cid, each),
+                    })
+            }else{
+                actions.push(
+                    {
+                        text: "Register ISCN",
+                        onClick: (e) => this._handleRegisterISCN(e, cid, each.filename),
+                    },
+                )
+            }
+
             if(!each.isMint){
                 actions.push({
                     text: "Mint NFT",

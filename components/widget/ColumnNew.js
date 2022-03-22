@@ -8,6 +8,8 @@ import {css} from "@emotion/react";
 import {withSnackbar} from "notistack";
 import * as DDNFT from "../../abi/DDNFT";
 import * as DDAction from "../../abi/DDAction"
+import {Avatar, Text} from "grommet";
+import AvatarPlaceholder from "./AvatarPlaceholder";
 
 const BUTTON_LIKE = css`
   width: max-content;
@@ -155,60 +157,6 @@ class Responsive extends Component {
         }
     }
 
-    async cancelSell(nft){
-        console.log(nft)
-        const marketContract = new this.state.web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
-        let marketCreateTransaction = await marketContract.methods.cancelMarketItem(
-            nft.itemId,
-        ).send({from: this.state.accounts[0]})
-            .on('receipt', function (receipt) {
-            });
-        console.log("market create transaction")
-        console.log(marketCreateTransaction)
-
-        await this.loadMyCreateds();
-    }
-
-    async saveToMySpace(nft){
-        const contract = new this.state.web3.eth.Contract(DDNFT.ABI, nftaddress);
-        let result = await contract.methods.tokenMetadata(nft.tokenId).call({from: this.state.accounts[0]}, function (error, result) {
-        });
-        if(result){
-            this.props.saveNFTToSpace(result);
-        }else{
-            this.showErrorMessage("Failed to request on-chain data, please try again!")
-        }
-    }
-
-    async openISCN(nft){
-        const contract = new this.state.web3.eth.Contract(DDNFT.ABI, nftaddress);
-        let result = await contract.methods.tokenMetadata(nft.tokenId).call({from: this.state.accounts[0]}, function (error, result) {
-        });
-        console.log(result)
-        if(result){
-            const iscnId = result.iscnId;
-            if (iscnId) {
-                const url = "https://app.like.co/view/"+encodeURIComponent(iscnId)
-                window.open(url)
-            } else {
-                this.showErrorMessage("Failed to request ISCN data, please try again!")
-            }
-        }else{
-            this.showErrorMessage("Failed to request on-chain data, please try again!")
-        }
-    }
-
-    showErrorMessage = (message)=>{
-        this.props.enqueueSnackbar(message,
-            {
-                variant: 'error',
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                },
-            })
-    }
-
     async like(nft){
         const ddactionContract = new this.state.web3.eth.Contract(DDAction.ABI, nftactionaddress)
         let marketCreateTransaction = await ddactionContract.methods.likeDDNFT(
@@ -223,73 +171,90 @@ class Responsive extends Component {
         await this.loadAllItems();
     }
 
-    async buy(nft) {
-        console.log(nft)
-        const marketContract = new this.state.web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
-        let marketCreateTransaction = await marketContract.methods.createMarketSale(
-            nft.itemId,
-        ).send({from: this.state.accounts[0],value :nft.price})
-            .on('receipt', function (receipt) {
-            });
-        console.log("market create transaction")
-        console.log(marketCreateTransaction)
 
-        await this.loadAllItems();
+    showDetail(nft){
+        console.log(nft)
+        this.props.showNFTDetail(nft);
     }
 
     render() {
         return (
             <div className='row'>
                 {this.state.items.map((nft, index) => (
-                    <div key={index} className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-4">
+                    <div key={index} className="d-item  col-md-6 col-sm-6 col-xs-12 mb-4" style={{width:300}}>
                         <div className="nft__item m-0">
-                            {/*{ nft.deadline &&*/}
-                            {/*    <div className="de_countdown">*/}
-                            {/*        <Clock deadline={nft.deadline} />*/}
-                            {/*    </div>*/}
-                            {/*}*/}
-                            <div className="nft__item_wrap" style={{height: `${this.state.height}px`}}>
-                                <span>
-                                    <img onLoad={this.onImgLoad} src={"https://ipfs.io/ipfs/" + nft.preCid}
-                                         className="lazy nft__item_preview"
-                                         alt=""/>
-                                </span>
-                            </div>
-                            <div className="nft__item_info">
-                                <span >
-                                     <h6>{nft.title}</h6>
-                                </span>
-                                <div className="nft__item_action">
-                                    <span>{nft.description}</span>
+                            <div style={{paddingLeft:24,paddingRight:24,paddingTop:12,float:"left",display:"flex",alignItems:"center"}}>
+                                {
+                                    nft.userIcon ? (
+                                        <Avatar style={{marginTop:"4px",marginBottom:"4px"}} size="48px" src={nft.userIcon} flex={false} />
+                                    ) : (
+                                        <AvatarPlaceholder did={nft.own} size={64} />
+                                    )
+                                }
+                                <div style={{display:"block"}}>
+                                    <div>
+                                        <h4 style={{marginLeft:16,color:"#000"}}>
+                                            {nft.userName.substr(0,10)}
+                                        </h4>
+                                    </div>
+                                    <div>
+                                        <span  style={{marginLeft:16,color:"#000"}}>
+                                            {nft.userWebSite}
+                                        </span>
+                                    </div>
                                 </div>
+                            </div>
 
+                            <div className="nft__item_wrap"  onClick={(e)=>{this.showDetail(nft)}}>
+                                <img onLoad={this.onImgLoad} src={"https://ipfs.io/ipfs/" + nft.preCid}
+                                     className="lazy nft__item_preview"
+                                     style={{width:230,boxSizing:"border-box",objectFit:"contain"}}
+                                     alt=""/>
+                            </div>
+                            <div className="nft__item_info" style={{paddingLeft:24,paddingRight:24}}>
+                                <span >
+                                     <h6>{nft.title} </h6>
+                                </span>
                                 {
                                     (this.props.nftIndex===0) && (
-                                        <div className="nft__item_price" style={{marginBottom:23}}>
-                                            {web3.utils.fromWei(nft.price)}<span>matic</span>
-
-                                            <div style={{marginTop:6}}>
-                                                <div css={nft.isMsgSenderLiked?BUTTON_LIKEED:BUTTON_LIKE} onClick={()=>this.like(nft)} >Total liked :{nft.likeNum} </div>
-                                                <button type="button" className="btn-main" style={{marginTop:6}} onClick={()=>this.buy(nft)} >Buy NFT</button>
+                                        <>
+                                            <span>{nft.description}</span>
+                                            <div className="nft__item_action">
+                                                {web3.utils.fromWei(nft.price)+" "}<span>matic</span>
                                             </div>
-                                        </div>
+                                            <div onClick={()=>this.like(nft)} className="nft__item_like" style={{color:nft.isMsgSenderLiked?"pink":"#ddd"}}>
+                                                <i className="fa fa-heart"></i><span>{nft.likeNum}</span>
+                                            </div>
+                                        </>
                                     )
                                 }
                                 {
                                     (this.props.nftIndex===1) && (
-                                        <div style={{float:"left",display:'flex',marginBottom:12}} >
-                                            <button type="button" className="btn-main" style={{marginTop:6,marginRight:6}} onClick={()=>this.openISCN(nft)} >ISCN</button>
-                                            <button type="button" className="btn-main"  style={{marginTop:6}} onClick={()=>this.saveToMySpace(nft)} >Save</button>
-                                        </div>
+                                        <>
+                                            <div>
+                                                <span>{nft.description}</span>
+                                                <div onClick={()=>this.like(nft)} className="nft__item_like" style={{color:nft.isMsgSenderLiked?"pink":"#ddd"}}>
+                                                    <i className="fa fa-heart"></i><span>{nft.likeNum}</span>
+                                                </div>
+                                            </div>
+                                        </>
                                     )
                                 }
                                 {
                                     (this.props.nftIndex===2) && (
-                                        <div style={{float:"left",display:'flex',marginBottom:12}} >
-                                            <button type="button" className="btn-main" style={{marginTop:6,marginRight:6}} onClick={()=>this.cancelSell(nft)} >Cancel </button>
-                                        </div>
+                                        <>
+                                            <div>
+                                                <span>{nft.description}</span>
+                                                <div onClick={()=>this.like(nft)} className="nft__item_like" style={{color:nft.isMsgSenderLiked?"pink":"#ddd"}}>
+                                                    <i className="fa fa-heart"></i><span>{nft.likeNum}</span>
+                                                </div>
+                                            </div>
+                                        </>
                                     )
                                 }
+
+                                <div style={{marginTop:16}}> </div>
+
                             </div>
                         </div>
                     </div>

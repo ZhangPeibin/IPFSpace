@@ -1,23 +1,21 @@
 /** @jsx jsx */
 import {jsx, css} from "@emotion/react";
-import Router from 'next/router'
-
 import * as React from "react";
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 import {IAssetData} from "@components/core/web3/types";
 import {getChainData} from "@components/core/web3/network";
-import {getProviderOptions} from "@components/core/web3/providers";
-import {generateMessageForEntropy, hashPersonalMessage, recoverPublicKey} from "@components/core/web3/signMessage";
+import {generateMessageForEntropy, hashPersonalMessage} from "@components/core/web3/signMessage";
 import {BigNumber, utils} from "ethers";
 import {PrivateKey} from "@textile/hub";
-import {H3} from "@components/widget/Typography";
-import * as Styles from "@common/styles";
-import * as SVG from "@common/svg";
 import * as Constants from "@common/constants";
-import {withSnackbar} from "notistack";
 import {CircularProgress} from "@material-ui/core";
-import {IDXClient} from "@components/core/ceramic/IDXClient";
+import { withRouter, NextRouter } from 'next/router'
+
+interface WithRouterProps {
+    router: NextRouter
+}
+interface MyComponentProps extends WithRouterProps {}
 
 
 interface IAppState {
@@ -33,8 +31,6 @@ interface IAppState {
     pendingRequest: boolean;
     result: any | null;
     secretKey: string;
-    password: string;
-    passwordAgain: string;
     loading: boolean;
 }
 
@@ -51,8 +47,6 @@ const INITIAL_STATE: IAppState = {
     pendingRequest: false,
     result: null,
     secretKey: null,
-    password: null,
-    passwordAgain: null,
     loading: false
 };
 
@@ -88,7 +82,7 @@ const STYLES_LINK_ITEM = (theme) => css`
   }
 `;
 
-class Web3Wallet extends React.Component<any, any> {
+class Web3Wallet extends React.Component<MyComponentProps > {
     // @ts-ignore
     public web3Modal: Web3Modal;
     public state: IAppState;
@@ -109,44 +103,6 @@ class Web3Wallet extends React.Component<any, any> {
 
     public getNetwork = () => getChainData(this.state.chainId).network;
 
-
-    public showMessage = (message) => {
-        this.props.enqueueSnackbar(message,
-            {
-                variant: 'error',
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                },
-            })
-    }
-
-    public checkPassword = async () => {
-        const password = this.state.password
-        const passwordAgain = this.state.passwordAgain
-        if (password != null) {
-            const passwordLength = password.length;
-            if (passwordAgain == null) {
-                this.showMessage("please input password again!")
-            } else {
-                const passwordAgainLength = passwordAgain.length;
-                if (passwordLength < 6 || passwordAgainLength < 6) {
-                    this.showMessage("password length must be larger than 6!")
-                } else {
-                    if (password != passwordAgain) {
-                        this.showMessage("password not equal passwordAgain!")
-                    } else {
-                        this.setState({
-                            message: null
-                        })
-                        await this.handleLogin()
-                    }
-                }
-            }
-        } else {
-            this.showMessage("please input password!")
-        }
-    }
 
     switchNetworkMumbai = async (web3) => {
         try {
@@ -195,7 +151,7 @@ class Web3Wallet extends React.Component<any, any> {
         const chainId = await web3.eth.chainId()
         console.log(chainId)
         console.log(networkId)
-        const secretKey = this.state.password;
+        const secretKey = "0xDeDeDeShare.io";
         await this.setState({
             web3,
             provider,
@@ -217,13 +173,6 @@ class Web3Wallet extends React.Component<any, any> {
         const message = generateMessageForEntropy(address, "DDshare", secretKey)
         const hasPersonalMessage = hashPersonalMessage(message)
         const signedText = await web3.eth.sign(hasPersonalMessage, address);
-        // const signer = recoverPublicKey(signedText, hasPersonalMessage);
-        // const verified = signer.toLowerCase() === address.toLowerCase();
-        // console.log(verified)
-        // if (!verified) {
-        //     this.showMessage("Signature information error")
-        //     return;
-        // }
         const hash = utils.keccak256(signedText);
         console.log(hash)
         const array = hash
@@ -240,7 +189,7 @@ class Web3Wallet extends React.Component<any, any> {
         localStorage.setItem('seed',JSON.stringify(array));
         // @ts-ignore
         localStorage.setItem("identity", identity.toString())
-        await Router.replace({pathname: "/dashboard"})
+        await this.props.router.replace({pathname: "/dashboard"})
     }
 
 
@@ -289,85 +238,18 @@ class Web3Wallet extends React.Component<any, any> {
     render() {
         return (
             <div
-                className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-200 border-0">
-                <H3
-                    style={{
-                        textAlign: "center",
-                        lineHeight: "30px",
-                        padding: "36px 32px  24px 32px",
-                    }}
                 >
-                    {"Set Web3 Wallet's Password"}
-                </H3>
-                <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-                    <form>
-                        <div className="relative w-full mb-3">
-                            <label
-                                className="block text-gray-700 text-xs font-bold mb-2"
-                                htmlFor="grid-password"
-                            >
-                                Password
-                            </label>
-                            <input
-                                onChange={this._handlePassword}
-                                type="password"
-                                className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                                placeholder="password"
-                                style={{
-                                    transition: "all .15s ease", borderColor: "#FF715E",
-                                    border: "none",
-                                }}
-                            />
-
-                            <label
-                                className="block  text-gray-700 text-xs font-bold mb-2 mt-4"
-                                htmlFor="grid-password"
-                            >
-                                Password again
-                            </label>
-                            <input
-                                onChange={this._handlePasswordAgain}
-                                type="password"
-                                className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                                placeholder="password again"
-                                style={{
-                                    transition: "all .15s ease", borderColor: "#FF715E",
-                                    border: "none",
-                                }}
-                            />
-                            {
-                                <button
-                                    onClick={(this.checkPassword)}
-                                    className="mt-6 bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
-                                    type="button"
-                                    style={{
-                                        transition: "all .15s ease",
-                                        backgroundColor: "#FF715E",
-                                        alignContent: "center"
-                                    }}
-                                >
-                                    {this.state.loading && <CircularProgress size={18} style={{color:"#faebd7",marginRight:"12px"}} />}
-                                    {this.state.loading?"Connecting ..." :" Continue with Web3 Wallet"}
-                                </button>
-                            }
-                        </div>
-
-                        <div className="mt-28">
-                            <div style={{marginTop: "auto"}}>
-                                <div css={STYLES_LINK_ITEM}>
-                                    <div css={Styles.HORIZONTAL_CONTAINER_CENTERED} onClick={(e) => this.props.back()}>
-                                        <SVG.ArrowDownLeft height="16px"
-                                                           style={{marginRight: 4}}/> Back
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                <button
+                    onClick={(this.handleLogin)}className="btn btn-main btn-fullwidth color-2"
+                    type="button"
+                >
+                    {this.state.loading && <CircularProgress size={18} style={{color:"#faebd7",marginRight:"12px"}} />}
+                    {this.state.loading?"Connecting ..." :" MetaMask"}
+                </button>
             </div>
         )
     }
 }
 
 
-export default withSnackbar(Web3Wallet);
+export default withRouter(Web3Wallet);

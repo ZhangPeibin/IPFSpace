@@ -2722,10 +2722,8 @@ i.font60 {
     display: flex;
     flex-direction: column;
     position: relative;
-    padding: 20px;
-    margin: 10px;
     border: solid 1px #ddd;
-    border-radius: 15px;
+    border-radius: 4px;
     -moz-border-radius: 15px;
     -webkit-border-radius: 15px;
     margin-bottom: 25px;
@@ -2738,8 +2736,6 @@ i.font60 {
 }
 .nft__item_info{
   cursor: pointer;
-  line-height: 28px;
-  margin-bottom: -22px;
 }
 .nft__item h4 {
     font-weight: 800;
@@ -2818,9 +2814,6 @@ i.font60 {
     display: inline-block;
     width: 50px;
     height: auto;
-    background: $color;
-    margin-left: 10px;
-    margin-top: -3px;
     border-radius: 100% !important;
     z-index: 1;
     transition: .3s;
@@ -2867,9 +2860,7 @@ i.font60 {
     width: 100%;
 }
 .nft__item img {
-    width: 100%;
-    height: auto !important;
-    border-radius: 8px;
+    border-radius: 4px;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
 }

@@ -82,6 +82,10 @@ export default function AccountButton(props) {
         setMenuOpen(false)
         props.showProfile()
     }
+    const bindWeb3Storage = ()=>{
+        setMenuOpen(false)
+        props._getWeb3Storage();
+    }
 
     const content = (
         <Box border={{ color: '#fffFff' }} margin={{ top: '30px' }} round={{ size: 'small' }}>
@@ -99,7 +103,7 @@ export default function AccountButton(props) {
                     )
                 }
                 <Text size="medium" truncate>
-                    {props.name}
+                    {props.name.substr(0,16)}
                 </Text>
             </Box>
             <Box
@@ -110,9 +114,9 @@ export default function AccountButton(props) {
                 <MenuButton onClick={()=>{profile()}}
                     label="Profile"
                 />
-                <Link href="/me/settings" passHref>
-                    <MenuButton label="Settings" onClick={() => setMenuOpen(false)} />
-                </Link>
+                <MenuButton onClick={()=>{bindWeb3Storage()}}
+                            label="Bind Web3.Storage"
+                />
                 <MenuButton label="Log out"  onClick={() => {props.exit()}} />
             </Box>
         </Box>
@@ -120,6 +124,7 @@ export default function AccountButton(props) {
 
     return (
         <DropButton
+            style={{width:200}}
             dropAlign={{ top: 'bottom', right: 'right' }}
             dropContent={content}
             dropProps={{ plain: true }}

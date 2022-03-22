@@ -5,7 +5,7 @@ import {css} from "@emotion/react";
 import * as Constants from "../../common/constants";
 
 const STYLES_CONTAINER = css`
-  padding: 0px 62px;
+  padding-top:72px;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -118,6 +118,10 @@ export default function Explore(props){
         setNFTIndex(which);
     }
 
+    const showNFTDetail = (nft)=>{
+        props._showNFTDetail(nft,nftIndex)
+    }
+
     return (
         <div css={STYLES_CONTAINER}>
             <section className='container'>
@@ -135,18 +139,11 @@ export default function Explore(props){
                             <a style={{marginRight: 12}}/>
                             <button type="button" onClick={()=>showWhichNFTS(2)} css={(nftIndex!==2)?BUTTON_WHITE:BUTTON_BLACK}>My Created</button>
                             <a style={{marginRight: 12}}/>
-                            <button
-                                css={BUTTON_HOME}
-                                onClick={props._goToHome}
-                                style={{whiteSpace: "nowrap", marginRight: 24, height: 36}}
-                            >
-                                Dashboad
-                            </button>
 
                         </div>
                     </div>
                 </div>
-                <ColumnNew nftIndex={nftIndex} saveNFTToSpace={props.saveNFTToSpace}/>
+                <ColumnNew nftIndex={nftIndex} saveNFTToSpace={props.saveNFTToSpace} showNFTDetail={showNFTDetail}/>
             </section>
         </div>
     );

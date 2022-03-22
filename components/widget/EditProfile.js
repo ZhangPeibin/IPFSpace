@@ -23,7 +23,6 @@ const STYLES_FILE_HIDDEN = css`
 `;
 
 export default function EditProfile(props) {
-
     const sex = [
         {
             value: 'Men',

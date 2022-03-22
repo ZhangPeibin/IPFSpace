@@ -60,11 +60,6 @@ export const ABI = [
                     },
                     {
                         "internalType": "string",
-                        "name": "preCid",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
                         "name": "title",
                         "type": "string"
                     },

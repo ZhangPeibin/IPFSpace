@@ -25,8 +25,9 @@ const STYLES_FILETYPE_TOOLTIP = css`
 `;
 
 const STYLES_CONTAINER = css`
-  padding: 16px 62px;
-  padding-top: 120px;
+  padding-top: 140px;
+  padding-left: 164px;
+  padding-right: 164px;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -90,39 +91,6 @@ class FileLayout extends React.Component {
         );
     };
 
-    _onSearch = async (value) => {
-        this.setState({
-            searchLoading: true
-        })
-        console.log(value)
-        if (value) {
-            const res = await searchISCNById(value)
-            if (res === "-1") {
-                this._errorMessage("Invalid ISCN ID format")
-            } else if (res === "-2") {
-                this._errorMessage("Request ISCN failed")
-            } else {
-                const url = "https://app.like.co/view/" + encodeURIComponent(value)
-                window.open(url)
-            }
-        }
-        this.setState({
-            searchLoading: false
-        })
-    }
-
-
-    _errorMessage = (message) => {
-        this.props.enqueueSnackbar(message,
-            {
-                variant: 'error',
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                },
-            })
-    }
-
     _filterFiles = () => {
         const filters = this.state.fileTypes;
         let fileTypeFiltersActive = Object.values(filters).some((val) => val === true);
@@ -168,69 +136,12 @@ class FileLayout extends React.Component {
                     onChange={(value) => this.setState({view: value})}
                     style={{margin: "0 0 24px 0"}}
                 />
-
-                <Search
-                    style={{marginRight: "24px"}}
-                    placeholder="search iscn by id"
-                    allowClear
-                    enterButton="Search"
-                    size="large"
-                    loading={this.state.searchLoading}
-                    onSearch={this._onSearch}
-                />
-
-                {
-                    (
-                        this.props.try ? null : (
-                            this.props.has1tT ? (null) : (
-                                <ButtonPrimary
-                                    onClick={this.props._getWeb3Storage}
-                                    style={{background: "#1890ff", whiteSpace: "nowrap", marginRight: 24, height: 36}}
-                                >
-                                    Web3.Storage
-                                </ButtonPrimary>
-                            )
-                        )
-                    )
-                }
-                {
-                    this.props.try ? null : (
-                        <ButtonPrimary
-                            onClick={this.props._refreshData}
-                            style={{whiteSpace: "nowrap", marginRight: 24, height: 36}}
-                        >
-                            Refresh
-                        </ButtonPrimary>
-                    )
-                }
                 <ButtonPrimary
                     onClick={this.props._handleUploadData}
                     style={{whiteSpace: "nowrap", marginRight: 24, height: 36}}
                 >
                     Upload data
                 </ButtonPrimary>
-
-                <ButtonPrimary
-                    onClick={this.props._goToMarketplace}
-                    style={{whiteSpace: "nowrap", marginRight: 24, height: 36}}
-                >
-                    Marketplace
-                </ButtonPrimary>
-
-                <ButtonPrimary
-                    onClick={this.props._sharingPool}
-                    style={{whiteSpace: "nowrap", marginRight: 24, height: 36}}
-                >
-                    SharingPool
-                </ButtonPrimary>
-                {/*<div  style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36, }}*/}
-                {/*      className="bg-gray-200 relative flex w-1 flex-wrap items-stretch">*/}
-                {/*    <input*/}
-                {/*        style={{ whiteSpace: "nowrap", marginRight: 24 ,height:36,}}*/}
-                {/*        className="w-1 border-none pl-4 bg-transparent focus:border-red-400 outline-none"*/}
-                {/*        placeholder="Search files"*/}
-                {/*    />*/}
-                {/*</div>*/}
                 <div style={{position: "relative"}}>
                     <ButtonTertiary style={{marginRight: 20}} onClick={this._handleFiletypeTooltip}>
                         <SVG.Filter

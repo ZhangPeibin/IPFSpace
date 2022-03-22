@@ -261,7 +261,7 @@ const homeone = () => {
                                             <div className="roadmap__item">
                                                 <div className="roadmap__inner">
                                                     <div className="roadmap__content">
-                                                        <h4>3. Mainnet Launch</h4>
+                                                        <h4>3. Mainnet Launch Initiated</h4>
                                                         <p>When the testnet is completed, we will choose a time to launch
                                                             the mainnet and issue governance tokens at the same time. The
                                                             airdrops obtained by the testnet can be exchanged for the

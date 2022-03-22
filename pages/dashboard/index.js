@@ -3,7 +3,6 @@ import {jsx, css} from "@emotion/react";
 import * as A from "../../common/UserInfo"
 import React from "react";
 import * as Constants from "../../common/constants";
-import DashboradHeader from "../../components/core/DashboradHeader";
 import WebsitePrototypeWrapper from "../../components/core/WebsitePrototypeWrapper";
 import {Boundary} from "../../components/widget/Boundary";
 import SidebarAddFileToBucket from "../../components/sidebar/SidebarAddFileToBucket";
@@ -16,7 +15,6 @@ import * as Events from "../../common/custom-events";
 import Loading from "../../components/core/Loading";
 import Web3Storage from "../../components/sidebar/Web3Storage";
 import {IDXClient} from "../../components/core/ceramic/IDXClient";
-import EditProfile from "../../components/widget/EditProfile";
 import {Web3ConfirmationModal} from "../../components/widget/Web3ConfirmationModal";
 import {SnackbarProvider, withSnackbar} from "notistack";
 import {EncryptConfirmation} from "../../components/widget/EncryptConfirmation";
@@ -30,7 +28,6 @@ import {addISCNIdToFile,addisMintToFile} from "../../common/UserInfo";
 import {KeplrConfirmationModal} from "../../components/widget/KeplrConfirmationModal";
 import Explore from "../../components/widget/explore";
 import Createpage from "../../components/widget/create";
-import Script from 'next/script'
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -44,6 +41,10 @@ import * as DDNFTMarket from "../../abi/DDNFTMarketplace";
 import {nftaddress, nftmarketaddress} from "../../config";
 import * as DDNFT from "../../abi/DDNFT";
 import SharingPool from "../../components/widget/SharingPool";
+import Header from '../../components/widget/header';
+import EditUserProfile from "../../components/widget/EditUserProfile";
+import NFTItemDetail from "../../components/widget/ItemDetail";
+import Script from "next/script";
 
 const STYLES_ROOT = css`
   width: 100%;
@@ -105,6 +106,17 @@ const SIDEBARS = {
     WEB3_INTRO: <Web3Storage/>,
 };
 
+const COMPONENTS = {
+    HOME:<FileLayout/>,
+    SHARING: <SharingPool/>,
+    MINT: <Createpage/>,
+    MARKETPLACE:<Explore/>,
+    PROFILE:<EditUserProfile/>,
+    LOADING:<Loading/>,
+    ITEM_DETAIL:<NFTItemDetail/>
+}
+
+
 class DashboardPage extends React.Component {
 
     constructor(props) {
@@ -113,10 +125,6 @@ class DashboardPage extends React.Component {
             identity: null,
             privacyTooltip: false,
             items: [],
-            loading: true,
-            marketplace: false,
-            sharingPool:false,
-            mint: false,
             dbClient: null,
             isRefreshByHand: false,
             showWeb3: false,
@@ -130,14 +138,17 @@ class DashboardPage extends React.Component {
             askISCNCid: null,
             askISCNName: null,
             localHasShowWeb3: false,
-            mintFile:null
+            mintFile:null,
+            nftDetail:null,
+            nftIndex:0,
         }
         this.handleFile.bind(this)
     }
 
     async componentDidMount() {
-
-
+        this.setState({
+            component:COMPONENTS['LOADING']
+        })
         const identity = await localStorage.getItem("identity")
         this.setState({
             identity: identity
@@ -183,7 +194,8 @@ class DashboardPage extends React.Component {
         await this.state.idxClient.writeUserInfo(kv)
         this.state.idxClient.readUserInfo().then((userInfo) => {
             this.setState({
-                userInfo: userInfo
+                userInfo: userInfo,
+                component:COMPONENTS["HOME"]
             })
         })
     }
@@ -216,23 +228,11 @@ class DashboardPage extends React.Component {
             this.setState({
                 userConfig: userConfig,
                 items: files,
-                loading: false
+                component:COMPONENTS['HOME']
             })
         })
     }
 
-    _refreshData = () => {
-        if (this.state.client) {
-            this.setState({
-                loading: true,
-                isRefreshByHand: true
-            })
-            this._requestData(this.state.identity,
-                this.state.client)
-        } else {
-            this._auth(this.state.identity);
-        }
-    }
     _getWeb3Storage = () => {
         this._handleAction({
             type: "SIDEBAR",
@@ -242,15 +242,13 @@ class DashboardPage extends React.Component {
 
     _goToMarketplace = () => {
         this.setState({
-            marketplace: true,
-            mint:false
+            component:COMPONENTS["MARKETPLACE"]
         })
     }
 
     _sharingPool = ()=>{
         this.setState({
-            sharingPool: true,
-            mint:false
+           component:COMPONENTS['SHARING']
         })
     }
 
@@ -269,9 +267,15 @@ class DashboardPage extends React.Component {
 
     _goToHome = () => {
         this.setState({
-            marketplace: false,
-            sharingPool:false,
-            mint:false
+            component:COMPONENTS["HOME"]
+        })
+    }
+
+    _showNFTDetail = async (nftData,nftIndex)=>{
+        this.setState({
+            nftDetail:nftData,
+            nftIndex:nftIndex,
+            component:COMPONENTS["ITEM_DETAIL"]
         })
     }
 
@@ -305,7 +309,7 @@ class DashboardPage extends React.Component {
 
     _openProfile = () => {
         this.setState({
-            openProfile: true
+            component: COMPONENTS["PROFILE"]
         })
     }
 
@@ -313,7 +317,7 @@ class DashboardPage extends React.Component {
     _mint = (file) => {
         console.log(file)
         this.setState({
-            mint: true,
+            component: COMPONENTS["MINT"],
             mintFile:file
         })
     }
@@ -650,9 +654,7 @@ class DashboardPage extends React.Component {
         console.log("createSharePoolItem transaction")
         console.log(marketCreateTransaction)
         this.setState({
-            marketplace: false,
-            sharingPool:true,
-            mint:false
+            component:COMPONENTS["SHARING"]
         })
     }
 
@@ -666,53 +668,56 @@ class DashboardPage extends React.Component {
                 setApiToken: this.setApiToken
             });
         }
+
+        let contentElement;
+        if(this.state.component){
+            contentElement = React.cloneElement(this.state.component, {
+                mintFile: this.state.mintFile,
+                _mintNFTSuccess:this.mintNFTSuccess,
+                _toNFT:this._goToMarketplace,
+                saveNFTToSpace: this._saveNFTToSpace,
+                _openISCN:this._openISCN,
+                _mint:this._mint,
+                _sellNFT:this._sellNFT,
+                _createSharePoolItem:this._createSharePoolItem,
+                encryptLoading:this._encryptLoading,
+                _handleUploadData:this._handleUploadData,
+                files:this.state.items,
+                has1tT:this.state.web3,
+                keplr:this.state.keplr,
+                keplrAddress:this.state.keplrAddress,
+                deleteCid:this._deleteCid,
+                editProfile:this.editProfile,
+                userInfo:this.state.userInfo,
+                _showNFTDetail:this._showNFTDetail,
+                nftDetail:this.state.nftDetail,
+                nftIndex:this.state.nftIndex,
+            });
+        }
+
         return (
             <WebsitePrototypeWrapper title={title} description={description} url={url}>
                 <SnackbarProvider>
                     <div css={STYLES_ROOT}>
-                        <DashboradHeader
-                            idxLoading={this.state.idxLoading}
-                            idx={this.state.idx}
-                            userInfo={this.state.userInfo}
-                            showProfile={() => this._openProfile()}
+                        <Header idxLoading={this.state.idxLoading}
+                                idx={this.state.idx}
+                                userInfo={this.state.userInfo}
+                                showProfile={() => this._openProfile() }
+                                _goToMarketplace={this._goToMarketplace}
+                                _sharingPool = {this._sharingPool}
+                                _getWeb3Storage={this._getWeb3Storage}
+                                _goToHome={this._goToHome}
                         />
+
                         {
-                            (this.state.marketplace || this.state.mint || this.state.sharingPool) ? (<div></div>) : (
-                                <Alert
-                                    fileLoading={this.state.fileLoading}
-                                    onAction={this._handleAction}/>
-                            )
+                            <Alert
+                                fileLoading={this.state.fileLoading}
+                                onAction={this._handleAction}/>
                         }
                         {
-                            this.state.loading ? (
-                                <Loading/>
-                            ) : (
-                                this.state.sharingPool?(
-                                        <SharingPool _goToHome={this._goToHome}/>
-                                    ):(
-                                    this.state.mint ? (
-                                        <Createpage mintFile={this.state.mintFile} _mintNFTSuccess={this.mintNFTSuccess} _toNFT={this._goToMarketplace}/>
-                                    ) : (this.state.marketplace ? (<Explore _goToHome={this._goToHome} saveNFTToSpace={this._saveNFTToSpace}/>) : (
-                                        <FileLayout
-                                            _openISCN={this._openISCN}
-                                            _mint={this._mint}
-                                            _sellNFT={this._sellNFT}
-                                            _createSharePoolItem={this._createSharePoolItem}
-                                            encryptLoading={this._encryptLoading}
-                                            _handleUploadData={this._handleUploadData}
-                                            _refreshData={this._refreshData}
-                                            _getWeb3Storage={this._getWeb3Storage}
-                                            _goToMarketplace={this._goToMarketplace}
-                                            _sharingPool = {this._sharingPool}
-                                            files={this.state.items}
-                                            has1tT={this.state.web3}
-                                            keplr={this.state.keplr}
-                                            keplrAddress={this.state.keplrAddress}
-                                            deleteCid={this._deleteCid}/>
-                                    ))
-                                )
-                            )
+                            this.state.component ?(contentElement):(<div></div>)
                         }
+
                         {this.state.sidebar ? (
                             <Boundary
                                 onMouseDown
@@ -770,11 +775,6 @@ class DashboardPage extends React.Component {
                             />
                         )}
 
-                        {this.state.openProfile && <EditProfile
-                            handleClose={() => this.setState({openProfile: false})}
-                            userInfo={this.state.userInfo}
-                            editProfile={this.editProfile}/>
-                        }
                         {this.state.openISCN && <EditISCN
                             iscnLoading={this.state.iscnLoading}
                             cidToISCNFilename={this.state.cidToISCNFilename}
@@ -789,9 +789,6 @@ class DashboardPage extends React.Component {
                         }
                         {
                             <div>
-                                <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                                    Open form dialog
-                                </Button>
                                 <Dialog open={this.state.openSellPriceFormDialog} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                                     <DialogTitle id="form-dialog-title">Sell your NFT </DialogTitle>
                                     <DialogContent>
@@ -823,7 +820,7 @@ class DashboardPage extends React.Component {
                         }
                     </div>
                 </SnackbarProvider>
-                <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></Script>
+                <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"/>
             </WebsitePrototypeWrapper>
         )
     }

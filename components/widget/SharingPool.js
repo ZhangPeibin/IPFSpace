@@ -4,7 +4,7 @@ import * as Constants from "../../common/constants";
 import SharingPoolColumn from "./SharingPoolColumn";
 
 const STYLES_CONTAINER = css`
-  padding: 0px 62px;
+  padding-top:72px;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -111,23 +111,14 @@ const options2 = [
 
 
 export default function SharingPool(props){
+    const showNFTDetail = (nft)=>{
+        props._showNFTDetail(nft,1)
+    }
+
     return (
         <div css={STYLES_CONTAINER}>
             <section className='container'>
-                <div className='row'>
-                    <div className='col-lg-12'>
-                        <div className="items_filter">
-                            <button
-                                css={BUTTON_HOME}
-                                onClick={props._goToHome}
-                                style={{whiteSpace: "nowrap", marginRight: 24, height: 36}}
-                            >
-                                Dashboad
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <SharingPoolColumn saveNFTToSpace={props.saveNFTToSpace}/>
+                <SharingPoolColumn saveNFTToSpace={props.saveNFTToSpace} showNFTDetail={showNFTDetail}/>
             </section>
         </div>
     );

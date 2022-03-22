@@ -9,11 +9,11 @@ const STYLES_ALERT = `
   box-sizing: border-box;
   z-index: ${Constants.zindex.alert};
   position: fixed;
-  top: 56px;
+  top: 72px;
   width: 100%;
   color: ${Constants.system.white};
   min-height: 40px;
-  padding: 12px 56px;
+  padding: 12px 164px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -180,7 +180,7 @@ export class Alert extends React.Component {
       return (
           <div css={STYLES_MESSAGE} style={this.props.style}>
             <div css={STYLES_MESSAGE_BOX} style={{ fontSize: 14 ,}}>
-              ISCN has joined! You can register after uploading a single file, or you can continue to register ISCN in the "..." button on the right side of the data！
+              The data nft module is live, you can now test it on the Polygon testnet mumbai ！ You should register ISCN before mint you data
               <span
                   style={{ position: "absolute", right: 24, padding: 4, cursor: "pointer" }}
                   onClick={this._handleDismissPrivacyAlert}

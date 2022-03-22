@@ -25,7 +25,7 @@ const EmailSign = () => {
     const router = useRouter();
     let magic;
     useEffect(function (){
-        magic = window && new Magic("pk_live_893A36ED60BCFF42"); // ✨
+        magic = window && new Magic("pk_live_26A238CA88F40218"); // ✨
     })
     const login = useCallback(async () => {
         if(magic){
@@ -95,23 +95,12 @@ const EmailSign = () => {
                 >
                     Email
                 </label>
-                <input
-                    css={EMAIL}
-                    onChange={onInputChange}
-                    type="email"
-                    className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                    placeholder="Email"
-                    style={{transition: "all .15s ease"}}
-                />
+
+                <input  onChange={onInputChange} type='email' className="form-control" placeholder="email"/>
             </div>
 
             <div className="text-center mt-4">
-                <button
-                    onClick={onPrivateKey}
-                    className="bg-orange-600 text-white active:bg-orange-200 text-sm font-bold  px-6 py-3 rounded-md shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
-                    type="button"
-                    style={{transition: "all .15s ease",backgroundColor: "#FF715E"}}
-                >
+                <button onClick={onPrivateKey} className="btn btn-main btn-fullwidth color-2">
                     {loading && <CircularProgress size={18} style={{color:"#faebd7",marginRight:"12px"}} />}
                     {loading?"Connecting with Magic and IDX ..." :" Sign In"}
                 </button>

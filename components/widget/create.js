@@ -3,7 +3,6 @@ import {nftaddress,nftmarketaddress} from '../../config'
 import {justUpload} from "../../common/fileupload";
 import Web3Modal from "web3modal";
 import Web3 from "web3";
-import * as DDNFT from "../../abi/DDNFT";
 import * as DDNFTMarket from "../../abi/DDNFTMarketplace"
 
 export default function Createpage(props) {
@@ -31,13 +30,11 @@ export default function Createpage(props) {
         setDescription((e.target.value))
     }
 
-
-    const _price = (e) => {
-        setPrice(e.target.value);
-    }
-
-
     const mint = async (e) => {
+        console.log(props.userInfo)
+        const userIcon = props.userInfo.icon;
+        const userName = props.userInfo.name;
+        const userWebSite = props.userInfo.website;
         let iscnId ;
         if(props.mintFile.iscnId){
             if(props.mintFile.iscnId.length>0){
@@ -54,6 +51,9 @@ export default function Createpage(props) {
         const marketContract = new web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
 
         let transaction = await marketContract.methods.createNFT(
+            userIcon,
+            userName,
+            userWebSite,
             srcCid,
             preCid,
             title,
@@ -77,19 +77,7 @@ export default function Createpage(props) {
 
     return (
         <div>
-            <section className='jumbotron breadcumb no-bg'>
-                <div className='mainbreadcumb'>
-                    <div className='container'>
-                        <div className='row '>
-                            <div className='col-12'>
-                                <h1 className='text-center'>Create Your Data NFT</h1>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section className='container'>
+            <section className='container' style={{marginTop:72}}>
                 <div className="row">
                     <div className="col-lg-7 offset-lg-1 mb-5">
                         <form id="form-create-item" className="form-border" action="#">
@@ -150,16 +138,16 @@ export default function Createpage(props) {
                     <div className="col-lg-3 col-sm-6 col-xs-12">
                         <h5>Preview item</h5>
                         <div className="nft__item m-0">
-                            <div className="nft__item_wrap">
+                            <div className="nft__item_wrap" >
                                 <span>
-                                    <img src={preUrl} alt=""/>
+                                    <img src={preUrl} style={{width:100,height:200,objectFit:"cover"}} />
                                 </span>
                             </div>
-                            <div className="nft__item_info">
+                            <div className="nft__item_info" style={{marginLeft:16,marginRight:16}}>
                                 <span>
                                     <h6>{title}</h6>
                                 </span>
-                                <div className="nft__item_action" style={{marginBottom:23}}>
+                                <div className="nft__item_info" style={{marginBottom:23}}>
                                     <span>{description}</span>
                                 </div>
 
