@@ -2723,9 +2723,8 @@ i.font60 {
     flex-direction: column;
     position: relative;
     border: solid 1px #ddd;
-    border-radius: 4px;
-    -moz-border-radius: 15px;
-    -webkit-border-radius: 15px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
     margin-bottom: 25px;
     background: #ffffff;
     transition: .7s;
@@ -2847,22 +2846,16 @@ i.font60 {
     z-index: 2;
 }
 .nft__item_wrap {
-    width: 100%;
     text-align: center;
     display: flex;
     align-items: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 16px;
+    margin-bottom: 16px;
     justify-content: center;
 }
 .nft__item_wrap span {
     display: block;
     width: 100%;
-}
-.nft__item img {
-    border-radius: 4px;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
 }
 
 /*** author list ***/

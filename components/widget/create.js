@@ -4,22 +4,25 @@ import {justUpload} from "../../common/fileupload";
 import Web3Modal from "web3modal";
 import Web3 from "web3";
 import * as DDNFTMarket from "../../abi/DDNFTMarketplace"
+import { Player } from 'video-react';
+import {getURLfromCID} from "../../common/strings";
 
 export default function Createpage(props) {
     const [preUrl, setPreUrl] = React.useState("");
+    const [fileType, setFileType] = React.useState("");
     const [preCid, setPreCid] = React.useState("");
     const [title, setTitle] = React.useState("title");
     const [description, setDescription] = React.useState("this is description");
-    const [price, setPrice] = React.useState("0");
-    const [minting, setMinting] = React.useState(false);
     const [loadingMsg,setLoadingMsg] = React.useState("")
 
     const onChange = async (e) => {
         var files = e.target.files;
         if (files && files.length>0) {
             const result = await justUpload(files[0])
+            setFileType(result.type)
+            console.log(result)
             setPreCid(result.cid)
-            setPreUrl("https://ipfs.io/ipfs/"+result.cid)
+            setPreUrl(getURLfromCID(result.cid))
         }
     }
 
@@ -31,10 +34,20 @@ export default function Createpage(props) {
     }
 
     const mint = async (e) => {
-        console.log(props.userInfo)
-        const userIcon = props.userInfo.icon;
-        const userName = props.userInfo.name;
-        const userWebSite = props.userInfo.website;
+        const web3Modal = new Web3Modal();
+        const provider = await web3Modal.connect();
+        const web3 = new Web3(provider);
+        const accounts = await web3.eth.getAccounts();
+
+        let userIcon = "";
+        let userName = accounts[0];
+        let userWebSite = "";
+
+        if(props.userInfo){
+            userIcon = props.userInfo.icon;
+            userName = props.userInfo.name;
+            userWebSite = props.userInfo.website;
+        }
         let iscnId ;
         if(props.mintFile.iscnId){
             if(props.mintFile.iscnId.length>0){
@@ -43,11 +56,6 @@ export default function Createpage(props) {
         }
         setLoadingMsg("Minting Data NFT , Please waiting ...")
         const srcCid = props.mintFile.cid;
-        const web3Modal = new Web3Modal();
-        const provider = await web3Modal.connect();
-        const web3 = new Web3(provider);
-        const accounts = await web3.eth.getAccounts();
-
         const marketContract = new web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
 
         let transaction = await marketContract.methods.createNFT(
@@ -58,6 +66,7 @@ export default function Createpage(props) {
             preCid,
             title,
             description,
+            fileType,
             iscnId,
             props.mintFile.type,
             props.mintFile.size
@@ -140,7 +149,16 @@ export default function Createpage(props) {
                         <div className="nft__item m-0">
                             <div className="nft__item_wrap" >
                                 <span>
-                                    <img src={preUrl} style={{width:100,height:200,objectFit:"cover"}} />
+                                    {
+                                        fileType.startsWith("video")?(
+                                            <Player
+                                                playsInline
+                                                src={preUrl}
+                                            />
+                                            ):(
+                                            preUrl.length>0  && <img src={preUrl} style={{height:200, paddingLeft:16,paddingRight:16,objectFit:"cover"}} />
+                                        )
+                                    }
                                 </span>
                             </div>
                             <div className="nft__item_info" style={{marginLeft:16,marginRight:16}}>

@@ -2,17 +2,6 @@ export const ABI = [
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "ddNFTContractAddress",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "uint256",
                 "name": "tokenId",
                 "type": "uint256"
@@ -27,6 +16,35 @@ export const ABI = [
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "like",
+                "type": "bool"
+            }
+        ],
+        "name": "likeDDNFT",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "ddNFTContractAddress",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
     },
     {
         "inputs": [
@@ -114,24 +132,6 @@ export const ABI = [
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bool",
-                "name": "like",
-                "type": "bool"
-            }
-        ],
-        "name": "likeDDNFT",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
     }
 ]

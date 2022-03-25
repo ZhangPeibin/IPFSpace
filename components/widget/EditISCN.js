@@ -7,34 +7,67 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {Avatar, TextareaAutosize, TextField} from "@material-ui/core";
 import EditableTagGroup from "./EditableTagGroup";
-import { withSnackbar } from 'notistack';
+import {withSnackbar} from 'notistack';
 import {transferAuth} from "../../common/iscn/constant/iscn.type";
-import { Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import {Spin} from 'antd';
+import {LoadingOutlined} from '@ant-design/icons';
+import Select from "react-select";
 
-const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+const antIcon = <LoadingOutlined style={{fontSize: 24}} spin/>;
+
+
+const customStyles = {
+    option: (base, state) => ({
+        ...base,
+        background: "#fff",
+        color: "#333",
+        borderRadius: state.isFocused ? "0" : 0,
+        "&:hover": {
+            background: "#eee",
+        }
+    }),
+    menu: base => ({
+        ...base,
+        borderRadius: 0,
+        marginTop: 0
+    }),
+    menuList: base => ({
+        ...base,
+        padding: 0
+    }),
+    control: (base, state) => ({
+        ...base,
+        padding: 2
+    })
+};
+const options = [
+    {value: 'MIT License', label: 'MIT License'},
+    {value: 'Creative Commons Zero v1.0 Universal', label: 'Creative Commons Zero v1.0 Universal'},
+    {value: 'Microsoft Public License', label: 'Microsoft Public License'},
+    {value: 'GNU Lesser General Public License v2.1', label: 'GNU Lesser General Public License v2.1'},
+    {value: 'GNU General Public License v2.0', label: 'GNU General Public License v2.0'},
+    {value: 'The Unlicense',label:"The Unlicense"}
+]
 
 function EditISCN(props) {
 
     const [open, setOpen] = React.useState(true);
     const [scroll, setScroll] = React.useState('paper');
-    const [title, setTitle] = React.useState(props.cidToISCNFilename?props.cidToISCNFilename:"");
+    const [title, setTitle] = React.useState(props.cidToISCNFilename ? props.cidToISCNFilename : "");
     const [author, setAuthor] = React.useState("");
     const [aurl, setAurl] = React.useState("");
     const [aintro, setAintro] = React.useState("");
-    const [likerID, setLikerID] = React.useState("");
     const [url, setUrl] = React.useState("");
     const [license, setLicense] = React.useState("");
-    const [description,setDescription] = React.useState("");
+    const [description, setDescription] = React.useState("");
     let tags = []
 
-    const handleDescription = (event) =>{
+    const handleDescription = (event) => {
         setDescription(event.target.value)
     }
 
-    const handleTagChanged = (v) =>{
+    const handleTagChanged = (v) => {
         tags = v
         console.log(tags)
     }
@@ -42,6 +75,11 @@ function EditISCN(props) {
     const handleClose = () => {
         props.handleClose();
     };
+
+    const onChange = selectedOption =>{
+        console.log(selectedOption)
+        setLicense(selectedOption.value)
+    }
 
 
     const handleOk = async () => {
@@ -81,14 +119,26 @@ function EditISCN(props) {
             return
         }
 
+        if (!license) {
+            props.enqueueSnackbar("The 'license' cannot be empty",
+                {
+                    variant: 'error',
+                    anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    },
+                })
+            return
+        }
+
         const address = props.keplrAddress
         const cid = props.cidToISCN
 
         const authJson = {
-            "name":author,
-            "url": aurl?[aurl]:[],
-            "wallet":[],
-            "likerId":likerID,
+            "name": author,
+            "url": aurl ? [aurl] : [],
+            "wallet": [],
+            "likerId":address,
         }
         const auths = [authJson]
         const authsResult = transferAuth(auths)
@@ -102,11 +152,11 @@ function EditISCN(props) {
             ipfsHash: cid,
             fileSHA256: cid,
             cosmosWallet: address,
-            likerIds: [likerID],
+            likerIds: [address],
             descriptions: [aintro],
-            authorNames:[author],
-            authorUrls:authsResult,
-            authorWallets:[[]]
+            authorNames: [author],
+            authorUrls: authsResult,
+            authorWallets: [[]]
         }
         props.editISCNBack(payload)
     };
@@ -122,7 +172,7 @@ function EditISCN(props) {
                 aria-describedby="scroll-dialog-description"
             >
                 <DialogTitle id="scroll-dialog-title"
-                             style={{color:"#FF715E"}}
+                             style={{color: "#FF715E"}}
                 >Add metadata to your ISCN</DialogTitle>
                 <DialogContent dividers={scroll === 'paper'}>
                     <DialogContentText
@@ -130,134 +180,69 @@ function EditISCN(props) {
                         id="scroll-dialog-description"
                         tabIndex={-1}
                     >
+                        <h6>Title</h6>
+                        <input type="text" name="item_title" id="item_title" className="form-control" value={title}
+                               onChange={(v) => {
+                                   setTitle(v.target.value)
+                               }}/>
+                        <h6>Author</h6>
+                        <input
+                            placeholder="egg: 0x.eth"
+                            type="text" name="item_desc" id="item_desc" className="form-control" value={author}
+                               onChange={(v) => {
+                                   setAuthor(v.target.value)
+                               }}/>
+                        <h6>Author URL</h6>
+                        <input
+                            placeholder="egg: www.author.com"
+                            type="text" name="item_desc" id="item_desc" className="form-control" value={aurl}
+                               onChange={(v) => {
+                                   setAurl(v.target.value)
+                               }}/>
 
-                        <div style={{display: "table-cell", textAlign: "left"}}>
-                            <div>
-                                <TextField
-                                    style={{
-                                        marginTop: "18px",}}
-                                    required
-                                    value={title}
-                                    id="outlined-required"
-                                    label=" Title "
-                                    defaultValue={"24234"}
-                                    size="small"
-                                    onChange={(v)=>{
-                                        setTitle(v.target.value)
-                                    }}
-                                    variant="outlined"
-                                />
-                            </div>
-                            <div>
-                                <TextField
-                                    required
-                                    style={{marginTop: "18px"}}
-                                    value={author}
-                                    size="small"
-                                    id="outlined-required"
-                                    label=" Author"
-                                    onChange={(v)=>{
-                                        setAuthor(v.target.value)
-                                    }}
-                                    variant="outlined"
-                                />
-                            </div>
+                        <h6>Author Introduce</h6>
+                        <input
+                            placeholder="egg: author is full stack ...."
+                            type="text" name="item_desc" id="item_desc" className="form-control" value={aintro}
+                               onChange={(v) => {
+                                   setAintro(v.target.value)
+                               }}/>
 
-                            <div>
-                                <TextField
-                                    style={{marginTop: "18px"}}
-                                    value={aurl}
-                                    size="small"
-                                    id="outlined-required"
-                                    label=" Author URL"
-                                    onChange={(v)=>{
-                                        setAurl(v.target.value)
-                                    }}
-                                    variant="outlined"
-                                />
-                            </div>
-                            <div>
-                                <TextField
-                                    style={{marginTop: "18px"}}
-                                    value={aintro}
-                                    size="small"
-                                    id="outlined-required"
-                                    label=" Author Intro"
-                                    onChange={(v)=>{
-                                        setAintro(v.target.value)
-                                    }}
-                                    variant="outlined"
-                                />
-                            </div>
+                        <h6>WebSite</h6>
+                        <input
+                            placeholder="egg: www.dataIntro.website"
+                            type="text" name="item_desc" id="item_desc" className="form-control" value={url}
+                               onChange={(v) => {
+                                   setUrl(v.target.value)
+                               }}/>
 
-                            <div>
-                                <TextField
-                                    style={{marginTop: "18px"}}
-                                    value={likerID}
-                                    size="small"
-                                    id="outlined-required"
-                                    label=" Author LikerID"
-                                    onChange={(v)=>{
-                                        setLikerID(v.target.value)
-                                    }}
-                                    variant="outlined"
-                                />
-                            </div>
-                            <div>
-                                <TextField
-                                    style={{marginTop: "18px"}}
-                                    value={url}
-                                    size="small"
-                                    id="outlined-required"
-                                    label=" WebSite URL"
-                                    onChange={(v)=>{
-                                        setUrl(v.target.value)
-                                    }}
-                                    variant="outlined"
-                                />
-                            </div>
+                        <h6>License</h6>
+                        <div className='dropdownSelect one'>
+                            <Select
+                                className="basic-multi-select"
+                                classNamePrefix="select"
+                                styles={customStyles}
+                                onChange={onChange}
+                                menuContainerStyle={{'zIndex': 999}} options={options}/></div>
 
-                            <div>
-                                <TextField
-                                    style={{marginTop: "18px"}}
-                                    value={license}
-                                    id="outlined-required"
-                                    label=" License"
-                                    size="small"
-                                    onChange={(v)=>{
-                                        setLicense(v.target.value)
-                                    }}
-                                    variant="outlined"
-                                />
-                            </div>
-
-                            <div  style={{marginTop: "18px"}}>
-                                <h>Tags</h>
-                            </div>
-                            <div>
-                                <EditableTagGroup tagChanged={handleTagChanged}/>
-                            </div>
-                            <div>
-                                <TextField
-                                    onChange={handleDescription}
-                                    style={{marginTop: "18px"}}
-                                    required
-                                    size="small"
-                                    id="outlined-multiline-static"
-                                    label=" Description"
-                                    multiline
-                                    rows={4}
-                                    value={description}
-                                    variant="outlined"
-                                />
-                            </div>
+                        <div style={{marginTop: "18px"}}>
+                            <h>Tags</h>
                         </div>
+                        <div>
+                            <EditableTagGroup tagChanged={handleTagChanged}/>
+                        </div>
+                        <div className="spacer-single"></div>
 
+                        <h6>Description</h6>
+                        <textarea
+                            placeholder="egg: description about this data"
+                            onChange={handleDescription} data-autoresize name="item_desc" id="item_desc"
+                                  className="form-control" value={description}></textarea>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     {
-                        props.iscnLoading && <Spin indicator={antIcon} />
+                        props.iscnLoading && <Spin indicator={antIcon}/>
                     }
                     <Button onClick={handleClose} style={{color: "#3A3B3C"}}>
                         Cancel

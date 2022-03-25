@@ -27,7 +27,7 @@ const inline = keyframes`
     display: inline-block;
   }
 `;
-const whitePager = "https://hub.textile.io/ipfs/bafybeiei6dlmkuvvtahisbjcs7vufqbes6mta7pgoaenvtifvtsqechmu4";
+const whitePager = "https://hub.textile.io/ipfs/bafybeifrxtvv3jx27aq5mnhxloqjvt5canq5i24dqdxeb2puycp2hemiu4";
 
 const slidermainparticle = (props) =>{
     const [showLogin,setShowLogin] = useState(false)

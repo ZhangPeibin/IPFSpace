@@ -83,33 +83,7 @@ const Header = function (props) {
 
 
     const search = async (v) => {
-        const evt = window.event || v;
-        if (evt.keyCode === 13) {
-            const value = v.target.value;
-            console.log(value)
-            if (value) {
-                const res = await searchISCNById(value)
-                if (res === "-1") {
-                    _errorMessage("Invalid ISCN ID format")
-                } else if (res === "-2") {
-                    _errorMessage("Request ISCN failed")
-                } else {
-                    const url = "https://app.like.co/view/" + encodeURIComponent(value)
-                    window.open(url)
-                }
-            }
-        }
-    }
-
-    const _errorMessage = (message) => {
-        props.enqueueSnackbar(message,
-            {
-                variant: 'error',
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                },
-            })
+        props._searchISCN(v);
     }
 
     return (
@@ -126,7 +100,7 @@ const Header = function (props) {
 
                     <div className='search'>
                         <input id="quick_search" className="xs-hide" name="quick_search"
-                               placeholder="search item here..." type="text" onKeyDown={(v)=>search(v)}/>
+                               placeholder="search iscn  here..." type="text" onKeyDown={(v)=>search(v)}/>
                     </div>
 
                     <BreakpointProvider>
@@ -154,6 +128,14 @@ const Header = function (props) {
                                         <div className="dropdown-custom  btn"
                                              onClick={handleBtnClick2}>
                                             Sharing
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='navbar-item'>
+                                    <div >
+                                        <div className="dropdown-custom  btn"
+                                             onClick={(e)=>{props._goMyNFTs()}}>
+                                            My NFTs
                                         </div>
                                     </div>
                                 </div>

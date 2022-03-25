@@ -23,10 +23,9 @@ import EditISCN from "../../components/widget/EditISCN";
 import {initKeplr} from "../../common/iscn/keplr";
 import {calculateTotalFee} from "../../common/iscn";
 import BigNumber from "bignumber.js";
-import {formatISCNTxPayload, getISCNId, signISCNTx} from "../../common/iscn/sign";
+import {formatISCNTxPayload, getISCNId, searchISCNById, signISCNTx} from "../../common/iscn/sign";
 import {addISCNIdToFile,addisMintToFile} from "../../common/UserInfo";
 import {KeplrConfirmationModal} from "../../components/widget/KeplrConfirmationModal";
-import Explore from "../../components/widget/explore";
 import Createpage from "../../components/widget/create";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -40,11 +39,13 @@ import Web3 from "web3";
 import * as DDNFTMarket from "../../abi/DDNFTMarketplace";
 import {nftaddress, nftmarketaddress} from "../../config";
 import * as DDNFT from "../../abi/DDNFT";
-import SharingPool from "../../components/widget/SharingPool";
 import Header from '../../components/widget/header';
 import EditUserProfile from "../../components/widget/EditUserProfile";
 import NFTItemDetail from "../../components/widget/ItemDetail";
 import Script from "next/script";
+import Author from "../../components/widget/Author";
+import ExploreMarket from "../../components/widget/ExploreMarket";
+import SharingPoolMarket from "../../components/widget/SharingPoolMarket";
 
 const STYLES_ROOT = css`
   width: 100%;
@@ -108,12 +109,13 @@ const SIDEBARS = {
 
 const COMPONENTS = {
     HOME:<FileLayout/>,
-    SHARING: <SharingPool/>,
+    SHARING: <SharingPoolMarket/>,
     MINT: <Createpage/>,
-    MARKETPLACE:<Explore/>,
+    MARKETPLACE:<ExploreMarket/>,
     PROFILE:<EditUserProfile/>,
     LOADING:<Loading/>,
-    ITEM_DETAIL:<NFTItemDetail/>
+    ITEM_DETAIL:<NFTItemDetail/>,
+    COLLECTION:<Author/>
 }
 
 
@@ -240,6 +242,25 @@ class DashboardPage extends React.Component {
         });
     }
 
+    searchISCN = async (v) => {
+        const evt = window.event || v;
+        if (evt.keyCode === 13) {
+            const value = v.target.value;
+            console.log(value)
+            if (value) {
+                const res = await searchISCNById(value)
+                if (res === "-1") {
+                    this._errorMessage("Invalid ISCN ID format")
+                } else if (res === "-2") {
+                    this._errorMessage("Request ISCN failed")
+                } else {
+                    const url = "https://app.like.co/view/" + encodeURIComponent(value)
+                    window.open(url)
+                }
+            }
+        }
+    }
+
     _goToMarketplace = () => {
         this.setState({
             component:COMPONENTS["MARKETPLACE"]
@@ -280,7 +301,6 @@ class DashboardPage extends React.Component {
     }
 
     _saveNFTToSpace = async (nftData) => {
-        this._goToHome();
         const dateobj = new Date();
         const createTime = dateobj.toISOString();
         const fileJson = {
@@ -692,6 +712,7 @@ class DashboardPage extends React.Component {
                 _showNFTDetail:this._showNFTDetail,
                 nftDetail:this.state.nftDetail,
                 nftIndex:this.state.nftIndex,
+                idx:this.state.idx
             });
         }
 
@@ -699,7 +720,9 @@ class DashboardPage extends React.Component {
             <WebsitePrototypeWrapper title={title} description={description} url={url}>
                 <SnackbarProvider>
                     <div css={STYLES_ROOT}>
-                        <Header idxLoading={this.state.idxLoading}
+                        <Header
+                                _searchISCN = {this.searchISCN}
+                                idxLoading={this.state.idxLoading}
                                 idx={this.state.idx}
                                 userInfo={this.state.userInfo}
                                 showProfile={() => this._openProfile() }
@@ -707,6 +730,9 @@ class DashboardPage extends React.Component {
                                 _sharingPool = {this._sharingPool}
                                 _getWeb3Storage={this._getWeb3Storage}
                                 _goToHome={this._goToHome}
+                                _goMyNFTs={()=>{this.setState({
+                                    component:COMPONENTS["COLLECTION"]
+                                })}}
                         />
 
                         {
@@ -821,6 +847,7 @@ class DashboardPage extends React.Component {
                     </div>
                 </SnackbarProvider>
                 <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"/>
+                <Script src="https://use.fontawesome.com/releases/v5.2.0/css/all.css"/>
             </WebsitePrototypeWrapper>
         )
     }

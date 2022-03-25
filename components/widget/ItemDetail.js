@@ -10,6 +10,7 @@ import Web3 from "web3";
 import * as DDNFT from "../../abi/DDNFT";
 import {withSnackbar} from "notistack";
 import * as DDAction from "../../abi/DDAction";
+import {Player} from "video-react";
 
 const GlobalStyles = createGlobalStyle`
   header#myHeader.navbar.white {
@@ -34,16 +35,10 @@ const GlobalStyles = createGlobalStyle`
 
 
 const NFTItemDetail = function (props) {
-
     const [openMenu, setOpenMenu] = React.useState(true);
     const [openMenu1, setOpenMenu1] = React.useState(false);
-    const handleBtnClick = () => {
-            setOpenMenu(!openMenu);
-            setOpenMenu1(false);
-            document.getElementById("Mainbtn").classList.add("active");
-            document.getElementById("Mainbtn1").classList.remove("active");
-        }
-    ;
+    const [detail, setDetail] = React.useState(props.nftDetail);
+
 
     const buy = async () => {
         console.log(props.userInfo)
@@ -54,8 +49,8 @@ const NFTItemDetail = function (props) {
 
         let userIcon = "";
         let userName = accounts[0];
-        let userWebSite = "Unkown ";
-        if(props.userInfo){
+        let userWebSite = "";
+        if (props.userInfo) {
             userIcon = props.userInfo.icon;
             userName = props.userInfo.name;
             userWebSite = props.userInfo.website;
@@ -63,25 +58,32 @@ const NFTItemDetail = function (props) {
 
         const marketContract = new web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
         let marketCreateTransaction = await marketContract.methods.createMarketSale(
-            props.nftDetail.itemId,
-            userIcon,userName,userWebSite
-        ).send({from: accounts[0], value: props.nftDetail.price})
+            detail.itemId,
+            userIcon, userName, userWebSite
+        ).send({from: accounts[0], value: detail.price})
             .on('receipt', function (receipt) {
             });
         console.log("market create transaction")
         props._toNFT();
     }
 
-    const  openISCN = async () => {
+    const openISCN = async () => {
         const web3Modal = new Web3Modal();
         const provider = await web3Modal.connect();
         const web3 = new Web3(provider);
         const accounts = await web3.eth.getAccounts();
 
-        const contract = new web3.eth.Contract(DDNFT.ABI, nftaddress);
-        let result = await contract.methods.tokenMetadata(props.nftDetail.tokenId).call({from: accounts[0]}, function (error, result) {
+        const marketContrac = new web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
+        await marketContrac.methods.addViewCount(detail.itemId).send({from: accounts[0]}, function (error, result) {
         });
-        console.log(result)
+
+        const newItemDetails = await marketContrac.methods.getItemAtIndex(detail.itemId).call({from: accounts[0]}, function (error, result) {
+        });
+        setDetail(newItemDetails)
+
+        const contract = new web3.eth.Contract(DDNFT.ABI, nftaddress);
+        let result = await contract.methods.tokenMetadata(detail.tokenId).call({from: accounts[0]}, function (error, result) {
+        });
         if (result) {
             const iscnId = result.iscnId;
             if (iscnId) {
@@ -94,14 +96,14 @@ const NFTItemDetail = function (props) {
             showErrorMessage("Failed to request on-chain data, please try again!")
         }
     }
-    const  cancelSell = async () =>{
+    const cancelSell = async () => {
         const web3Modal = new Web3Modal();
         const provider = await web3Modal.connect();
         const web3 = new Web3(provider);
         const accounts = await web3.eth.getAccounts();
         const marketContract = new web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
         let marketCreateTransaction = await marketContract.methods.cancelMarketItem(
-            props.nftDetail.itemId,
+            detail.itemId,
         ).send({from: accounts[0]})
             .on('receipt', function (receipt) {
             });
@@ -111,8 +113,7 @@ const NFTItemDetail = function (props) {
     }
 
 
-
-    const showErrorMessage = (message)=>{
+    const showErrorMessage = (message) => {
         props.enqueueSnackbar(message,
             {
                 variant: 'error',
@@ -123,17 +124,26 @@ const NFTItemDetail = function (props) {
             })
     }
 
-    const  saveToMySpace = async () =>{
+    const saveToMySpace = async () => {
+
         const web3Modal = new Web3Modal();
         const provider = await web3Modal.connect();
         const web3 = new Web3(provider);
         const accounts = await web3.eth.getAccounts();
-        const contract = new web3.eth.Contract(DDNFT.ABI, nftaddress);
-        let result = await contract.methods.tokenMetadata(props.nftDetail.tokenId).call({from: accounts[0]}, function (error, result) {
+
+        const marketContrac = new web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
+        await marketContrac.methods.addDownloadCount(detail.itemId).send({from: accounts[0]}, function (error, result) {
         });
-        if(result){
+        const newItemDetails = await marketContrac.methods.getItemAtIndex(detail.itemId).call({from: accounts[0]}, function (error, result) {
+        });
+        setDetail(newItemDetails)
+
+        const contract = new web3.eth.Contract(DDNFT.ABI, nftaddress);
+        let result = await contract.methods.tokenMetadata(detail.tokenId).call({from: accounts[0]}, function (error, result) {
+        });
+        if (result) {
             props.saveNFTToSpace(result);
-        }else{
+        } else {
             showErrorMessage("Failed to request on-chain data, please try again!")
         }
     }
@@ -147,8 +157,8 @@ const NFTItemDetail = function (props) {
 
         const ddactionContract = new web3.eth.Contract(DDAction.ABI, nftactionaddress)
         let marketCreateTransaction = await ddactionContract.methods.likeDDNFT(
-            props.nftDetail.tokenId,
-            !props.nftDetail.isMsgSenderLiked,
+            detail.tokenId,
+            !detail.isMsgSenderLiked,
         ).send({from: accounts[0]})
             .on('receipt', function (receipt) {
             });
@@ -160,43 +170,63 @@ const NFTItemDetail = function (props) {
         <div>
             <GlobalStyles/>
 
-            <section className='container'>
+            <section className='container' style={{marginTop:16}}>
                 <div className='row mt-md-5 pt-md-4'>
 
                     <div className="col-md-6 text-center">
-                        <img src={getURLfromCID(props.nftDetail.preCid)} className="img-fluid img-rounded mb-sm-30"
-                             alt=""/>
+                        {
+                            detail.filetype && detail.filetype.startsWith("video") ? (
+                                <Player
+                                    playsInline
+                                    src={getURLfromCID(detail.preCid)}
+                                />
+                            ):(
+                                <img src={getURLfromCID(detail.preCid)} className="img-fluid img-rounded mb-sm-30"
+                                     alt=""/>
+                            )
+                        }
+
                     </div>
                     <div className="col-md-6">
                         <div className="item_info">
-                            {props.nftDetail.onMarket ? "Seller":"Owner"}:
-                            <h4>{props.nftDetail.onMarket ? props.nftDetail.seller:props.nftDetail.owner}</h4>
-                            <h2>{props.nftDetail.title}</h2>
+                            {detail.onMarket ? "Seller" : "Owner"}:
+                            <h4>{detail.onMarket ? detail.seller : detail.owner}</h4>
+                            <h2>{detail.title}</h2>
                             <div className="item_info_counts">
-                                <div onClick={()=>like()}  className="item_info_like" style={{color:props.nftDetail.isMsgSenderLiked?"pink":"#ddd"}}><i className="fa fa-heart" ></i>{"  "+props.nftDetail.likeNum}
+                                <div className="item_info_type"><i className="fa fa-download"></i>{detail.downloadCount}</div>
+                                <div className="item_info_type"><i className="fa fa-eye"></i>{detail.viewCount}</div>
+                                <div onClick={() => like()} className="item_info_like"
+                                     style={{color: detail.isMsgSenderLiked && "pink" }}><i
+                                    className="fa fa-heart"></i>{"  " + detail.likeNum}
                                 </div>
                             </div>
-                            <p>{props.nftDetail.description}.</p>
+                            <p>{detail.description}.</p>
                             <h6>Creator</h6>
-                            <div className="item_author">
+                            <div className="item_author" style={{alignItems: "center"}}>
                                 <div className="author_list_pp">
                                     {
-                                        props.nftDetail.userIcon ? (
-                                            <Avatar style={{marginTop: "4px", marginBottom: "4px"}} size="48px"
-                                                    src={props.nftDetail.userIcon} flex={false}/>
+                                        detail.userIcon ? (
+                                            <Avatar size="48px"
+                                                    src={detail.userIcon} flex={false}/>
                                         ) : (
-                                            <AvatarPlaceholder did={""} size={64}/>
+                                            <AvatarPlaceholder did={""} size={48}/>
                                         )
                                     }
                                 </div>
-                                <div className="author_list_info">
+                                <div style={{marginLeft: 64,alignItems:"center"}}>
                                     <div>
-                                        <p  style={{color:"#000",padding:0 ,margin:0}}>
-                                            {props.nftDetail.userName}
+                                        <p style={{color: "#000", padding: 0, margin: 0}}>
+                                            {detail.userName}
                                         </p>
-                                        <a  href={"https://"+props.nftDetail.userWebSite} target={"_"} style={{color:"#262525"}}>
-                                            {props.nftDetail.userWebSite}
-                                        </a>
+
+                                        {
+                                            detail.userWebSite && detail.userWebSite.length>0 &&(
+                                                <a href={"https://" + detail.userWebSite} target={"_"}
+                                                   style={{color: "#262525"}}>
+                                                    {detail.userWebSite}
+                                                </a>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -207,23 +237,25 @@ const NFTItemDetail = function (props) {
 
                                 <ul className="de_nav">
                                     {
-                                        props.nftIndex===0 && (
+                                        props.nftIndex === 0 && (
                                             <li id='Mainbtn' className="active"><span onClick={buy}>Buy</span></li>
                                         )
                                     }
                                     {
-                                        props.nftIndex===1 && (
-                                            <li id='Mainbtn' className="active"><span onClick={openISCN}>View ISCN</span></li>
+                                        props.nftIndex === 1 && (
+                                            <li id='Mainbtn' className="active"><span
+                                                onClick={openISCN}>View ISCN</span></li>
                                         )
                                     }
                                     {
-                                        props.nftIndex===1 && (
-                                            <li id='Mainbtn' className="active"><span onClick={saveToMySpace}>Save To Space</span></li>
+                                        props.nftIndex === 1 && (
+                                            <li id='Mainbtn1' style={{color: "#FF715E"}}><span onClick={saveToMySpace}>Save Data</span></li>
                                         )
                                     }
                                     {
-                                        props.nftIndex===2 && (
-                                            <li id='Mainbtn' className="active"><span onClick={cancelSell}>Cancel Sell</span></li>
+                                        props.nftIndex === 2 && (
+                                            <li id='Mainbtn' className="active"><span
+                                                onClick={cancelSell}>Cancel Sell</span></li>
                                         )
                                     }
                                 </ul>

@@ -10,6 +10,9 @@ import * as DDNFT from "../../abi/DDNFT";
 import * as DDAction from "../../abi/DDAction"
 import {Avatar, Text} from "grommet";
 import AvatarPlaceholder from "./AvatarPlaceholder";
+import Script from "next/script";
+import {Player} from "video-react";
+import {getURLfromCID} from "../../common/strings";
 
 const BUTTON_LIKE = css`
   width: max-content;
@@ -62,16 +65,14 @@ const BUTTON_WHITE = css`
   transition: all 0.3s ease;
 `;
 
-class Responsive extends Component {
+class OnSaleColumn extends Component {
 
     constructor(props) {
         super(props);
         this.onImgLoad = this.onImgLoad.bind(this);
-        this.loadAllItems = this.loadAllItems.bind(this);
         this.state = {
             height: 0,
             items: [],
-            nftIndex:props.nftIndex
         };
     }
 
@@ -86,47 +87,10 @@ class Responsive extends Component {
             accounts: accounts,
 
         })
-
-        if(this.state.nftIndex===0){
-            await this.loadAllItems();
-        }else if(this.state.nftIndex===1){
-            await  this.loadMyNFTs();
-        }else {
-            await  this.loadMyCreateds();
-        }
+        await  this.loadMyCreateds();
     }
 
-    async componentDidUpdate(prevProps) {
-        if (prevProps.nftIndex !== this.props.nftIndex) {
-            if(this.props.nftIndex===0){
-                await this.loadAllItems();
-            }else if(this.props.nftIndex===1){
-                await  this.loadMyNFTs();
-            }else {
-                await  this.loadMyCreateds();
-            }
-        }
-    }
 
-    loadAllItems = async () => {
-        const contract = new this.state.web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
-        let result = await contract.methods.fetchMarketItems().call({from: this.state.accounts[0]}, function (error, result) {
-        });
-        console.log(result)
-        this.setState({
-            items: result
-        })
-    }
-
-    loadMyNFTs = async () =>{
-        const contract = new this.state.web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
-        let result = await contract.methods.fetchMyNFTs().call({from: this.state.accounts[0]}, function (error, result) {
-        });
-        console.log(result)
-        this.setState({
-            items: result
-        })
-    }
 
     loadMyCreateds = async () =>{
         const contract = new this.state.web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
@@ -138,16 +102,6 @@ class Responsive extends Component {
         })
     }
 
-    loadMore = async () => {
-        await this.loadAllItems();
-        // let nftState = this.state.nfts
-        // let start = nftState.length
-        // let end = nftState.length + 4
-        // this.setState({
-        //     nfts: [...nftState, ...(this.dummyData.slice(start, end))]
-        // });
-    }
-
     onImgLoad({target: img}) {
         let currentHeight = this.state.height;
         if (currentHeight < img.offsetHeight) {
@@ -157,7 +111,9 @@ class Responsive extends Component {
         }
     }
 
-    async like(nft){
+    async like(e,nft){
+        e.stopPropagation();
+
         const ddactionContract = new this.state.web3.eth.Contract(DDAction.ABI, nftactionaddress)
         let marketCreateTransaction = await ddactionContract.methods.likeDDNFT(
             nft.tokenId,
@@ -168,7 +124,7 @@ class Responsive extends Component {
         console.log("likeDDNFT transaction")
         console.log(marketCreateTransaction)
 
-        await this.loadAllItems();
+        await this.loadMyCreateds();
     }
 
 
@@ -181,14 +137,14 @@ class Responsive extends Component {
         return (
             <div className='row'>
                 {this.state.items.map((nft, index) => (
-                    <div key={index} className="d-item  col-md-6 col-sm-6 col-xs-12 mb-4" style={{width:300}}>
+                    <div key={index} className="d-item  col-md-6 col-sm-6 col-xs-12 mb-4" style={{width:280}}>
                         <div className="nft__item m-0">
-                            <div style={{paddingLeft:24,paddingRight:24,paddingTop:12,float:"left",display:"flex",alignItems:"center"}}>
+                            <div onClick={(e)=>{this.showDetail(nft)}} style={{paddingLeft:16,paddingRight:16,paddingTop:12,float:"left",display:"flex",alignItems:"center"}}>
                                 {
-                                    nft.userIcon ? (
-                                        <Avatar style={{marginTop:"4px",marginBottom:"4px"}} size="48px" src={nft.userIcon} flex={false} />
+                                    (nft.userIcon  && nft.userIcon.length>0)? (
+                                        <Avatar style={{marginTop:"4px",marginBottom:"4px"}} size="36px" src={nft.userIcon} flex={false} />
                                     ) : (
-                                        <AvatarPlaceholder did={nft.own} size={64} />
+                                        <AvatarPlaceholder did={nft.own} size={36} />
                                     )
                                 }
                                 <div style={{display:"block"}}>
@@ -197,57 +153,46 @@ class Responsive extends Component {
                                             {nft.userName.substr(0,10)}
                                         </h4>
                                     </div>
-                                    <div>
+                                    {
+                                        nft.userWebSite && nft.userWebSite.length>0 &&
+                                        <div>
                                         <span  style={{marginLeft:16,color:"#000"}}>
                                             {nft.userWebSite}
                                         </span>
-                                    </div>
+                                        </div>
+                                    }
                                 </div>
                             </div>
 
-                            <div className="nft__item_wrap"  onClick={(e)=>{this.showDetail(nft)}}>
-                                <img onLoad={this.onImgLoad} src={"https://ipfs.io/ipfs/" + nft.preCid}
-                                     className="lazy nft__item_preview"
-                                     style={{width:230,boxSizing:"border-box",objectFit:"contain"}}
-                                     alt=""/>
+                            <div className="nft__item_wrap"  >
+                                {
+                                    nft.filetype && nft.filetype.startsWith("video") ? (
+                                        <Player
+                                            playsInline
+                                            src={getURLfromCID(nft.preCid)}
+                                        />
+                                    ):(
+                                        <img
+                                            onClick={(e)=>{this.showDetail(nft)}}
+                                            onLoad={this.onImgLoad} src={getURLfromCID(nft.preCid)}
+                                             style={{width:230,height:280,boxSizing:"border-box",objectFit:"cover"}}
+                                             alt=""/>
+                                    )
+                                }
                             </div>
-                            <div className="nft__item_info" style={{paddingLeft:24,paddingRight:24}}>
+                            <div className="nft__item_info" onClick={(e)=>{this.showDetail(nft)}} style={{paddingLeft:16,paddingRight:16}}>
                                 <span >
                                      <h6>{nft.title} </h6>
                                 </span>
                                 {
-                                    (this.props.nftIndex===0) && (
+                                    (
                                         <>
                                             <span>{nft.description}</span>
                                             <div className="nft__item_action">
                                                 {web3.utils.fromWei(nft.price)+" "}<span>matic</span>
                                             </div>
-                                            <div onClick={()=>this.like(nft)} className="nft__item_like" style={{color:nft.isMsgSenderLiked?"pink":"#ddd"}}>
+                                            <div onClick={(e)=>this.like(e,nft)} className="nft__item_like" style={{color:nft.isMsgSenderLiked?"pink":"#ddd"}}>
                                                 <i className="fa fa-heart"></i><span>{nft.likeNum}</span>
-                                            </div>
-                                        </>
-                                    )
-                                }
-                                {
-                                    (this.props.nftIndex===1) && (
-                                        <>
-                                            <div>
-                                                <span>{nft.description}</span>
-                                                <div onClick={()=>this.like(nft)} className="nft__item_like" style={{color:nft.isMsgSenderLiked?"pink":"#ddd"}}>
-                                                    <i className="fa fa-heart"></i><span>{nft.likeNum}</span>
-                                                </div>
-                                            </div>
-                                        </>
-                                    )
-                                }
-                                {
-                                    (this.props.nftIndex===2) && (
-                                        <>
-                                            <div>
-                                                <span>{nft.description}</span>
-                                                <div onClick={()=>this.like(nft)} className="nft__item_like" style={{color:nft.isMsgSenderLiked?"pink":"#ddd"}}>
-                                                    <i className="fa fa-heart"></i><span>{nft.likeNum}</span>
-                                                </div>
                                             </div>
                                         </>
                                     )
@@ -266,8 +211,9 @@ class Responsive extends Component {
                 {/*</div>*/}
                 {/*}*/}
             </div>
+
         );
     }
 }
 
-export default withSnackbar(Responsive);
+export default withSnackbar(OnSaleColumn);

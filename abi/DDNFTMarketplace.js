@@ -2,80 +2,28 @@ export const ABI = [
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "nftContract",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "ddActiontract",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "DDNFTCreated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
                 "internalType": "uint256",
                 "name": "itemId",
                 "type": "uint256"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "nftContract",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "seller",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "price",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "bool",
-                "name": "sold",
-                "type": "bool"
             }
         ],
-        "name": "MarketItemCreated",
-        "type": "event"
+        "name": "addDownloadCount",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "itemId",
+                "type": "uint256"
+            }
+        ],
+        "name": "addViewCount",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
         "inputs": [
@@ -175,6 +123,11 @@ export const ABI = [
             },
             {
                 "internalType": "string",
+                "name": "preFileType",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
                 "name": "iscnId",
                 "type": "string"
             },
@@ -219,6 +172,97 @@ export const ABI = [
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "nftContract",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "ddActiontract",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "DDNFTCreated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "itemId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "nftContract",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "seller",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "sold",
+                "type": "bool"
+            }
+        ],
+        "name": "MarketItemCreated",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "ddActiontract",
+                "type": "address"
+            }
+        ],
+        "name": "setDDActionContract",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "fetchItemsCreated",
         "outputs": [
@@ -247,6 +291,11 @@ export const ABI = [
                     {
                         "internalType": "address payable",
                         "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address payable",
+                        "name": "creator",
                         "type": "address"
                     },
                     {
@@ -290,6 +339,11 @@ export const ABI = [
                         "type": "string"
                     },
                     {
+                        "internalType": "string",
+                        "name": "filetype",
+                        "type": "string"
+                    },
+                    {
                         "internalType": "bool",
                         "name": "onMarket",
                         "type": "bool"
@@ -308,6 +362,16 @@ export const ABI = [
                         "internalType": "bool",
                         "name": "isMsgSenderLiked",
                         "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "viewCount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "downloadCount",
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct DDNFTMarket.MarketItem[]",
@@ -350,6 +414,11 @@ export const ABI = [
                         "type": "address"
                     },
                     {
+                        "internalType": "address payable",
+                        "name": "creator",
+                        "type": "address"
+                    },
+                    {
                         "internalType": "string",
                         "name": "userIcon",
                         "type": "string"
@@ -390,6 +459,11 @@ export const ABI = [
                         "type": "string"
                     },
                     {
+                        "internalType": "string",
+                        "name": "filetype",
+                        "type": "string"
+                    },
+                    {
                         "internalType": "bool",
                         "name": "onMarket",
                         "type": "bool"
@@ -408,6 +482,16 @@ export const ABI = [
                         "internalType": "bool",
                         "name": "isMsgSenderLiked",
                         "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "viewCount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "downloadCount",
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct DDNFTMarket.MarketItem[]",
@@ -450,6 +534,11 @@ export const ABI = [
                         "type": "address"
                     },
                     {
+                        "internalType": "address payable",
+                        "name": "creator",
+                        "type": "address"
+                    },
+                    {
                         "internalType": "string",
                         "name": "userIcon",
                         "type": "string"
@@ -490,6 +579,11 @@ export const ABI = [
                         "type": "string"
                     },
                     {
+                        "internalType": "string",
+                        "name": "filetype",
+                        "type": "string"
+                    },
+                    {
                         "internalType": "bool",
                         "name": "onMarket",
                         "type": "bool"
@@ -508,6 +602,16 @@ export const ABI = [
                         "internalType": "bool",
                         "name": "isMsgSenderLiked",
                         "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "viewCount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "downloadCount",
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct DDNFTMarket.MarketItem[]",
@@ -550,6 +654,11 @@ export const ABI = [
                         "type": "address"
                     },
                     {
+                        "internalType": "address payable",
+                        "name": "creator",
+                        "type": "address"
+                    },
+                    {
                         "internalType": "string",
                         "name": "userIcon",
                         "type": "string"
@@ -590,6 +699,11 @@ export const ABI = [
                         "type": "string"
                     },
                     {
+                        "internalType": "string",
+                        "name": "filetype",
+                        "type": "string"
+                    },
+                    {
                         "internalType": "bool",
                         "name": "onMarket",
                         "type": "bool"
@@ -608,6 +722,16 @@ export const ABI = [
                         "internalType": "bool",
                         "name": "isMsgSenderLiked",
                         "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "viewCount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "downloadCount",
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct DDNFTMarket.MarketItem[]",
@@ -669,6 +793,11 @@ export const ABI = [
                         "type": "address"
                     },
                     {
+                        "internalType": "address payable",
+                        "name": "creator",
+                        "type": "address"
+                    },
+                    {
                         "internalType": "string",
                         "name": "userIcon",
                         "type": "string"
@@ -709,6 +838,11 @@ export const ABI = [
                         "type": "string"
                     },
                     {
+                        "internalType": "string",
+                        "name": "filetype",
+                        "type": "string"
+                    },
+                    {
                         "internalType": "bool",
                         "name": "onMarket",
                         "type": "bool"
@@ -727,6 +861,16 @@ export const ABI = [
                         "internalType": "bool",
                         "name": "isMsgSenderLiked",
                         "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "viewCount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "downloadCount",
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct DDNFTMarket.MarketItem",
@@ -735,32 +879,6 @@ export const ABI = [
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getListingPrice",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "ddActiontract",
-                "type": "address"
-            }
-        ],
-        "name": "setDDActionContract",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
     }
 ]
