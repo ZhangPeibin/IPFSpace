@@ -28,7 +28,7 @@ class Particle extends Component {
         options={{
           background: {
             color: {
-              value: "",
+              value: "#1e1f26",
             },
           },
           fpsLimit: 70,

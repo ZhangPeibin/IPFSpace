@@ -1872,7 +1872,6 @@ footer{
         text-decoration: none;
         transition: all 0.3s ease;
         &:hover{
-          color: $color;
           transition: all 0.3s ease;
         }
       }
@@ -2395,7 +2394,7 @@ i.font60 {
 .feature-box.f-boxed {
     overflow: none;
     padding: 50px;
-    background: rgba(131,100,226, .1);
+    background: rgba(64,63,131);
     border-radius: 6px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -3666,7 +3665,6 @@ img.img-rounded{
   }
   .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
     color: $white;
-    background: $color_more;
     border-radius: 4px;
     border: 0;
   }
@@ -3690,7 +3688,6 @@ img.img-rounded{
   }
   .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
     color: $white;
-    background: $color_more;
     border-radius: 4px;
     border: 0;
   }
@@ -3715,7 +3712,6 @@ img.img-rounded{
   }
   .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
     color: $white;
-    background: $color_more;
     border-radius: 4px;
     border: 0;
   }

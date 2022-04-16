@@ -7,6 +7,7 @@ import * as Constants from "../common/constants";
 import FeatureBox from '../components/widget/FeatureBox';
 import Faq from 'react-faq-component';
 import Script from "next/script";
+import WebsitePrototypeWrapper from "../components/core/WebsitePrototypeWrapper";
 
 const img = css`
   width: 427px;
@@ -74,25 +75,26 @@ const data = {
         }]
 }
 
+const title = `Multistorage - Cross-Chain Data marketplace`;
+const description =
+    "Build a web3.0 multi-chain storage layer based on W3DS to provide a cross-chain data trading market";
+const url = "https://www.anipfs.space";
 
 const homeone = () => {
     return (
-        <>
+        <WebsitePrototypeWrapper title={title} description={description} url={url} >
             <Script src="/js/jquery-3.6.0.min.js" />
             <Script src="/js/bootstrap.bundle.min.js" />
             <Script src="/js/all.min.js" />
             <Script src="/js/swiper-bundle.min.js" />
             <Script src="/js/aos.js" />
-            <Script src="/js/custom.js" />
-
             <div>
                 <GlobalStyles/>
-                <section className="jumbotron no-bg"
-                         style={{paddingTop: 32, backgroundImage: `url(${'./img/background/2.jpg'})`}}>
+                <section style={{paddingTop:0,paddingBottom:0}}>
                     <Particle/>
                     <SliderMainParticle/>
                 </section>
-                <section>
+                <section style={{zIndex:111999}}>
                     <div className='container'>
                         <FeatureBox/>
                     </div>
@@ -346,7 +348,7 @@ const homeone = () => {
                 </section>
             </div>
 
-        </>
+        </WebsitePrototypeWrapper>
     )
 }
 export default homeone;
