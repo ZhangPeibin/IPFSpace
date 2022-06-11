@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import {jsx, css} from "@emotion/react";
 import React, { useState} from 'react';
 import Reveal from 'react-awesome-reveal';
 import {keyframes} from "@emotion/react";
@@ -8,6 +10,22 @@ import Web3 from "web3";
 import Web3Modal from "web3modal";
 import {getChainData} from "../core/web3/network";
 import {withRouter} from "next/router";
+
+
+const BANNER_BTN = css`
+  padding-left: 32px;
+  padding-right: 32px;
+  background: linear-gradient(-90deg, #5352FC 0%, #6BA2FF 100%);
+  color: #fff;
+  font-size: 20px;
+  text-align: center;
+  line-height: 52px;
+  font-family:"Times New Roman";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%)
+`;
 
 const fadeInUp = keyframes`
   0% {
@@ -126,49 +144,24 @@ const slidermainparticle = (props) =>{
 
     return(
         <div className="container">
-            <div className="row align-items-center" style={{paddingTop:16}}>
-                <div style={{display:'flex',alignItems:"center"}}>
-                    <div style={{float:"left",width:200,zIndex:1000,alignItems:"center",paddingTop:12}}>
-                        <h4 className="col-white" >NeXT Storage </h4>
-                    </div>
-                    <div  style={{float:"right",width:"100%"}}>
-                        <nav className="navbar navbar-expand-xl"  >
-                            <div className="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
-                                <div className="navbar-nav">
-                                    <a  onClick={()=>{ setShowLogin(false)}} className="nav-link" href="#home">Home</a>
-                                    <a  onClick={()=>{ setShowLogin(false)}} className="nav-link"  href="#home">How it works</a>
-                                    <a  onClick={()=>{ setShowLogin(false)}} className="nav-link" href="#home">What is W3DS</a>
-                                    <a onClick={()=>{ setShowLogin(false)}}  className="nav-link" href="#roadmap">Roadmap</a>
-                                    <a onClick={()=>{ setShowLogin(false)}}  className="nav-link" href="#faq">Faq</a>
-                                    <a onClick={()=>{ setShowLogin(false)}} className="nav-link" href="#contact">Contact</a>
-                                </div>
-                                <div onClick={()=>_signIn()} className="btn-main" style={{marginLeft:16}}>Sign In</div>
-                            </div>
-                        </nav>
-                    </div>
-                </div>
-                <div className="col-md-6"  style={{paddingTop:160}}>
+            <div className="row align-items-center" >
+                <div className="col-md-8 align-items-center"  style={{paddingTop:160}}>
                     <div className="spacer-double"></div>
                     <Reveal className='onStep' keyframes={fadeInUp} delay={300} duration={900} triggerOnce>
-                        <h2 className="col-white">Build web3 storage aggregation layer, designed to build Data metaverse with the W3DS protocol</h2>
-                    </Reveal>
-                    <Reveal className='onStep' keyframes={fadeInUp} delay={600} duration={900} triggerOnce>
-                        <p className="lead col-white">
-
-                        </p>
+                        <p style={{fontSize:24,fontWeight:500}} className="col-white">We are in the process of functional development, if you know front-end development and are interested in us, welcome to join our team</p>
                     </Reveal>
                     <div className="spacer-10"></div>
+
+                    <Reveal className='onStep' keyframes={fadeInUp} delay={300} duration={900} triggerOnce>
+                        <p className="col-white">If you have any questions or suggestions, We are so glad that you can email us <a style={{textDecoration:"underline"}} href="https://www.istorage.one/#contact" target={"_blank"}><p className="col-white">Click here to contact Us</p></a></p>
+
+                    </Reveal>
+                    <div className="spacer-2"></div>
                     <Reveal className='onStep d-inline' keyframes={inline} delay={800} duration={900} triggerOnce>
-                        <span onClick={() => window.open(whitePager, "_blank")} className="btn-main inline lead">White Paper</span>
+                        <span  style={{  background:"linear-gradient(-90deg, #5352FC 0%, #6BA2FF 100%)"}} onClick={() => _signIn()} className="btn-main inline lead">Sign In</span>
                         <div className="mb-sm-30"></div>
                     </Reveal>
-                    <div className="spacer-single"></div>
                 </div>
-                {/*{*/}
-                {/*    showLogin &&   <div style={{paddingTop:32,background:"#ffffff"}} className="col-lg-4 offset-lg-2 wow fadeIn" data-wow-delay=".5s" >*/}
-                {/*        <Login />*/}
-                {/*    </div>*/}
-                {/*}*/}
             </div>
         </div>
     )

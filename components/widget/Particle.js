@@ -28,7 +28,7 @@ class Particle extends Component {
         options={{
           background: {
             color: {
-              value: "#1e1f26",
+              value: "#151a2f",
             },
           },
           fpsLimit: 70,
@@ -47,7 +47,7 @@ class Particle extends Component {
             },
             modes: {
               bubble: {
-                distance: 400,
+                distance: 200,
                 duration: 2,
                 opacity: 0.8,
                 size: 40,
