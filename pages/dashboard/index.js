@@ -49,6 +49,7 @@ import SharingPoolMarket from "../../components/widget/SharingPoolMarket";
 
 const STYLES_ROOT = css`
   width: 100%;
+  overflow-y: hidden;
   background-color: ${Constants.system.backgroundColor};
   @media (max-width: ${Constants.sizes.mobile}px) {
     padding: 0px 24px 0 0px;

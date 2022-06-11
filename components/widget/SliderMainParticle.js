@@ -50,8 +50,7 @@ const inline = keyframes`
     display: inline-block;
   }
 `;
-const whitePager = "https://hub.textile.io/ipfs/bafybeifrxtvv3jx27aq5mnhxloqjvt5canq5i24dqdxeb2puycp2hemiu4";
-
+const website = "https://www.istorage.one/"
 const slidermainparticle = (props) =>{
 
     function initWeb3(provider) {
@@ -109,6 +108,10 @@ const slidermainparticle = (props) =>{
         await props.router.replace({pathname: "/dashboard"})
     }
 
+    const backToWebSite = async ()=>{
+        window.open(website,"_blank")
+    }
+
     const switchNetworkMumbai = async (web3) => {
         try {
             await web3.currentProvider.request({
@@ -144,8 +147,14 @@ const slidermainparticle = (props) =>{
 
     return(
         <div className="container">
+            <div style={{display:'flex',alignItems:"center"}}>
+                <div style={{float:"left",width:200,zIndex:1000,alignItems:"center"}}>
+                    <button  onClick={() => backToWebSite()}  className="col-white"
+                             style={{fontSize:64,paddingTop:136,fontWeight:500}}>IStorage</button>
+                </div>
+            </div>
             <div className="row align-items-center" >
-                <div className="col-md-8 align-items-center"  style={{paddingTop:160}}>
+                <div className="col-md-8 align-items-center"  style={{paddingTop:100}}>
                     <div className="spacer-double"></div>
                     <Reveal className='onStep' keyframes={fadeInUp} delay={300} duration={900} triggerOnce>
                         <p style={{fontSize:24,fontWeight:500}} className="col-white">We are in the process of functional development, if you know front-end development and are interested in us, welcome to join our team</p>
@@ -154,9 +163,8 @@ const slidermainparticle = (props) =>{
 
                     <Reveal className='onStep' keyframes={fadeInUp} delay={300} duration={900} triggerOnce>
                         <p className="col-white">If you have any questions or suggestions, We are so glad that you can email us <a style={{textDecoration:"underline"}} href="https://www.istorage.one/#contact" target={"_blank"}><p className="col-white">Click here to contact Us</p></a></p>
-
                     </Reveal>
-                    <div className="spacer-2"></div>
+                    <div className="spacer-10"></div>
                     <Reveal className='onStep d-inline' keyframes={inline} delay={800} duration={900} triggerOnce>
                         <span  style={{  background:"linear-gradient(-90deg, #5352FC 0%, #6BA2FF 100%)"}} onClick={() => _signIn()} className="btn-main inline lead">Sign In</span>
                         <div className="mb-sm-30"></div>
