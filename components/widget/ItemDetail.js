@@ -193,7 +193,7 @@ const NFTItemDetail = function (props) {
                             <h4>{detail.onMarket ? detail.seller : detail.owner}</h4>
                             <h2>{detail.title}</h2>
                             <div className="item_info_counts">
-                                <div className="item_info_type"><i className="fa fa-download"></i>{detail.downloadCount}</div>
+                                <div className="item_info_type"><i className="fa "></i>{detail.downloadCount}</div>
                                 <div className="item_info_type"><i className="fa fa-eye"></i>{detail.viewCount}</div>
                                 <div onClick={() => like()} className="item_info_like"
                                      style={{color: detail.isMsgSenderLiked && "pink" }}><i

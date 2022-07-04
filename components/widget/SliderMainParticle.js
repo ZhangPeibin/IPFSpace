@@ -108,9 +108,6 @@ const slidermainparticle = (props) =>{
         await props.router.replace({pathname: "/dashboard"})
     }
 
-    const backToWebSite = async ()=>{
-        window.open(website,"_blank")
-    }
 
     const switchNetworkMumbai = async (web3) => {
         try {
@@ -144,7 +141,9 @@ const slidermainparticle = (props) =>{
         }
     }
 
-
+    const backToWebSite = async ()=>{
+        window.open(website,"_blank")
+    }
     return(
         <div className="container">
             <div style={{display:'flex',alignItems:"center"}}>

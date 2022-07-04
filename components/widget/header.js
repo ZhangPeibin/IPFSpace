@@ -57,6 +57,7 @@ const Header = function (props) {
         props._sharingPool();
     };
     const handleBtnClick3 = () => {
+        props._ranking();
     };
 
     let magic;
@@ -128,6 +129,14 @@ const Header = function (props) {
                                         <div className="dropdown-custom  btn"
                                              onClick={handleBtnClick2}>
                                             Sharing
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='navbar-item'>
+                                    <div >
+                                        <div className="dropdown-custom  btn"
+                                             onClick={handleBtnClick3}>
+                                            Ranking
                                         </div>
                                     </div>
                                 </div>

@@ -46,6 +46,7 @@ import Script from "next/script";
 import Author from "../../components/widget/Author";
 import ExploreMarket from "../../components/widget/ExploreMarket";
 import SharingPoolMarket from "../../components/widget/SharingPoolMarket";
+import Ranking from "../../components/widget/rangking";
 
 const STYLES_ROOT = css`
   width: 100%;
@@ -116,7 +117,8 @@ const COMPONENTS = {
     PROFILE:<EditUserProfile/>,
     LOADING:<Loading/>,
     ITEM_DETAIL:<NFTItemDetail/>,
-    COLLECTION:<Author/>
+    COLLECTION:<Author/>,
+    RANKING:<Ranking/>
 }
 
 
@@ -271,6 +273,13 @@ class DashboardPage extends React.Component {
     _sharingPool = ()=>{
         this.setState({
            component:COMPONENTS['SHARING']
+        })
+    }
+
+
+    _ranking = ()=>{
+        this.setState({
+            component:COMPONENTS['RANKING']
         })
     }
 
@@ -729,6 +738,7 @@ class DashboardPage extends React.Component {
                                 showProfile={() => this._openProfile() }
                                 _goToMarketplace={this._goToMarketplace}
                                 _sharingPool = {this._sharingPool}
+                                _ranking = {this._ranking}
                                 _getWeb3Storage={this._getWeb3Storage}
                                 _goToHome={this._goToHome}
                                 _goMyNFTs={()=>{this.setState({
