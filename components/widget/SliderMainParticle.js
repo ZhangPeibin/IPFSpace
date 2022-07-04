@@ -156,7 +156,7 @@ const slidermainparticle = (props) =>{
                 <div className="col-md-8 align-items-center"  style={{paddingTop:100}}>
                     <div className="spacer-double"></div>
                     <Reveal className='onStep' keyframes={fadeInUp} delay={300} duration={900} triggerOnce>
-                        <p style={{fontSize:24,fontWeight:500}} className="col-white">We are in the process of functional development, if you know front-end development and are interested in us, welcome to join our team</p>
+                        <p style={{fontSize:36,fontWeight:500}} className="col-white">Your own decentralized storage </p>
                     </Reveal>
                     <div className="spacer-10"></div>
 
