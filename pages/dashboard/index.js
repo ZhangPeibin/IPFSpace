@@ -108,6 +108,7 @@ const SIDEBARS = {
     SIDEBAR_ADD_FILE_TO_BUCKET: <SidebarAddFileToBucket/>,
     WEB3_INTRO: <Web3Storage/>,
 };
+const axios = require('axios').default;
 
 const COMPONENTS = {
     HOME:<FileLayout/>,
@@ -389,8 +390,37 @@ class DashboardPage extends React.Component {
             })
     }
 
+    saveISCN = async (payload) =>{
+        console.log(payload)
+        var formatPayload = payload;
+        formatPayload["likerIds"] = payload["likerIds"].length>0?payload["likerIds"][0]:"";
+        formatPayload["descriptions"] = payload["descriptions"].length>0?payload["descriptions"][0]:"";
+        formatPayload["authorNames"] = payload["authorNames"].length>0?payload["authorNames"][0]:"";
+        formatPayload["authorUrls"] = "";
+        formatPayload["authorWallets"] = "";
+        console.log(formatPayload)
+
+        var data=JSON.stringify(formatPayload);
+
+        const config = {
+            method :'post',
+            url :'/dataman/save',
+            baseURL:'https://bridge.mfull.cn',
+            data:data
+        }
+
+
+        axios.request(config)
+            .then(function(response){
+                console.log(response)
+            } )
+            .catch((error)=> {
+                console.log(error)
+            })
+    }
 
     editISCNOK = async (payload) => {
+        console.log(payload)
         this.setState({
             iscnLoading: true
         })
@@ -420,6 +450,8 @@ class DashboardPage extends React.Component {
                 openISCN: false,
                 iscnLoading: false
             })
+
+            this.saveISCN(payload).then(r => {})
         } catch (e) {
             this._errorMessage("Register ISCN Failed " + e.toString())
             this.setState({

@@ -13,6 +13,8 @@ import {transferAuth} from "../../common/iscn/constant/iscn.type";
 import {Spin} from 'antd';
 import {LoadingOutlined} from '@ant-design/icons';
 import Select from "react-select";
+import {sha256} from "ethers/lib/utils";
+import {sha224} from "js-sha256";
 
 const antIcon = <LoadingOutlined style={{fontSize: 24}} spin/>;
 
@@ -61,15 +63,15 @@ function EditISCN(props) {
     const [url, setUrl] = React.useState("");
     const [license, setLicense] = React.useState("");
     const [description, setDescription] = React.useState("");
-    let tags = []
+    const [tags, setTags] = React.useState([]);
+
 
     const handleDescription = (event) => {
         setDescription(event.target.value)
     }
 
     const handleTagChanged = (v) => {
-        tags = v
-        console.log(tags)
+        setTags(v)
     }
 
     const handleClose = () => {
@@ -142,6 +144,7 @@ function EditISCN(props) {
         }
         const auths = [authJson]
         const authsResult = transferAuth(auths)
+        console.log(tags)
         const payload = {
             type: "ddshare-data",
             name: title,
@@ -150,7 +153,7 @@ function EditISCN(props) {
             url: url,
             license: license,
             ipfsHash: cid,
-            fileSHA256: cid,
+            fileSHA256:sha224(cid),
             cosmosWallet: address,
             likerIds: [address],
             descriptions: [aintro],
@@ -160,7 +163,6 @@ function EditISCN(props) {
         }
         props.editISCNBack(payload)
     };
-
 
     return (
         <div>

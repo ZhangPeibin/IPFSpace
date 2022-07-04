@@ -69,6 +69,7 @@ async function authByTextile (keyInfo: KeyInfo) {
 
 
 export const auth = async (userIdentity) => {
+    console.log("userIdentity :"+userIdentity)
     if(userIdentity==null){
         return null;
     }
@@ -103,6 +104,8 @@ export const getLocalThreadId = async (client:Client)=>{
     return localThreadId;
 }
 
+
+
 export const authIndex = async (identity,client:Client) => {
     if(client!=null){
         let localThreadId = await getLocalThreadId(client);
@@ -130,6 +133,33 @@ export const authIndex = async (identity,client:Client) => {
     }
     return [];
 };
+
+export const getDBData = async (identity,client:Client,localThreadId) => {
+    if(client!=null){
+        const threadId = ThreadID.fromString(localThreadId);
+        const query = new Where('identity').eq(identity)
+        try {
+            const findResult = await client.find(threadId,C.DB.FILES_COLLECTION,query)
+            if(findResult &&findResult.length>0){
+                return findResult;
+            }
+            let config = init
+            config.identity = identity;
+            await client.create(threadId, C.DB.FILES_COLLECTION, [config])
+            return [config];
+        }catch (e) {
+            if(e.toString().indexOf("not found")!==-1){
+                let config = init
+                config.identity = identity;
+                await client.newCollectionFromObject(threadId, schema,{name:C.DB.FILES_COLLECTION})
+                await client.create(threadId, C.DB.FILES_COLLECTION, [config])
+                return [config]
+            }
+        }
+    }
+    return [];
+};
+
 
 export const storeUserInfo = async (client: Client ,userInfo)=>{
     const threadId = ThreadID.fromString(await getLocalThreadId(client));

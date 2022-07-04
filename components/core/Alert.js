@@ -180,7 +180,7 @@ export class Alert extends React.Component {
       return (
           <div css={STYLES_MESSAGE} style={this.props.style}>
             <div css={STYLES_MESSAGE_BOX} style={{ fontSize: 14 ,}}>
-              The data nft module is live, you can now test it on the Polygon testnet mumbai ！ You should register ISCN before mint you data
+              Store your data on your own decentralized storage platform
               <span
                   style={{ position: "absolute", right: 24, padding: 4, cursor: "pointer" }}
                   onClick={this._handleDismissPrivacyAlert}

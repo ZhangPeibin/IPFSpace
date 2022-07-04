@@ -87,6 +87,18 @@ export default function AccountButton(props) {
         props._getWeb3Storage();
     }
 
+    const copyIdentity = async () => {
+        setMenuOpen(false)
+        const identity = await localStorage.getItem("identity")
+        navigator.clipboard.writeText(identity)
+    }
+
+    const copyThreadId = async () => {
+        setMenuOpen(false)
+        const threadId = await localStorage.getItem("threadId")
+        navigator.clipboard.writeText(threadId)
+    }
+
     const content = (
         <Box border={{ color: '#fffFff' }} margin={{ top: '30px' }} round={{ size: 'small' }}>
             <Box
@@ -116,6 +128,12 @@ export default function AccountButton(props) {
                 />
                 <MenuButton onClick={()=>{bindWeb3Storage()}}
                             label="Bind Web3.Storage"
+                />
+                <MenuButton onClick={()=>{copyIdentity()}}
+                            label="Copy Identity"
+                />
+                <MenuButton onClick={()=>{copyThreadId()}}
+                            label="Copy ThreadId"
                 />
                 <MenuButton label="Log out"  onClick={() => {props.exit()}} />
             </Box>

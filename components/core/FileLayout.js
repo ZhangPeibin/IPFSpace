@@ -24,7 +24,25 @@ const STYLES_FILETYPE_TOOLTIP = css`
   height: 260px;
 `;
 
+
 const STYLES_CONTAINER = css`
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    display: none;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: ${Constants.system.foreground};
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${Constants.system.darkGray};
+  }
   padding-top: 140px;
   padding-left: 164px;
   padding-right: 164px;

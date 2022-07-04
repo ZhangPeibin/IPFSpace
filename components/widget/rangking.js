@@ -3,7 +3,6 @@ import Select from 'react-select'
 import {css} from "@emotion/react";
 import * as Constants from "../../common/constants";
 
-
 const STYLES_CONTAINER = css`
   padding-top:72px;
   width: 100%;
@@ -14,6 +13,24 @@ const STYLES_CONTAINER = css`
   @media (max-width: ${Constants.sizes.mobile}px) {
     margin-top: 24px;
     padding-left: 12px;
+  }
+
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    display: none;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: ${Constants.system.foreground};
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${Constants.system.darkGray};
   }
 `;
 
@@ -68,14 +85,14 @@ const Ranking = () => (
         <section className='container'>
             <div className='row'>
                 <div className='col-lg-12'>
-                    <div className="items_filter centerEl">
-                        <div className='dropdownSelect one'><Select className='select1' styles={customStyles}
-                                                                    menuContainerStyle={{'zIndex': 999}}
-                                                                    defaultValue={options[0]} options={options}/></div>
-                        <div className='dropdownSelect two'><Select className='select1' styles={customStyles}
-                                                                    defaultValue={options1[0]} options={options1}/>
-                        </div>
-                    </div>
+                    {/*<div className="items_filter centerEl">*/}
+                    {/*    <div className='dropdownSelect one'><Select className='select1' styles={customStyles}*/}
+                    {/*                                                menuContainerStyle={{'zIndex': 999}}*/}
+                    {/*                                                defaultValue={options[0]} options={options}/></div>*/}
+                    {/*    <div className='dropdownSelect two'><Select className='select1' styles={customStyles}*/}
+                    {/*                                                defaultValue={options1[0]} options={options1}/>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
 
                     <table className="table de-table table-rank">
                         <thead>
@@ -92,13 +109,9 @@ const Ranking = () => (
                         </thead>
                         <tbody>
                         <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-1.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
+                            <td scope="row">
                                 Abstraction
-                            </th>
+                            </td>
                             <td>15,225.87</td>
                             <td className="d-plus">+87.54%</td>
                             <td className="d-plus">+309.49%</td>
@@ -107,13 +120,9 @@ const Ranking = () => (
                             <td>58.5k</td>
                         </tr>
                         <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-2.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
+                            <td scope="row">
                                 Sketchify
-                            </th>
+                            </td>
                             <td>14,304.78</td>
                             <td className="d-plus">+35.11%</td>
                             <td className="d-plus">+239.83%</td>
@@ -122,13 +131,9 @@ const Ranking = () => (
                             <td>28.4k</td>
                         </tr>
                         <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-3.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
+                            <td scope="row">
                                 Cartoonism
-                            </th>
+                            </td>
                             <td>13,705.58</td>
                             <td className="d-min">-33.56%</td>
                             <td className="d-plus">+307.97%</td>
@@ -137,139 +142,15 @@ const Ranking = () => (
                             <td>48.8k</td>
                         </tr>
                         <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-4.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
+                            <td scope="row">
                                 Papercut
-                            </th>
+                            </td>
                             <td>12,516.75</td>
                             <td className="d-plus">+23.45%</td>
                             <td className="d-plus">+171.25%</td>
                             <td>6.3</td>
                             <td>5.3k</td>
                             <td>54.2k</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-5.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
-                                Virtuland
-                            </th>
-                            <td>11,586.26</td>
-                            <td className="d-plus">+80.91%</td>
-                            <td className="d-plus">+241.18%</td>
-                            <td>2.2</td>
-                            <td>1.8k</td>
-                            <td>23.9k</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-6.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
-                                CoolThings
-                            </th>
-                            <td>10,645.96</td>
-                            <td className="d-plus">+51.99%</td>
-                            <td className="d-min">-29.82%</td>
-                            <td>6.6</td>
-                            <td>1.8k</td>
-                            <td>23.6k</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-7.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
-                                DigiPunks
-                            </th>
-                            <td>9,219.13</td>
-                            <td className="d-plus">+42.24%</td>
-                            <td className="d-plus">+95.45%</td>
-                            <td>1.2</td>
-                            <td>3.8k</td>
-                            <td>58.4k</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-8.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
-                                RockToonz
-                            </th>
-                            <td>8,436.15</td>
-                            <td className="d-plus">+61.31%</td>
-                            <td className="d-plus">+347.19%</td>
-                            <td>2.4</td>
-                            <td>1.4k</td>
-                            <td>63.3k</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-9.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
-                                BeeFriends
-                            </th>
-                            <td>7,505.16</td>
-                            <td className="d-plus">+64.46%</td>
-                            <td className="d-plus">+240.94%</td>
-                            <td>2.3</td>
-                            <td>5.2k</td>
-                            <td>70.3k</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-10.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
-                                Patternlicious
-                            </th>
-                            <td>6,593.91</td>
-                            <td className="d-min">-33.78%</td>
-                            <td className="d-plus">+82.32%</td>
-                            <td>4.5</td>
-                            <td>6.5k</td>
-                            <td>53.3k</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-11.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
-                                FlyingFox
-                            </th>
-                            <td>5,605.97</td>
-                            <td className="d-plus">+48.67%</td>
-                            <td className="d-plus">+101.33%</td>
-                            <td>4.6</td>
-                            <td>5.1k</td>
-                            <td>36.2k</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                                <div className="coll_list_pp">
-                                    <img className="lazy" src="./img/author/author-12.jpg" alt=""/>
-                                    <i className="fa fa-check"></i>
-                                </div>
-                                Autoglyphs
-                            </th>
-                            <td>4,904.27</td>
-                            <td className="d-plus">+86.15%</td>
-                            <td className="d-plus">+391.49%</td>
-                            <td>4.5</td>
-                            <td>6.2k</td>
-                            <td>21.1k</td>
                         </tr>
                         </tbody>
                     </table>

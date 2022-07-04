@@ -140,6 +140,7 @@ class SharingPoolMarket extends Component {
 
 
     async openISCN(nft){
+        nft.tokenId = undefined;
         const contract = new this.state.web3.eth.Contract(DDNFT.ABI, nftaddress);
         let result = await contract.methods.tokenMetadata(nft.tokenId).call({from: this.state.accounts[0]}, function (error, result) {
         });
