@@ -1,10 +1,14 @@
-import React from 'react';
-import Select from 'react-select'
+import React, {Component} from 'react';
 import {css} from "@emotion/react";
 import * as Constants from "../../common/constants";
+import Web3Modal from "web3modal";
+import Web3 from "web3";
+import web3 from "web3";
+import * as DDNFTMarket from "../../abi/DDNFTMarketplace";
+import {nftmarketaddress} from "../../config";
 
 const STYLES_CONTAINER = css`
-  padding-top:72px;
+  padding-top: 72px;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -79,94 +83,119 @@ const options1 = [
     {value: 'Utility', label: 'Utility'}
 ]
 
+class Ranking extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            height: 0,
+            items: [],
+        };
+        this.loadData = this.loadData.bind(this);
+    }
 
-const Ranking = () => (
-    <div css={STYLES_CONTAINER}>
-        <section className='container'>
-            <div className='row'>
-                <div className='col-lg-12'>
-                    {/*<div className="items_filter centerEl">*/}
-                    {/*    <div className='dropdownSelect one'><Select className='select1' styles={customStyles}*/}
-                    {/*                                                menuContainerStyle={{'zIndex': 999}}*/}
-                    {/*                                                defaultValue={options[0]} options={options}/></div>*/}
-                    {/*    <div className='dropdownSelect two'><Select className='select1' styles={customStyles}*/}
-                    {/*                                                defaultValue={options1[0]} options={options1}/>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
+    async componentDidMount() {
+        const web3Modal = new Web3Modal();
+        const provider = await web3Modal.connect();
+        const web3 = new Web3(provider);
+        const accounts = await web3.eth.getAccounts();
 
-                    <table className="table de-table table-rank">
-                        <thead>
-                        <tr>
-                            <th scope="col">Collection</th>
-                            <th scope="col">Volume</th>
-                            <th scope="col">24h %</th>
-                            <th scope="col">7d %</th>
-                            <th scope="col">Floor Price</th>
-                            <th scope="col">Owners</th>
-                            <th scope="col">Assets</th>
-                        </tr>
-                        <tr></tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td scope="row">
-                                Abstraction
-                            </td>
-                            <td>15,225.87</td>
-                            <td className="d-plus">+87.54%</td>
-                            <td className="d-plus">+309.49%</td>
-                            <td>5.9</td>
-                            <td>2.8k</td>
-                            <td>58.5k</td>
-                        </tr>
-                        <tr>
-                            <td scope="row">
-                                Sketchify
-                            </td>
-                            <td>14,304.78</td>
-                            <td className="d-plus">+35.11%</td>
-                            <td className="d-plus">+239.83%</td>
-                            <td>2.9</td>
-                            <td>2.3k</td>
-                            <td>28.4k</td>
-                        </tr>
-                        <tr>
-                            <td scope="row">
-                                Cartoonism
-                            </td>
-                            <td>13,705.58</td>
-                            <td className="d-min">-33.56%</td>
-                            <td className="d-plus">+307.97%</td>
-                            <td>4.5</td>
-                            <td>2.2k</td>
-                            <td>48.8k</td>
-                        </tr>
-                        <tr>
-                            <td scope="row">
-                                Papercut
-                            </td>
-                            <td>12,516.75</td>
-                            <td className="d-plus">+23.45%</td>
-                            <td className="d-plus">+171.25%</td>
-                            <td>6.3</td>
-                            <td>5.3k</td>
-                            <td>54.2k</td>
-                        </tr>
-                        </tbody>
-                    </table>
+        this.setState({
+            web3: web3,
+            accounts: accounts,
 
-                    <div className="spacer-double"></div>
+        })
 
-                    <ul className="pagination justify-content-center">
-                        <li className="active"><span>1 - 20</span></li>
-                        <li><span>21 - 40</span></li>
-                        <li><span>41 - 60</span></li>
-                    </ul>
+        await this.loadData();
+    }
 
-                </div>
+    getGeneralAttributes =  (nft) =>{
+        return parseInt(nft.likeNum) + parseInt(nft.viewCount) + parseInt(nft.downloadCount);
+    }
+
+    loadData = async () => {
+        const contract = new this.state.web3.eth.Contract(DDNFTMarket.ABI, nftmarketaddress);
+        let marketItems = await contract.methods.fetchMarketItems().call({from: this.state.accounts[0]}, function (error, result) {
+        });
+        console.log("all")
+        console.log(marketItems)
+
+        let sharePoolItems = await contract.methods.fetchSharePoolItems().call({from: this.state.accounts[0]}, function (error, result) {
+        });
+        console.log("sharing")
+        console.log(sharePoolItems)
+        var allItems = marketItems.concat(sharePoolItems);
+        allItems.sort(function(a,b){ // 这是比较函数
+            const a_total = parseInt(a.likeNum) + parseInt(a.viewCount) + parseInt(a.downloadCount);
+            const b_total = parseInt(b.likeNum) + parseInt(b.viewCount) + parseInt(b.downloadCount);
+            return b_total - a_total;    // 降序
+        })
+
+        this.setState({
+            items: allItems
+        })
+        console.log("all")
+        console.log(allItems)
+
+    }
+
+
+
+
+    render() {
+        return (
+            <div css={STYLES_CONTAINER}>
+                <section className='container'>
+                    <div className='row'>
+                        <div className='col-lg-12'>
+                            {/*<div className="items_filter centerEl">*/}
+                            {/*    <div className='dropdownSelect one'><Select className='select1' styles={customStyles}*/}
+                            {/*                                                menuContainerStyle={{'zIndex': 999}}*/}
+                            {/*                                                defaultValue={options[0]} options={options}/></div>*/}
+                            {/*    <div className='dropdownSelect two'><Select className='select1' styles={customStyles}*/}
+                            {/*                                                defaultValue={options1[0]} options={options1}/>*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
+
+                            <table className="table de-table table-rank">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">desc</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">Owners</th>
+                                    <th scope="col">General attributes</th>
+                                </tr>
+                                <tr></tr>
+                                </thead>
+                                <tbody>
+                                {this.state.items.map((nft, index) => (
+                                    <tr key={index}>
+                                        <td scope="row">
+                                            {nft.title}
+                                        </td>
+                                        <td>{nft.description}</td>
+                                        <td>{web3.utils.fromWei(nft.price)+" "}<span>matic</span></td>
+                                        <td>{nft.owner}</td>
+                                        <td>{this.getGeneralAttributes(nft)}</td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+
+                            <div className="spacer-double"></div>
+
+                            {/*<ul className="pagination justify-content-center">*/}
+                            {/*    <li className="active"><span>1 - 20</span></li>*/}
+                            {/*    <li><span>21 - 40</span></li>*/}
+                            {/*    <li><span>41 - 60</span></li>*/}
+                            {/*</ul>*/}
+
+                        </div>
+                    </div>
+                </section>
             </div>
-        </section>
-    </div>
+        );
+    }
+}
 
-);
 export default Ranking;
